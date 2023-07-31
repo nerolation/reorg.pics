@@ -639,6 +639,41 @@ fig1, fig2, fig3, fig4, fig5, fig6, fig7 = create_figures(df_90, df_60, df_30, d
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@nero_ETH">
+        <meta name="twitter:title" content="MEV-Boost Relay API Dashboard">
+        <meta name="twitter:description" content="Selected comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
+        <meta name="twitter:image" content="./assets/reorg.jpeg">
+        <meta property="og:title" content="MEV-Boost" relay="" api="" dashboard="">
+        <meta property="og:site_name" content="reorg.pics">
+        <meta property="og:url" content="reorg.pics">
+        <meta property="og:description" content="Selected comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
+        <meta property="og:type" content="website">
+        <link rel="shortcut icon" href="./assets/reorg.jpeg">
+        <meta property="og:image" content="https://mevboost.toniwahrstaetter.com/ethlogo.png">
+        <meta name="description" content="Up-to-date comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
+        <meta name="keywords" content="Ethereum, Reorg, Consensus, Dashboard">
+        <meta name="author" content="Toni Wahrstätter">
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
 app.scripts.append_script({"external_url": "update_window_width.js"})
 app.clientside_callback(
     "window.dash_clientside.update_window_size",
