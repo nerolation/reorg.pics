@@ -15,6 +15,10 @@ from plotly.subplots import make_subplots
 # Data preparation
 def prepare_data():
     df = pd.read_csv("reorg-data.csv")
+    df2 = pd.read_csv("validator_slots.csv")
+    df3 = pd.read_csv("relay_slots.csv")
+    df4 = pd.read_csv("builder_slots.csv")
+    df5 = pd.read_csv("clclient_slots.csv")
     
     
     def max_slot(slot):
@@ -59,7 +63,7 @@ def prepare_data():
     #df_per_sie_7.reset_index(inplace=True)
     #df_per_sie_7.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
 
-    return df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7
+    return df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5
 
 def fig3_layout(width=801):
     if width <= 800:
@@ -140,7 +144,7 @@ def fig2_layout(width=801):
     else:
         font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Client',
         margin=dict(l=20, r=20, t=40, b=20),
@@ -154,7 +158,7 @@ def fig2_layout(width=801):
         updatemenus=[dict(
             buttons=[
                 dict(args=[{"visible": [True,False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             # "height":500,
                             "xaxis.title": "%",
                             #"annotations": k
@@ -164,7 +168,7 @@ def fig2_layout(width=801):
                 )
                 ,
                 dict(args=[{"visible": [False,True]},
-                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absulute Nr. of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absulute Nr. of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                                 # "height":500,
                                 "xaxis.title": "slots",
                                 #"annotations": k
@@ -184,10 +188,13 @@ def fig2_layout(width=801):
     )
 
 
-def create_fig2(df, df_60, df_30, df_14, df_7):
+def create_fig2(df_90, df, df_30, df_14, df_7, order):
+    df = df[df["cl_client"] != "missed"]
     _df = df['cl_client'].value_counts().reset_index()
-    _df = _df[_df["cl_client"] != "missed"]
-    _df["relative_count"] = round(_df['count']/_df['count'].sum()*100, 0)
+    _df = pd.merge(_df,order,how="left", left_on="cl_client", right_on="cl_client")
+    _df["cl_client"]= _df["cl_client"].apply(lambda x: x[0].upper()+x[1:])
+    _df.columns = ['cl_client', 'count', 'slots']
+    _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     fig2 = make_subplots(rows=1, cols=1)
     fig2.add_trace(
         go.Bar(x=_df['relative_count'], y=_df['cl_client'], orientation='h', 
@@ -210,7 +217,7 @@ def fig1_layout(width=801):
     else:
         font_size = 16
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Number of Missed Blocks Over Date</span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Number of Missed Blocks Over Time</span>',
         xaxis_title='Date',
         yaxis_title='#Blocks',
         margin=dict(l=20, r=20, t=40, b=20),
@@ -256,7 +263,7 @@ def fig1_layout(width=801):
         )]
     )
 
-def create_fig1(df_90, df_60, df, df_14, df_7):
+def create_fig1(df, df_60, df_30, df_14, df_7):
     fig1 = make_subplots(rows=1, cols=1)
     df["date"] = df["date"].apply(lambda x: x.split(" ")[0])
     df.groupby(["date","cl_client"]).sum()
@@ -284,7 +291,7 @@ def fig4_layout(width=801):
     else:
         font_size = 16
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Validator',
         margin=dict(l=20, r=20, t=40, b=20),
@@ -298,14 +305,14 @@ def fig4_layout(width=801):
         updatemenus=[dict(
             buttons=[
                 dict(args=[{"visible": [True,False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
                 dict(args=[{"visible": [False,True]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
                     label="Absolute",
@@ -323,12 +330,13 @@ def fig4_layout(width=801):
     )
 
 
-def create_fig_for_validators(df, df_60, df_30, df_14, df_7):
+def create_fig_for_validators(df_90, df, df_30, df_14, df_7, order):
     df = df[df["validator"] != "missed"]
-    df["validator"]= df["validator"].apply(lambda x: x[0].upper()+x[1:])
     _df = df['validator'].value_counts().reset_index()
-    _df.columns = ['validator', 'count']
-    _df["relative_count"] = round(_df['count'] / _df['count'].sum() * 100, 0)
+    _df = pd.merge(_df,order,how="left", left_on="validator", right_on="validator")
+    _df["validator"]= _df["validator"].apply(lambda x: x[0].upper()+x[1:])
+    _df.columns = ['validator', 'count', 'slots']
+    _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df = _df[_df["count"] > 0]
     _df["validator"] = _df["validator"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df = _df.sort_values("count", ascending=False)
@@ -377,7 +385,7 @@ def fig5_layout(width=801):
     else:
         font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Validator',
         margin=dict(l=20, r=20, t=40, b=20),
@@ -391,14 +399,14 @@ def fig5_layout(width=801):
         updatemenus=[dict(
             buttons=[
                 dict(args=[{"visible": [True,False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
                 dict(args=[{"visible": [False,True]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
                     label="Absolute",
@@ -415,11 +423,13 @@ def fig5_layout(width=801):
         )]
     )
 
-def create_fig_for_relays(df, df_60, df_30, df_14, df_7):
+def create_fig_for_relays(df_90, df, df_30, df_14, df_7, order):
     df = df[df["relay"] != "missed"]
     _df = df['relay'].value_counts().reset_index()
-    _df.columns = ['relay', 'count']
-    _df["relative_count"] = round(_df['count'] / _df['count'].sum() * 100, 0)
+    _df = pd.merge(_df,order,how="left", left_on="relay", right_on="relay")
+    _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
+    _df.columns = ['relay', 'count', 'slots']
+    _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df = _df[_df["count"] > 0]
     _df["relay"] = _df["relay"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
@@ -469,7 +479,7 @@ def fig6_layout(width=801):
     else:
         font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Builder',
         margin=dict(l=20, r=20, t=40, b=20),
@@ -483,14 +493,14 @@ def fig6_layout(width=801):
         updatemenus=[dict(
             buttons=[
                 dict(args=[{"visible": [True,False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
                 dict(args=[{"visible": [False,True]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
                     label="Absolute",
@@ -508,11 +518,13 @@ def fig6_layout(width=801):
     )
 
 
-def create_fig_for_builders(df, df_60, df_30, df_14, df_7):
+def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
     df = df[df["builder"] != "missed"]
     _df = df['builder'].value_counts().reset_index()
-    _df.columns = ['builder', 'count']
-    _df["relative_count"] = round(_df['count'] / _df['count'].sum() * 100, 0)
+    _df = pd.merge(_df,order,how="left", left_on="builder", right_on="builder")
+    _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
+    _df.columns = ['builder', 'count', 'slots']
+    _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df = _df[_df["count"] > 0]
     _df["validator"] = _df["builder"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df = _df.sort_values("count", ascending=False)
@@ -624,18 +636,18 @@ def create_fig_stacked(df_90, df_60, df, df_14, df_7):
 
 
 # Figures
-def create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7):
+def create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5):
     fig1 = create_fig1(df_90, df_60, df_30, df_14, df_7)
-    fig2 = create_fig2(df_90, df_60, df_30, df_14, df_7)
+    fig2 = create_fig2(df_90, df_60, df_30, df_14, df_7, df5)
     fig3 = create_fig3(df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7)
-    fig4 = create_fig_for_validators(df_90, df_60, df_30, df_14, df_7)
-    fig5 = create_fig_for_relays(df_90, df_60, df_30, df_14, df_7)
-    fig6 = create_fig_for_builders(df_90, df_60, df_30, df_14, df_7)
+    fig4 = create_fig_for_validators(df_90, df_60, df_30, df_14, df_7, df2)
+    fig5 = create_fig_for_relays(df_90, df_60, df_30, df_14, df_7, df3)
+    fig6 = create_fig_for_builders(df_90, df_60, df_30, df_14, df_7, df4)
     fig7 = create_fig_stacked(df_90, df_60, df_30, df_14, df_7)
     return fig1, fig2, fig3, fig4, fig5, fig6, fig7
 
-df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7 = prepare_data()
-fig1, fig2, fig3, fig4, fig5, fig6, fig7 = create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7)
+df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5 = prepare_data()
+fig1, fig2, fig3, fig4, fig5, fig6, fig7 = create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5)
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
