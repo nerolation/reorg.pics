@@ -655,7 +655,7 @@ app.index_string = '''
         <meta property="og:description" content="Selected comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
         <meta property="og:type" content="website">
         <link rel="shortcut icon" href="./assets/reorg.jpeg">
-        <meta property="og:image" content="https://mevboost.toniwahrstaetter.com/ethlogo.png">
+        <meta property="og:image" content="./assets/reorg.jpeg">
         <meta name="description" content="Up-to-date comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
         <meta name="keywords" content="Ethereum, Reorg, Consensus, Dashboard">
         <meta name="author" content="Toni Wahrstätter">
