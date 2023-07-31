@@ -15,56 +15,95 @@ from plotly.subplots import make_subplots
 # Data preparation
 def prepare_data():
     df = pd.read_csv("reorg-data.csv")
-    df_table = df.rename(columns={"slot": "Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
+    
+    
+    def max_slot(slot):
+        return int(slot.split("[")[1].split("]")[0])
+    
+    df_90 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*90]
+    df_60 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*60]
+    df_30 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*30]
+    df_14 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*14]
+    df_7 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*7]
+    
+    df_table = df_90.rename(columns={"slot": "Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
     df_table.sort_values("Slot", ascending=False, inplace=True)
+    df_table = df_table[["Slot", "CL Client", "Val. ID", "Date", "Slot Nr. in Epoch"]].drop_duplicates()
+    
+    df_per_sie_60 = df_60['slot_in_epoch'].value_counts().reset_index()
+    df_per_sie_60.set_index('slot_in_epoch', inplace=True)
+    df_per_sie_60 = df_per_sie_60.reindex(range(0, 32))
+    df_per_sie_60.fillna(0, inplace=True)
+    df_per_sie_60.reset_index(inplace=True)
+    df_per_sie_60.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
+    
+    df_per_sie_30 = df_30['slot_in_epoch'].value_counts().reset_index()
+    df_per_sie_30.set_index('slot_in_epoch', inplace=True)
+    df_per_sie_30 = df_per_sie_30.reindex(range(0, 32))
+    df_per_sie_30.fillna(0, inplace=True)
+    df_per_sie_30.reset_index(inplace=True)
+    df_per_sie_30.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
+    
+    df_per_sie_14 = df_14['slot_in_epoch'].value_counts().reset_index()
+    df_per_sie_14.set_index('slot_in_epoch', inplace=True)
+    df_per_sie_14 = df_per_sie_14.reindex(range(0, 32))
+    df_per_sie_14.fillna(0, inplace=True)
+    df_per_sie_14.reset_index(inplace=True)
+    df_per_sie_14.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
+    
+    df_per_sie_7 = df_7['slot_in_epoch'].value_counts().reset_index()
+    df_per_sie_7.set_index('slot_in_epoch', inplace=True)
+    df_per_sie_7 = df_per_sie_7.reindex(range(0, 32))
+    df_per_sie_7.fillna(0, inplace=True)
+    df_per_sie_7.reset_index(inplace=True)
+    df_per_sie_7.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
 
-    df_per_sie = df['slot_in_epoch'].value_counts().reset_index()
-    df_per_sie.set_index('slot_in_epoch', inplace=True)
-    df_per_sie = df_per_sie.reindex(range(0, 32))
-    df_per_sie.fillna(0, inplace=True)
-    df_per_sie.reset_index(inplace=True)
-    df_per_sie.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
-
-    return df, df_table, df_per_sie
+    return df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7
 
 def fig3_layout(width=801):
     if width <= 800:
-        font_size = 8
+        font_size = 10
     else:
-        font_size = 16
+        font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;>Slot Missed in Epoch</span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Missed in Epoch</span>',
         xaxis_title='Date',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
+        xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
         updatemenus=[dict(
             buttons=[
                 dict(args=[{"visible": [True,False,False,False]},
                            {}],
-                    label="24 hours",
+                    label="60 days",
                     method="update"
                 )
                 ,
                 dict(args=[{"visible": [False,True,False,False]},
                                {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Number of Missed Blocks Over Date</span>',}],
-                        label="48 hours",
+                        label="30 days",
                         method="update"
                 ),
                 dict(args=[{"visible": [False,False,True,False]},
                            {}],
-                    label="7 days",
+                    label="14 hours",
                     method="update"
                 )
                 ,
                 dict(args=[{"visible": [False,False,False,True]},
                                {}],
-                        label="14 days",
+                        label="48 hours",
                         method="update"
                 )
                 ],
             showactive= True,
             direction= 'down',
-            active= 1,
+            active= 0,
             x= 1.0, 
             xanchor= 'right', 
             y= 1.15, 
@@ -72,18 +111,18 @@ def fig3_layout(width=801):
         )]
     )
 
-def create_fig3(df_per_sie):
+def create_fig3(df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7):
     fig3 = make_subplots(rows=1, cols=1)
     fig3.add_trace(
-        go.Bar(x=df_per_sie['slot_in_epoch'], y=df_per_sie['count'], visible=False, marker=dict(color='#1f77b4'))
+        go.Bar(x=df_per_sie_60['slot_in_epoch'], y=df_per_sie_60['count'], marker=dict(color='#1f77b4'))
     )
     fig3.add_trace(
-        go.Bar(x=df_per_sie['slot_in_epoch'], y=df_per_sie['count'], visible=False, marker=dict(color='#1f77b4')))
+        go.Bar(x=df_per_sie_30['slot_in_epoch'], y=df_per_sie_30['count'], visible=False, marker=dict(color='#1f77b4')))
     fig3.add_trace(
-        go.Bar(x=df_per_sie['slot_in_epoch'], y=df_per_sie['count'], marker=dict(color='#1f77b4'))
+        go.Bar(x=df_per_sie_14['slot_in_epoch'], y=df_per_sie_14['count'], visible=False, marker=dict(color='#1f77b4'))
     )
     fig3.add_trace(
-        go.Bar(x=df_per_sie['slot_in_epoch'], y=df_per_sie['count'], visible=False, marker=dict(color='#1f77b4'))
+        go.Bar(x=df_per_sie_7['slot_in_epoch'], y=df_per_sie_7['count'], visible=False, marker=dict(color='#1f77b4'))
     )
 
 
@@ -93,19 +132,25 @@ def create_fig3(df_per_sie):
 
 def fig2_layout(width=801):
     if width <= 800:
-        font_size = 8
+        font_size = 10
     else:
-        font_size = 16
+        font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 14 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Client',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
+                xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
         updatemenus=[dict(
             buttons=[
                 dict(args=[{"visible": [True,False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 14 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
                             # "height":500,
                             "xaxis.title": "%",
                             #"annotations": k
@@ -115,7 +160,7 @@ def fig2_layout(width=801):
                 )
                 ,
                 dict(args=[{"visible": [False,True]},
-                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absulute Nr. of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 14 days)</span></span>',
+                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absulute Nr. of Missed Slots per Client <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
                                 # "height":500,
                                 "xaxis.title": "slots",
                                 #"annotations": k
@@ -135,7 +180,7 @@ def fig2_layout(width=801):
     )
 
 
-def create_fig2(df):
+def create_fig2(df, df_60, df_30, df_14, df_7):
     _df = df['cl_client'].value_counts().reset_index()
     _df["relative_count"] = round(_df['count']/_df['count'].sum()*100, 0)
     fig2 = make_subplots(rows=1, cols=1)
@@ -156,7 +201,7 @@ def create_fig2(df):
 
 def fig1_layout(width=801):
     if width <= 800:
-        font_size = 8
+        font_size = 10
     else:
         font_size = 16
     return dict(
@@ -165,6 +210,12 @@ def fig1_layout(width=801):
         yaxis_title='#Blocks',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
+        xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
         updatemenus=[dict(
             buttons=[
                 dict(args=[{"visible": [True,False,False,False]},
@@ -200,7 +251,7 @@ def fig1_layout(width=801):
         )]
     )
 
-def create_fig1(df):
+def create_fig1(df, df_60, df_30, df_14, df_7):
     fig1 = make_subplots(rows=1, cols=1)
     fig1.add_trace(
         go.Histogram(x=df['date'], nbinsx=500, visible=False, marker=dict(color='#1f77b4'))
@@ -220,16 +271,296 @@ def create_fig1(df):
     fig1.update_yaxes(title_standoff=5)
     return fig1
 
+def fig4_layout(width=801):
+    if width <= 800:
+        font_size = 10
+    else:
+        font_size = 16
+    return dict(
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+        xaxis_title='%',
+        yaxis_title='Validator',
+        margin=dict(l=20, r=20, t=40, b=20),
+        font=dict(family="Ubuntu Mono", size=font_size),
+        xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
+        updatemenus=[dict(
+            buttons=[
+                dict(args=[{"visible": [True,False]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                            "xaxis.title": "%",
+                           }],
+                    label="Relative",
+                    method="update"
+                ),
+                dict(args=[{"visible": [False,True]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Validator <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                            "xaxis.title": "slots",
+                           }],
+                    label="Absolute",
+                    method="update"
+                )
+            ],
+            showactive=True,
+            direction='down',
+            active=0,
+            x=1.0,
+            xanchor='right',
+            y=1.15,
+            yanchor='top'
+        )]
+    )
+
+
+def create_fig_for_validators(df, df_60, df_30, df_14, df_7):
+    df = df[df["validator"] != "missed"]
+    
+    _df = df['validator'].value_counts().reset_index()
+    _df.columns = ['validator', 'count']
+    _df["relative_count"] = round(_df['count'] / _df['count'].sum() * 100, 0)
+    _df = _df[_df["count"] > 0]
+    _df["validator"] = _df["validator"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
+    _df = _df.sort_values("count", ascending=False)
+    _df = _df.iloc[0:7]
+    fig = make_subplots(rows=1, cols=1)
+    fig.add_trace(
+        go.Bar(x=_df['relative_count'], y=_df['validator'], orientation='h',
+               marker=dict(color = [
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ]) # Add more colors if needed
+    ))
+
+    fig.add_trace(
+        go.Bar(
+            x=_df['count'], y=_df['validator'], orientation='h',
+            marker=dict(color = [
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ]), visible=False
+        )
+    )
+    fig.update_layout(**fig4_layout())
+    fig.update_yaxes(title_standoff=5)
+    return fig
+
+def fig5_layout(width=801):
+    if width <= 800:
+        font_size = 10
+    else:
+        font_size = 18
+    return dict(
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+        xaxis_title='%',
+        yaxis_title='Validator',
+        margin=dict(l=20, r=20, t=40, b=20),
+        font=dict(family="Ubuntu Mono", size=font_size),
+        xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
+        updatemenus=[dict(
+            buttons=[
+                dict(args=[{"visible": [True,False]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                            "xaxis.title": "%",
+                           }],
+                    label="Relative",
+                    method="update"
+                ),
+                dict(args=[{"visible": [False,True]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Relay <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                            "xaxis.title": "slots",
+                           }],
+                    label="Absolute",
+                    method="update"
+                )
+            ],
+            showactive=True,
+            direction='down',
+            active=0,
+            x=1.0,
+            xanchor='right',
+            y=1.15,
+            yanchor='top'
+        )]
+    )
+
+def create_fig_for_relays(df, df_60, df_30, df_14, df_7):
+    df = df[df["relay"] != "missed"]
+    
+    _df = df['relay'].value_counts().reset_index()
+    _df.columns = ['relay', 'count']
+    _df["relative_count"] = round(_df['count'] / _df['count'].sum() * 100, 0)
+    _df = _df[_df["count"] > 0]
+    _df["relay"] = _df["relay"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
+    _df = _df.sort_values("count", ascending=False)
+    _df = _df.iloc[0:7]
+    fig = make_subplots(rows=1, cols=1)
+    fig.add_trace(
+        go.Bar(x=_df['relative_count'], y=_df['relay'], orientation='h',
+               marker=dict(color=[
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ])) # Add more colors if needed
+    )
+
+    fig.add_trace(
+        go.Bar(
+            x=_df['count'], y=_df['relay'], orientation='h',
+            marker=dict(color = [
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ]), visible=False
+        )
+    )
+    fig.update_layout(**fig5_layout())
+    fig.update_yaxes(title_standoff=5)
+    return fig
+
+def fig6_layout(width=801):
+    if width <= 800:
+        font_size = 10
+    else:
+        font_size = 18
+    return dict(
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+        xaxis_title='%',
+        yaxis_title='Builder',
+        margin=dict(l=20, r=20, t=40, b=20),
+        font=dict(family="Ubuntu Mono", size=font_size),
+        xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
+        updatemenus=[dict(
+            buttons=[
+                dict(args=[{"visible": [True,False]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                            "xaxis.title": "%",
+                           }],
+                    label="Relative",
+                    method="update"
+                ),
+                dict(args=[{"visible": [False,True]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 90 days)</span></span>',
+                            "xaxis.title": "slots",
+                           }],
+                    label="Absolute",
+                    method="update"
+                )
+            ],
+            showactive=True,
+            direction='down',
+            active=0,
+            x=1.0,
+            xanchor='right',
+            y=1.15,
+            yanchor='top'
+        )]
+    )
+
+
+def create_fig_for_builders(df, df_60, df_30, df_14, df_7):
+    df = df[df["builder"] != "missed"]
+    _df = df['builder'].value_counts().reset_index()
+    _df.columns = ['builder', 'count']
+    _df["relative_count"] = round(_df['count'] / _df['count'].sum() * 100, 0)
+    _df = _df[_df["count"] > 0]
+    _df["validator"] = _df["builder"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
+    _df = _df.sort_values("count", ascending=False)
+    _df = _df.iloc[0:7]
+    fig = make_subplots(rows=1, cols=1)
+    fig.add_trace(
+        go.Bar(x=_df['relative_count'], y=_df['builder'], orientation='h',
+               marker=dict(color = [
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ]) # Add more colors if needed
+    ))
+
+    fig.add_trace(
+        go.Bar(
+            x=_df['count'], y=_df['builder'], orientation='h',
+            marker=dict(color = [
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ]), visible=False
+        )
+    )
+    fig.update_layout(**fig6_layout())
+    fig.update_yaxes(title_standoff=5)
+    return fig
+
 
 # Figures
-def create_figures(df, df_per_sie):
-    fig1 = create_fig1(df)
-    fig2 = create_fig2(df)
-    fig3 = create_fig3(df_per_sie)
-    return fig1, fig2, fig3
+def create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7):
+    fig1 = create_fig1(df_90, df_60, df_30, df_14, df_7)
+    fig2 = create_fig2(df_90, df_60, df_30, df_14, df_7)
+    fig3 = create_fig3(df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7)
+    fig4 = create_fig_for_validators(df_90, df_60, df_30, df_14, df_7)
+    fig5 = create_fig_for_relays(df_90, df_60, df_30, df_14, df_7)
+    fig6 = create_fig_for_builders(df_90, df_60, df_30, df_14, df_7)
+    return fig1, fig2, fig3, fig4, fig5, fig6
 
-df, df_table, df_per_sie = prepare_data()
-fig1, fig2, fig3 = create_figures(df, df_per_sie)
+df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7 = prepare_data()
+fig1, fig2, fig3, fig4, fig5, fig6 = create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7)
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -243,11 +574,11 @@ app.title = 'Reorg.pics'
 server = app.server
 
 def table_styles(width):
-    font_size = '16px' if width >= 800 else '10px'
+    font_size = '18px' if width >= 800 else '10px'
 
     return [
         {'if': {'column_id': 'Slot Nr. in Epoch'}, 'maxWidth': '30px', 'text-align': 'center', 'fontSize': font_size},
-        {'if': {'column_id': 'Slot'}, 'textAlign': 'right', 'maxWidth': '30px', 'fontSize': font_size},
+        {'if': {'column_id': 'Slot'}, 'textAlign': 'right', 'maxWidth': '40px', 'fontSize': font_size},
         {'if': {'column_id': 'Val. ID'}, 'maxWidth': '30px', 'fontSize': font_size},
         {'if': {'column_id': 'Date'}, 'maxWidth': '80px', 'fontSize': font_size},
         {'if': {'column_id': 'CL Client'}, 'maxWidth': '80px', 'fontSize': font_size}
@@ -256,7 +587,7 @@ def table_styles(width):
 app.layout = dbc.Container(
     [
         # Title
-        dbc.Row(html.H1("Reorg Dashboard", style={'text-align': 'center','margin-top': '20px'}), className="mb-4"),
+        dbc.Row(html.H1("Ethereum Reorg Dashboard", style={'text-align': 'center','margin-top': '20px'}), className="mb-4"),
 
         html.H5(
             ['Built with 🖤 by ', html.A('Toni Wahrstätter', href='https://twitter.com/nero_eth', target='_blank')],
@@ -294,6 +625,9 @@ app.layout = dbc.Container(
         dbc.Row(dbc.Col(dcc.Graph(id='graph1', figure=fig1), md=12, className="mb-4")),
         dbc.Row(dbc.Col(dcc.Graph(id='graph2', figure=fig2), md=12, className="mb-4")),
         dbc.Row(dbc.Col(dcc.Graph(id='graph3', figure=fig3), md=12, className="mb-4")),
+        dbc.Row(dbc.Col(dcc.Graph(id='graph4', figure=fig4), md=12, className="mb-4")),
+        dbc.Row(dbc.Col(dcc.Graph(id='graph5', figure=fig5), md=12, className="mb-4")),
+        dbc.Row(dbc.Col(dcc.Graph(id='graph6', figure=fig6), md=12, className="mb-4")),
 
         # Additional Components
         dbc.Row(dcc.Interval(id='window-size-trigger', interval=5000, n_intervals=0, max_intervals=1)),
@@ -351,6 +685,39 @@ def update_layout3(window_size_data):
     width = window_size_data['width']
     fig3.update_layout(**fig3_layout(width))
     return fig3
+
+@app.callback(
+    Output('graph4', 'figure'),
+    Input('window-size-store', 'data')
+)
+def update_layout4(window_size_data):
+    if window_size_data is None:
+        raise dash.exceptions.PreventUpdate
+    width = window_size_data['width']
+    fig4.update_layout(**fig4_layout(width))
+    return fig4
+
+@app.callback(
+    Output('graph5', 'figure'),
+    Input('window-size-store', 'data')
+)
+def update_layout5(window_size_data):
+    if window_size_data is None:
+        raise dash.exceptions.PreventUpdate
+    width = window_size_data['width']
+    fig5.update_layout(**fig5_layout(width))
+    return fig5
+
+@app.callback(
+    Output('graph6', 'figure'),
+    Input('window-size-store', 'data')
+)
+def update_layout6(window_size_data):
+    if window_size_data is None:
+        raise dash.exceptions.PreventUpdate
+    width = window_size_data['width']
+    fig6.update_layout(**fig6_layout(width))
+    return fig6
 
 if __name__ == '__main__':
     #app.run_server(debug=True)

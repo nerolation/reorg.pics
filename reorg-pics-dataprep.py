@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 from datetime import datetime
@@ -9,7 +9,7 @@ import pandas as pd
 import os
 
 
-# In[2]:
+# In[ ]:
 
 
 def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
@@ -24,7 +24,7 @@ def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
 set_google_credentials("./config/","google-creds.json")
 
 
-# In[3]:
+# In[ ]:
 
 
 def slot_to_time(slot):
@@ -40,11 +40,13 @@ def add_link_to_slot(slot):
     return f'[{slot}](https://beaconcha.in/slot/{slot})'
 
 
-# In[4]:
+# In[ ]:
 
 
 query = """
     SELECT
+      DISTINCT AA.slot, AA.cl_client, AA.validator_id, BB.validator, BB.builder, BB.relay FROM (
+        SELECT
       DISTINCT *
     FROM
       `ethereum-data-nero.ethdata.beaconchain_pace`
@@ -56,7 +58,11 @@ query = """
         `ethereum-data-nero.eth.validator_info`
       WHERE
         validator_id= "missed"
-    )
+        )
+    )) AA LEFT JOIN (
+      SELECT DISTINCT slot, relay, builder, validator FROM `ethereum-data-nero.eth.mevboost_db` WHERE DATE(date) between DATE_SUB(current_date(), INTERVAL 90 DAY) and current_date()
+    ) BB on AA.slot = BB.slot
+    ORDER BY slot
 """
 df = pd.read_gbq(query)
 df["date"] = df["slot"].apply(slot_to_time)
@@ -65,14 +71,20 @@ df["slot"] = df["slot"].apply(add_link_to_slot)
 df
 
 
-# In[5]:
+# In[ ]:
 
 
 df.to_csv("reorg-data.csv", index=None)
 
 
-# In[6]:
+# In[ ]:
 
 
 print("finished")
+
+
+# In[ ]:
+
+
+
 
