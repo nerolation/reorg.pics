@@ -30,33 +30,34 @@ def prepare_data():
     df_table.sort_values("Slot", ascending=False, inplace=True)
     df_table = df_table[["Slot", "CL Client", "Val. ID", "Date", "Slot Nr. in Epoch"]].drop_duplicates()
     
-    df_per_sie_60 = df_60['slot_in_epoch'].value_counts().reset_index()
-    df_per_sie_60.set_index('slot_in_epoch', inplace=True)
-    df_per_sie_60 = df_per_sie_60.reindex(range(0, 32))
-    df_per_sie_60.fillna(0, inplace=True)
-    df_per_sie_60.reset_index(inplace=True)
-    df_per_sie_60.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
+    df_per_sie_60 = df_60.groupby(["cl_client", "slot_in_epoch"])['slot'].count().reset_index().sort_values("slot_in_epoch")
+    #df_per_sie_60.set_index('slot_in_epoch', inplace=True)
+    #print(df_per_sie_60)
+    #df_per_sie_60 = df_per_sie_60.reindex(range(0, 32))
+    #df_per_sie_60.fillna(0, inplace=True)
+    #df_per_sie_60.reset_index(inplace=True)
+    #df_per_sie_60.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
     
-    df_per_sie_30 = df_30['slot_in_epoch'].value_counts().reset_index()
-    df_per_sie_30.set_index('slot_in_epoch', inplace=True)
-    df_per_sie_30 = df_per_sie_30.reindex(range(0, 32))
-    df_per_sie_30.fillna(0, inplace=True)
-    df_per_sie_30.reset_index(inplace=True)
-    df_per_sie_30.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
+    df_per_sie_30 = df_30.groupby(["cl_client", "slot_in_epoch"])['slot'].count().reset_index().sort_values("slot_in_epoch")
+    #df_per_sie_30.set_index('slot_in_epoch', inplace=True)
+    #df_per_sie_30 = df_per_sie_30.reindex(range(0, 32))
+    #df_per_sie_30.fillna(0, inplace=True)
+    #df_per_sie_30.reset_index(inplace=True)
+    #df_per_sie_30.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
     
-    df_per_sie_14 = df_14['slot_in_epoch'].value_counts().reset_index()
-    df_per_sie_14.set_index('slot_in_epoch', inplace=True)
-    df_per_sie_14 = df_per_sie_14.reindex(range(0, 32))
-    df_per_sie_14.fillna(0, inplace=True)
-    df_per_sie_14.reset_index(inplace=True)
-    df_per_sie_14.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
+    df_per_sie_14 = df_14.groupby(["cl_client", "slot_in_epoch"])['slot'].count().reset_index().sort_values("slot_in_epoch")
+    #df_per_sie_14.set_index('slot_in_epoch', inplace=True)
+    #df_per_sie_14 = df_per_sie_14.reindex(range(0, 32))
+    #df_per_sie_14.fillna(0, inplace=True)
+    #df_per_sie_14.reset_index(inplace=True)
+    #df_per_sie_14.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
     
-    df_per_sie_7 = df_7['slot_in_epoch'].value_counts().reset_index()
-    df_per_sie_7.set_index('slot_in_epoch', inplace=True)
-    df_per_sie_7 = df_per_sie_7.reindex(range(0, 32))
-    df_per_sie_7.fillna(0, inplace=True)
-    df_per_sie_7.reset_index(inplace=True)
-    df_per_sie_7.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
+    df_per_sie_7 = df_7.groupby(["cl_client", "slot_in_epoch"])['slot'].count().reset_index().sort_values("slot_in_epoch")
+    #df_per_sie_7.set_index('slot_in_epoch', inplace=True)
+    #df_per_sie_7 = df_per_sie_7.reindex(range(0, 32))
+    #df_per_sie_7.fillna(0, inplace=True)
+    #df_per_sie_7.reset_index(inplace=True)
+    #df_per_sie_7.rename(columns={'index': 'slot_in_epoch'}, inplace=True)
 
     return df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7
 
@@ -66,12 +67,14 @@ def fig3_layout(width=801):
     else:
         font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Missed in Epoch</span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Nr. Missed in Epoch</span>',
         xaxis_title='Date',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
+        barmode='stack',
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, # Disables zooming/panning on the x-axis,
+            tickvals=list(range(32))
         ),
         yaxis=dict(
             fixedrange=True # Disables zooming/panning on the y-axis
@@ -85,7 +88,7 @@ def fig3_layout(width=801):
                 )
                 ,
                 dict(args=[{"visible": [False,True,False,False]},
-                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Number of Missed Blocks Over Date</span>',}],
+                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Nr. Missed in Epoch</span>',}],
                         label="30 days",
                         method="update"
                 ),
@@ -111,24 +114,25 @@ def fig3_layout(width=801):
         )]
     )
 
-def create_fig3(df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7):
-    fig3 = make_subplots(rows=1, cols=1)
-    fig3.add_trace(
-        go.Bar(x=df_per_sie_60['slot_in_epoch'], y=df_per_sie_60['count'], marker=dict(color='#1f77b4'))
-    )
-    fig3.add_trace(
-        go.Bar(x=df_per_sie_30['slot_in_epoch'], y=df_per_sie_30['count'], visible=False, marker=dict(color='#1f77b4')))
-    fig3.add_trace(
-        go.Bar(x=df_per_sie_14['slot_in_epoch'], y=df_per_sie_14['count'], visible=False, marker=dict(color='#1f77b4'))
-    )
-    fig3.add_trace(
-        go.Bar(x=df_per_sie_7['slot_in_epoch'], y=df_per_sie_7['count'], visible=False, marker=dict(color='#1f77b4'))
-    )
+def create_fig3(df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
+    pivot_df = df
+    fig = make_subplots(rows=1, cols=1)
+
+    # Colors array (can be extended with more colors)
+    colors = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+        '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
+    ]
+
+    # Add traces for each client
+    for i, client in enumerate(pivot_df["cl_client"].unique()):
+        df = pivot_df[pivot_df["cl_client"] == client]
+        fig.add_trace(go.Bar(x=df["slot_in_epoch"], y=df["slot"], name=client, marker_color=colors[i]))
 
 
-    fig3.update_layout(**fig3_layout())
-    fig3.update_yaxes(title_standoff=5)
-    return fig3
+    fig.update_layout(**fig3_layout())
+    fig.update_yaxes(title_standoff=5)
+    return fig
 
 def fig2_layout(width=801):
     if width <= 800:
@@ -182,6 +186,7 @@ def fig2_layout(width=801):
 
 def create_fig2(df, df_60, df_30, df_14, df_7):
     _df = df['cl_client'].value_counts().reset_index()
+    _df = _df[_df["cl_client"] != "missed"]
     _df["relative_count"] = round(_df['count']/_df['count'].sum()*100, 0)
     fig2 = make_subplots(rows=1, cols=1)
     fig2.add_trace(
@@ -251,8 +256,10 @@ def fig1_layout(width=801):
         )]
     )
 
-def create_fig1(df, df_60, df_30, df_14, df_7):
+def create_fig1(df_90, df_60, df, df_14, df_7):
     fig1 = make_subplots(rows=1, cols=1)
+    df["date"] = df["date"].apply(lambda x: x.split(" ")[0])
+    df.groupby(["date","cl_client"]).sum()
     fig1.add_trace(
         go.Histogram(x=df['date'], nbinsx=500, visible=False, marker=dict(color='#1f77b4'))
     )
@@ -318,7 +325,7 @@ def fig4_layout(width=801):
 
 def create_fig_for_validators(df, df_60, df_30, df_14, df_7):
     df = df[df["validator"] != "missed"]
-    
+    df["validator"]= df["validator"].apply(lambda x: x[0].upper()+x[1:])
     _df = df['validator'].value_counts().reset_index()
     _df.columns = ['validator', 'count']
     _df["relative_count"] = round(_df['count'] / _df['count'].sum() * 100, 0)
@@ -410,12 +417,12 @@ def fig5_layout(width=801):
 
 def create_fig_for_relays(df, df_60, df_30, df_14, df_7):
     df = df[df["relay"] != "missed"]
-    
     _df = df['relay'].value_counts().reset_index()
     _df.columns = ['relay', 'count']
     _df["relative_count"] = round(_df['count'] / _df['count'].sum() * 100, 0)
     _df = _df[_df["count"] > 0]
     _df["relay"] = _df["relay"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
+    _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
     _df = _df.sort_values("count", ascending=False)
     _df = _df.iloc[0:7]
     fig = make_subplots(rows=1, cols=1)
@@ -548,6 +555,73 @@ def create_fig_for_builders(df, df_60, df_30, df_14, df_7):
     fig.update_yaxes(title_standoff=5)
     return fig
 
+def fig7_layout(width=801):
+    if width <= 800:
+        font_size = 10
+    else:
+        font_size = 18
+    return dict(
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Missed Slots over Time<span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+        xaxis_title='Date',
+        yaxis_title='Slots',
+        margin=dict(l=20, r=20, t=40, b=20),
+        font=dict(family="Ubuntu Mono", size=font_size),
+        barmode='stack',
+        xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
+        updatemenus=[dict(
+            buttons=[
+                dict(args=[{"visible": [True,False]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+                            "xaxis.title": "%",
+                           }],
+                    label="Relative",
+                    method="update"
+                ),
+                dict(args=[{"visible": [False,True]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+                            "xaxis.title": "slots",
+                           }],
+                    label="Absolute",
+                    method="update"
+                )
+            ],
+            showactive=True,
+            direction='down',
+            active=0,
+            x=1.0,
+            xanchor='right',
+            y=1.15,
+            yanchor='top'
+        )]
+    )
+
+def create_fig_stacked(df_90, df_60, df, df_14, df_7):
+    df["date"] = df["date"].apply(lambda x: x.split(" ")[0])
+    pivot_df = df.groupby(["date","cl_client"])["slot"].count().reset_index()
+    # Create a subplot
+    fig = make_subplots(rows=1, cols=1)
+
+    # Colors array (can be extended with more colors)
+    colors = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+        '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
+    ]
+
+    # Add traces for each client
+    for i, client in enumerate(pivot_df["cl_client"].unique()):
+        df = pivot_df[pivot_df["cl_client"] == client]
+        fig.add_trace(go.Bar(x=df["date"], y=df["slot"], name=client, marker_color=colors[i]))
+        
+    fig.update_layout(**fig7_layout())
+    fig.update_yaxes(title_standoff=5)
+    return fig
+
+
 
 # Figures
 def create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7):
@@ -557,10 +631,11 @@ def create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_3
     fig4 = create_fig_for_validators(df_90, df_60, df_30, df_14, df_7)
     fig5 = create_fig_for_relays(df_90, df_60, df_30, df_14, df_7)
     fig6 = create_fig_for_builders(df_90, df_60, df_30, df_14, df_7)
-    return fig1, fig2, fig3, fig4, fig5, fig6
+    fig7 = create_fig_stacked(df_90, df_60, df_30, df_14, df_7)
+    return fig1, fig2, fig3, fig4, fig5, fig6, fig7
 
 df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7 = prepare_data()
-fig1, fig2, fig3, fig4, fig5, fig6 = create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7)
+fig1, fig2, fig3, fig4, fig5, fig6, fig7 = create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7)
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -623,8 +698,9 @@ app.layout = dbc.Container(
 
         # Graphs
         dbc.Row(dbc.Col(dcc.Graph(id='graph1', figure=fig1), md=12, className="mb-4")),
-        dbc.Row(dbc.Col(dcc.Graph(id='graph2', figure=fig2), md=12, className="mb-4")),
+        dbc.Row(dbc.Col(dcc.Graph(id='graph7', figure=fig7), md=12, className="mb-4")),
         dbc.Row(dbc.Col(dcc.Graph(id='graph3', figure=fig3), md=12, className="mb-4")),
+        dbc.Row(dbc.Col(dcc.Graph(id='graph2', figure=fig2), md=12, className="mb-4")),
         dbc.Row(dbc.Col(dcc.Graph(id='graph4', figure=fig4), md=12, className="mb-4")),
         dbc.Row(dbc.Col(dcc.Graph(id='graph5', figure=fig5), md=12, className="mb-4")),
         dbc.Row(dbc.Col(dcc.Graph(id='graph6', figure=fig6), md=12, className="mb-4")),
@@ -718,6 +794,16 @@ def update_layout6(window_size_data):
     width = window_size_data['width']
     fig6.update_layout(**fig6_layout(width))
     return fig6
+@app.callback(
+    Output('graph7', 'figure'),
+    Input('window-size-store', 'data')
+)
+def update_layout7(window_size_data):
+    if window_size_data is None:
+        raise dash.exceptions.PreventUpdate
+    width = window_size_data['width']
+    fig7.update_layout(**fig7_layout(width))
+    return fig7
 
 if __name__ == '__main__':
     #app.run_server(debug=True)
