@@ -263,7 +263,7 @@ def fig1_layout(width=801):
         )]
     )
 
-def create_fig1(df, df_60, df_30, df_14, df_7):
+def create_fig1(df_90, df_60, df, df_14, df_7):
     fig1 = make_subplots(rows=1, cols=1)
     df["date"] = df["date"].apply(lambda x: x.split(" ")[0])
     df.groupby(["date","cl_client"]).sum()
