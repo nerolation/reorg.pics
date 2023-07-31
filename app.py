@@ -38,6 +38,7 @@ fig3.update_layout(
 fig3.update_xaxes(tickvals=list(range(32)))
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 #app = JupyterDash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 def update_styles(selected_cells, data):
