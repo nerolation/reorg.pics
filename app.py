@@ -214,7 +214,7 @@ def create_fig2(df_90, df, df_30, df_14, df_7, order):
     _df["cl_client"]= _df["cl_client"].apply(lambda x: x[0].upper()+x[1:])
     _df.columns = ['cl_client', 'count', 'slots']
     _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
-    
+    _df.sort_values("relative_count", ascending=False, inplace=True)
     fig2 = make_subplots(rows=1, cols=1)
     fig2.add_trace(
         go.Bar(x=_df['relative_count'], y=_df['cl_client'], orientation='h', 
@@ -411,7 +411,7 @@ def fig5_layout(width=801):
     return dict(
         title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
-        yaxis_title='Validator',
+        yaxis_title='Relay',
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size=font_size),
         xaxis=dict(
