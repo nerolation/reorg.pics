@@ -175,6 +175,7 @@ def fig2_layout(width=801):
             fixedrange=True # Disables zooming/panning on the y-axis
         ),
         updatemenus=[dict(
+            type="buttons",
             buttons=[
                 dict(args=[{"visible": [True,False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
@@ -197,7 +198,7 @@ def fig2_layout(width=801):
                 )
                 ],
             showactive= True,
-            direction= 'down',
+            direction= 'left',
             active= 0,
             x= 1.0, 
             xanchor= 'right', 
@@ -256,6 +257,7 @@ def fig1_layout(width=801):
             fixedrange=True # Disables zooming/panning on the y-axis
         ),
         updatemenus=[dict(
+            type="buttons",
             buttons=[
                 dict(args=[{"visible": [True if i%2==0 else False for i in range(10)]},
                            {}],
@@ -270,7 +272,7 @@ def fig1_layout(width=801):
                 )
                 ],
             showactive= True,
-            direction= 'down',
+            direction= 'left',
             active= 0,
             x= 1.0, 
             xanchor= 'right', 
@@ -327,6 +329,7 @@ def fig4_layout(width=801):
             fixedrange=True # Disables zooming/panning on the y-axis
         ),
         updatemenus=[dict(
+            type="buttons",
             buttons=[
                 dict(args=[{"visible": [True,False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
@@ -344,7 +347,7 @@ def fig4_layout(width=801):
                 )
             ],
             showactive=True,
-            direction='down',
+            direction='left',
             active=0,
             x=1.0,
             xanchor='right',
@@ -421,6 +424,7 @@ def fig5_layout(width=801):
             fixedrange=True # Disables zooming/panning on the y-axis
         ),
         updatemenus=[dict(
+            type="buttons",
             buttons=[
                 dict(args=[{"visible": [True,False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
@@ -438,7 +442,7 @@ def fig5_layout(width=801):
                 )
             ],
             showactive=True,
-            direction='down',
+            direction='left',
             active=0,
             x=1.0,
             xanchor='right',
@@ -497,6 +501,216 @@ def create_fig_for_relays(df_90, df, df_30, df_14, df_7, order):
     fig.update_yaxes(title_standoff=5)
     return fig
 
+
+
+
+
+
+def create_reorger_builder_layout(width=801):
+    if width <= 800:
+        font_size = 10
+    else:
+        font_size = 20
+    return dict(
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+        xaxis_title='%',
+        yaxis_title='Builder',
+        margin=dict(l=20, r=20, t=80, b=20),
+        font=dict(family="Ubuntu Mono", size=font_size),
+        xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
+        paper_bgcolor= "#eee",
+        updatemenus=[dict(
+            type="buttons",
+            buttons=[
+                dict(args=[{"visible": [True,False]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                            "xaxis.title": "%",
+                           }],
+                    label="Relative",
+                    method="update"
+                ),
+                dict(args=[{"visible": [False,True]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Slots by Reorging Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                            "xaxis.title": "slots",
+                           }],
+                    label="Absolute",
+                    method="update"
+                )
+            ],
+            showactive=True,
+            direction='left',
+            active=0,
+            x=1.0,
+            xanchor='right',
+            y=1.15,
+            yanchor='top'
+        )]
+    )
+
+def create_reorger_builder(df_90, df_60, df_30, df_14, df_7, order, df):
+    df = df[df["builder"] != "missed"]
+    _df = df['builder'].value_counts().reset_index()
+    _df = pd.merge(_df,order,how="left", left_on="builder", right_on="builder")
+    _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
+    _df.columns = ['builder', 'count', 'slots']
+    _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
+    _df = _df[_df["count"] > 0]
+    _df["builder"] = _df["builder"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
+    _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
+    _df.sort_values("relative_count", ascending=False, inplace=True)    
+    _df = _df.iloc[0:7]
+    fig = make_subplots(rows=1, cols=1)
+    fig.add_trace(
+        go.Bar(x=_df['relative_count'], y=_df['builder'], orientation='h',
+               marker=dict(color=[
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ])) # Add more colors if needed
+    )
+
+    fig.add_trace(
+        go.Bar(
+            x=_df['count'], y=_df['builder'], orientation='h',
+            marker=dict(color = [
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ]), visible=False
+        )
+    )
+    fig.update_layout(**create_reorger_builder_layout())
+    fig.update_yaxes(title_standoff=5)
+    return fig
+
+
+
+
+
+
+def create_reorger_validator_layout(width=801):
+    if width <= 800:
+        font_size = 10
+    else:
+        font_size = 20
+    return dict(
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+        xaxis_title='%',
+        yaxis_title='Validator',
+        margin=dict(l=20, r=20, t=80, b=20),
+        font=dict(family="Ubuntu Mono", size=font_size),
+        xaxis=dict(
+            fixedrange=True # Disables zooming/panning on the x-axis
+        ),
+        yaxis=dict(
+            fixedrange=True # Disables zooming/panning on the y-axis
+        ),
+        paper_bgcolor= "#eee",
+        updatemenus=[dict(
+            type = "buttons",
+            direction = "left",
+
+            buttons=[
+                dict(args=[{"visible": [True,False]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                            "xaxis.title": "%",
+                           }],
+                    label="Relative",
+                    method="update"
+                ),
+                dict(args=[{"visible": [False,True]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Slots by Reorging Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                            "xaxis.title": "slots",
+                           }],
+                    label="Absolute",
+                    method="update"
+                )
+            ],
+            showactive=True,
+            active=0,
+            x=1.0,
+            xanchor='right',
+            y=1.15,
+            yanchor='top'
+        )]
+    )
+
+def create_reorger_validator(df_90, df_60, df_30, df_14, df_7, order, df):
+    df = df[df["validator"] != "missed"]
+    _df = df['validator'].value_counts().reset_index()
+    print(_df)
+    print(order)
+    _df = pd.merge(_df,order,how="left", left_on="validator", right_on="validator")
+    _df["validator"]= _df["validator"].apply(lambda x: x[0].upper()+x[1:])
+    _df.columns = ['validator', 'count', 'slots']
+    _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
+    _df = _df[_df["count"] > 0]
+    _df["validator"] = _df["validator"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
+    _df["validator"]= _df["validator"].apply(lambda x: x[0].upper()+x[1:])
+    _df.sort_values("relative_count", ascending=False, inplace=True)    
+    _df = _df.iloc[0:7]
+    fig = make_subplots(rows=1, cols=1)
+    fig.add_trace(
+        go.Bar(x=_df['relative_count'], y=_df['validator'], orientation='h',
+               marker=dict(color=[
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ])) # Add more colors if needed
+    )
+
+    fig.add_trace(
+        go.Bar(
+            x=_df['count'], y=_df['validator'], orientation='h',
+            marker=dict(color = [
+                '#1f77b4', # blue
+                '#ff7f0e', # orange
+                '#2ca02c', # green
+                '#d62728', # red
+                '#9467bd', # purple
+                '#8c564b', # brown
+                '#e377c2', # pink
+                '#7f7f7f', # grey
+                '#bcbd22', # olive
+                '#17becf'  # teal
+            ]), visible=False
+        )
+    )
+    fig.update_layout(**create_reorger_validator_layout())
+    fig.update_yaxes(title_standoff=5)
+    return fig
+
+
+
+
+
+
 def create_reorger_relay_layout(width=801):
     if width <= 800:
         font_size = 10
@@ -514,7 +728,9 @@ def create_reorger_relay_layout(width=801):
         yaxis=dict(
             fixedrange=True # Disables zooming/panning on the y-axis
         ),
+        paper_bgcolor= "#eee",
         updatemenus=[dict(
+            type="buttons",
             buttons=[
                 dict(args=[{"visible": [True,False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
@@ -532,7 +748,7 @@ def create_reorger_relay_layout(width=801):
                 )
             ],
             showactive=True,
-            direction='down',
+            direction='left',
             active=0,
             x=1.0,
             xanchor='right',
@@ -609,6 +825,7 @@ def fig6_layout(width=801):
             fixedrange=True # Disables zooming/panning on the y-axis
         ),
         updatemenus=[dict(
+            type="buttons",
             buttons=[
                 dict(args=[{"visible": [True,False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
@@ -626,7 +843,7 @@ def fig6_layout(width=801):
                 )
             ],
             showactive=True,
-            direction='down',
+            direction='left',
             active=0,
             x=1.0,
             xanchor='right',
@@ -712,6 +929,7 @@ def fig7_layout(width=801):
             bgcolor="rgba(255, 255, 255, 0.5)" # You can set a background color for readability if needed
         ),
         updatemenus=[dict(
+            type="buttons",
             buttons=[
                 dict(args=[{"visible": [True if i %2==0 else False for i in range(10)]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
@@ -729,7 +947,7 @@ def fig7_layout(width=801):
                 )
             ],
             showactive=True,
-            direction='down',
+            direction='left',
             active=1,
             x=1.0,
             xanchor='right',
@@ -780,10 +998,12 @@ def create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_3
     fig6 = create_fig_for_builders(df_90, df_60, df_30, df_14, df_7, df4)
     fig7 = create_fig_stacked(df_90, df_60, df_30, df_14, df_7, df5)
     fig8 = create_reorger_relay(df_90, df_60, df_30, df_14, df_7, df3, dfreorger)
-    return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8
+    fig9 = create_reorger_builder(df_90, df_60, df_30, df_14, df_7, df4, dfreorger)
+    fig10 = create_reorger_validator(df_90, df_60, df_30, df_14, df_7, df2, dfreorger)
+    return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, fig9, fig10
 
 df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5, dfreorger = prepare_data()
-fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8 = create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5, dfreorger)
+fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, fig9, fig10 = create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5, dfreorger)
 
 # Initialize the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -867,14 +1087,14 @@ app.layout = html.Div(
                     dbc.Col(
                         html.H5(
                             ['Built with 🖤 by ', html.A('Toni Wahrstätter', href='https://twitter.com/nero_eth', target='_blank')],
-                            className="mb-4 smaller-text" # Apply the class
+                            className="mb-4 even-smaller-text" # Apply the class
                         ),
                         width={"size": 6, "order": 1}
                     ),
                     dbc.Col(
                         html.H5(
                             ['Built using ', html.A('blockprint', href='https://github.com/sigp/blockprint', target='_blank')],
-                            className="mb-4 smaller-text text-right",
+                            className="mb-4 even-smaller-text text-right",
                             style={'textAlign': 'right'}
                         ),
                         width={"size": 6, "order": 2}
@@ -922,6 +1142,8 @@ app.layout = html.Div(
             dbc.Row(dbc.Col(dcc.Graph(id='graph5', figure=fig5), md=12, className="mb-4")),
             dbc.Row(dbc.Col(dcc.Graph(id='graph6', figure=fig6), md=12, className="mb-4")),
             dbc.Row(dbc.Col(dcc.Graph(id='graph8', figure=fig8), md=12, className="mb-4")),
+            dbc.Row(dbc.Col(dcc.Graph(id='graph9', figure=fig9), md=12, className="mb-4")),
+            dbc.Row(dbc.Col(dcc.Graph(id='graph10', figure=fig10), md=12, className="mb-4")),
 
             # Additional Components
             dbc.Row(dcc.Interval(id='window-size-trigger', interval=1000, n_intervals=0, max_intervals=1)),
