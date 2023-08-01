@@ -34,7 +34,7 @@ def prepare_data():
     df_14 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*14]
     df_7 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*7]
     
-    df_table = df_90.rename(columns={"slot": "Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
+    df_table = df_30.rename(columns={"slot": "Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
     df_table.sort_values("Slot", ascending=False, inplace=True)
     df_table = df_table[["Slot", "CL Client", "Val. ID", "Date", "Slot Nr. in Epoch"]].drop_duplicates()
     
@@ -235,7 +235,7 @@ def fig1_layout(width=801):
     if width <= 800:
         font_size = 10
     else:
-        font_size = 16
+        font_size = 20
     return dict(
         title=f'<span style="font-size: {font_size}px;font-weight:bold;">Number of Missed Blocks Over Time</span>',
         xaxis_title='Date',
@@ -313,7 +313,7 @@ def fig4_layout(width=801):
     if width <= 800:
         font_size = 10
     else:
-        font_size = 16
+        font_size = 20
     return dict(
         title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
@@ -407,7 +407,7 @@ def fig5_layout(width=801):
     if width <= 800:
         font_size = 10
     else:
-        font_size = 18
+        font_size = 20
     return dict(
         title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
@@ -501,7 +501,7 @@ def create_reorger_relay_layout(width=801):
     if width <= 800:
         font_size = 10
     else:
-        font_size = 18
+        font_size = 20
     return dict(
         title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
@@ -595,7 +595,7 @@ def fig6_layout(width=801):
     if width <= 800:
         font_size = 10
     else:
-        font_size = 18
+        font_size = 20
     return dict(
         title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
@@ -690,7 +690,7 @@ def fig7_layout(width=801):
     if width <= 800:
         font_size = 10
     else:
-        font_size = 18
+        font_size = 20
     return dict(
         title=f'<span style="font-size: {font_size}px;font-weight:bold;">Missed Slots over Time<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
         xaxis_title='Date',
@@ -832,7 +832,7 @@ app.title = 'Reorg.pics'
 server = app.server
 
 def table_styles(width):
-    font_size = '18px' if width >= 800 else '10px'
+    font_size = '20px' if width >= 800 else '10px'
 
     return [
         {'if': {'column_id': 'Slot Nr. in Epoch'}, 'maxWidth': '30px', 'text-align': 'center', 'fontSize': font_size},
@@ -862,13 +862,31 @@ app.layout = html.Div(
         [
             # Title
             dbc.Row(html.H1("Ethereum Reorg Dashboard", style={'text-align': 'center','margin-top': '20px'}), className="mb-4"),
-
-            html.H5(
-                ['Built with 🖤 by ', html.A('Toni Wahrstätter', href='https://twitter.com/nero_eth', target='_blank')],
-                className="mb-4 smaller-text" # Apply the class
+            html.Div([
+                dbc.Row([
+                    dbc.Col(
+                        html.H5(
+                            ['Built with 🖤 by ', html.A('Toni Wahrstätter', href='https://twitter.com/nero_eth', target='_blank')],
+                            className="mb-4 smaller-text" # Apply the class
+                        ),
+                        width={"size": 6, "order": 1}
+                    ),
+                    dbc.Col(
+                        html.H5(
+                            ['Built using ', html.A('blockprint', href='https://github.com/sigp/blockprint', target='_blank')],
+                            className="mb-4 smaller-text text-right",
+                            style={'textAlign': 'right'}
+                        ),
+                        width={"size": 6, "order": 2}
+                    )
+                ])
+            ]),
+            dbc.Row(
+               html.H5(
+                        ['Reorg Overview', ' (last 30 days)'],
+                        className="mb-4 smaller-text" # Apply the class
+                    )
             ),
-
-            # DataTable
             dbc.Row(
                 dbc.Col(
                     dash_table.DataTable(
