@@ -76,6 +76,13 @@ def fig3_layout(width=801):
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
         barmode='stack',
+        legend=dict(
+            x=1,           # x position of the legend (1 corresponds to the right end of the plot)
+            y=1,           # y position of the legend (1 corresponds to the top of the plot)
+            xanchor="auto",  # x anchor of the legend
+            yanchor="auto",  # y anchor of the legend
+            bgcolor="rgba(255, 255, 255, 0.5)" # You can set a background color for readability if needed
+        ),
         xaxis=dict(
             fixedrange=True, # Disables zooming/panning on the x-axis,
             tickvals=list(range(32))
@@ -85,26 +92,26 @@ def fig3_layout(width=801):
         ),
         updatemenus=[dict(
             buttons=[
-                dict(args=[{"visible": [True,False,False,False]},
+                dict(args=[{"visible": [True if i %4==0 else False for i in range(20)]},
                            {}],
                     label="60 days",
                     method="update"
                 )
                 ,
-                dict(args=[{"visible": [False,True,False,False]},
+                dict(args=[{"visible": [True if i %4==1 else False for i in range(20)]},
                                {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Nr. Missed in Epoch</span>',}],
                         label="30 days",
                         method="update"
                 ),
-                dict(args=[{"visible": [False,False,True,False]},
+                dict(args=[{"visible": [True if i %4==2 else False for i in range(20)]},
                            {}],
-                    label="14 hours",
+                    label="14 days",
                     method="update"
                 )
                 ,
-                dict(args=[{"visible": [False,False,False,True]},
+                dict(args=[{"visible": [True if i %4==3 else False for i in range(20)]},
                                {}],
-                        label="48 hours",
+                        label="7 days",
                         method="update"
                 )
                 ],
@@ -119,8 +126,12 @@ def fig3_layout(width=801):
     )
 
 def create_fig3(df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
-    pivot_df = df
     fig = make_subplots(rows=1, cols=1)
+    df_per_sie_60 = df_per_sie_60[df_per_sie_60["cl_client"] != "missed"]
+    df = df[df["cl_client"] != "missed"]
+    df_per_sie_14 = df_per_sie_14[df_per_sie_14["cl_client"] != "missed"]
+    df_per_sie_7 = df_per_sie_7[df_per_sie_7["cl_client"] != "missed"]
+    
 
     # Colors array (can be extended with more colors)
     colors = [
@@ -129,9 +140,13 @@ def create_fig3(df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
     ]
 
     # Add traces for each client
-    for i, client in enumerate(pivot_df["cl_client"].unique()):
-        df = pivot_df[pivot_df["cl_client"] == client]
-        fig.add_trace(go.Bar(x=df["slot_in_epoch"], y=df["slot"], name=client, marker_color=colors[i]))
+    for i, client in enumerate(df["cl_client"].unique()):
+        visible = True
+        for j in (df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
+            k = j[j["cl_client"] == client]
+            fig.add_trace(go.Bar(x=k["slot_in_epoch"], y=k["slot"], name=client, marker_color=colors[i], visible=visible))
+            visible = False
+        
 
 
     fig.update_layout(**fig3_layout())
@@ -222,6 +237,13 @@ def fig1_layout(width=801):
         yaxis_title='#Blocks',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
+        legend=dict(
+            x=0,           # x position of the legend (1 corresponds to the right end of the plot)
+            y=1,           # y position of the legend (1 corresponds to the top of the plot)
+            xanchor="auto",  # x anchor of the legend
+            yanchor="auto",  # y anchor of the legend
+            bgcolor="rgba(255, 255, 255, 0.7)" # You can set a background color for readability if needed
+        ),
         xaxis=dict(
             fixedrange=True # Disables zooming/panning on the x-axis
         ),
@@ -230,32 +252,21 @@ def fig1_layout(width=801):
         ),
         updatemenus=[dict(
             buttons=[
-                dict(args=[{"visible": [True,False,False,False]},
+                dict(args=[{"visible": [True if i%2==0 else False for i in range(10)]},
                            {}],
-                    label="500 bins",
+                    label="Absolute",
                     method="update"
                 )
                 ,
-                dict(args=[{"visible": [False,True,False,False]},
+                dict(args=[{"visible": [True if i%2==1 else False for i in range(10)]},
                                {}],
-                        label="100 bins",
-                        method="update"
-                ),
-                dict(args=[{"visible": [False,False,True,False]},
-                           {}],
-                    label="50 bins",
-                    method="update"
-                )
-                ,
-                dict(args=[{"visible": [False,False,False,True]},
-                               {}],
-                        label="20 bins",
+                        label="Relative",
                         method="update"
                 )
                 ],
             showactive= True,
             direction= 'down',
-            active= 1,
+            active= 0,
             x= 1.0, 
             xanchor= 'right', 
             y= 1.15, 
@@ -264,22 +275,31 @@ def fig1_layout(width=801):
     )
 
 def create_fig1(df_90, df_60, df, df_14, df_7):
+    df = df[df["cl_client"] != "missed"]
     fig1 = make_subplots(rows=1, cols=1)
     df["date"] = df["date"].apply(lambda x: x.split(" ")[0])
-    df.groupby(["date","cl_client"]).sum()
-    fig1.add_trace(
-        go.Histogram(x=df['date'], nbinsx=500, visible=False, marker=dict(color='#1f77b4'))
-    )
-    fig1.add_trace(
-        go.Histogram(x=df['date'], nbinsx=100, marker=dict(color='#1f77b4'))
-    )
-    fig1.add_trace(
-        go.Histogram(x=df['date'], nbinsx=50, visible=False, marker=dict(color='#1f77b4'))
-    )
-    fig1.add_trace(
-        go.Histogram(x=df['date'], nbinsx=20, visible=False, marker=dict(color='#1f77b4'))
-    )
+    grouped_data = df.groupby(["date","cl_client"])["slot"].count().reset_index()
+    ordering = grouped_data.groupby("cl_client")["slot"].count().index.sort_values().values.tolist()
+    grouped_data.set_index("cl_client", inplace=True)
+    grouped_data = grouped_data.loc[ordering].reset_index()
+    for i, j in grouped_data.iterrows():
+        grouped_data.loc[i, "relative_count"] = j["slot"] / grouped_data[grouped_data["date"] == j["date"]]["slot"].sum()
+    print(grouped_data)
+ 
+        
+        
+    #grouped_data["relative_count"] = grouped_data["slot"]/grouped_data["sum"]
 
+    # Add a trace for each unique client
+    for client in grouped_data['cl_client'].unique():
+        client_data = grouped_data[grouped_data['cl_client'] == client]
+        fig1.add_trace(
+            go.Scatter(x=client_data['date'], y=client_data['slot'], mode='lines', name=client, stackgroup='A')
+        )
+        fig1.add_trace(
+            go.Scatter(x=client_data['date'], y=client_data['relative_count'], mode='lines', name=client, stackgroup='B', visible=False)
+        )
+        
 
     fig1.update_layout(**fig1_layout())
     fig1.update_yaxes(title_standoff=5)
@@ -565,6 +585,7 @@ def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
     )
     fig.update_layout(**fig6_layout())
     fig.update_yaxes(title_standoff=5)
+    
     return fig
 
 def fig7_layout(width=801):
@@ -585,17 +606,24 @@ def fig7_layout(width=801):
         yaxis=dict(
             fixedrange=True # Disables zooming/panning on the y-axis
         ),
+        legend=dict(
+            x=1,           # x position of the legend (1 corresponds to the right end of the plot)
+            y=1,           # y position of the legend (1 corresponds to the top of the plot)
+            xanchor="auto",  # x anchor of the legend
+            yanchor="auto",  # y anchor of the legend
+            bgcolor="rgba(255, 255, 255, 0.5)" # You can set a background color for readability if needed
+        ),
         updatemenus=[dict(
             buttons=[
-                dict(args=[{"visible": [True,False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+                dict(args=[{"visible": [True if i %2==0 else False for i in range(10)]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per CL Client <span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
-                dict(args=[{"visible": [False,True]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Builder <span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+                dict(args=[{"visible": [False if i %2==0 else True for i in range(10)]},
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per CL Client <span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
                     label="Absolute",
@@ -604,7 +632,7 @@ def fig7_layout(width=801):
             ],
             showactive=True,
             direction='down',
-            active=0,
+            active=1,
             x=1.0,
             xanchor='right',
             y=1.15,
@@ -612,10 +640,15 @@ def fig7_layout(width=801):
         )]
     )
 
-def create_fig_stacked(df_90, df_60, df, df_14, df_7):
+def create_fig_stacked(df_90, df_60, df, df_14, df_7, order):
+    df = df[df["cl_client"] != "missed"]
     df["date"] = df["date"].apply(lambda x: x.split(" ")[0])
-    pivot_df = df.groupby(["date","cl_client"])["slot"].count().reset_index()
-    # Create a subplot
+    _df = df.groupby(["date","cl_client"])["slot"].count().reset_index()
+
+    _df = pd.merge(_df,order,how="left", left_on="cl_client", right_on="cl_client")
+    _df["cl_client"]= _df["cl_client"].apply(lambda x: x[0].upper()+x[1:])
+    _df.columns = ['date', 'cl_client', 'slot', 'slots']
+    _df["relative_count"] = round(_df['slot'] / _df['slots'] * 100, 5)
     fig = make_subplots(rows=1, cols=1)
 
     # Colors array (can be extended with more colors)
@@ -625,11 +658,13 @@ def create_fig_stacked(df_90, df_60, df, df_14, df_7):
     ]
 
     # Add traces for each client
-    for i, client in enumerate(pivot_df["cl_client"].unique()):
-        df = pivot_df[pivot_df["cl_client"] == client]
+    for i, client in enumerate(_df["cl_client"].unique()):
+        df = _df[_df["cl_client"] == client]
+        fig.add_trace(go.Bar(x=df["date"], y=df["relative_count"], name=client, marker_color=colors[i], visible=False))
         fig.add_trace(go.Bar(x=df["date"], y=df["slot"], name=client, marker_color=colors[i]))
         
     fig.update_layout(**fig7_layout())
+    
     fig.update_yaxes(title_standoff=5)
     return fig
 
@@ -643,7 +678,7 @@ def create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_3
     fig4 = create_fig_for_validators(df_90, df_60, df_30, df_14, df_7, df2)
     fig5 = create_fig_for_relays(df_90, df_60, df_30, df_14, df_7, df3)
     fig6 = create_fig_for_builders(df_90, df_60, df_30, df_14, df_7, df4)
-    fig7 = create_fig_stacked(df_90, df_60, df_30, df_14, df_7)
+    fig7 = create_fig_stacked(df_90, df_60, df_30, df_14, df_7, df5)
     return fig1, fig2, fig3, fig4, fig5, fig6, fig7
 
 df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5 = prepare_data()
@@ -706,57 +741,75 @@ def table_styles(width):
         {'if': {'column_id': 'CL Client'}, 'maxWidth': '80px', 'fontSize': font_size}
     ]
 
-app.layout = dbc.Container(
+@app.callback(
+    Output('main-div', 'style'),
+    Input('window-size-store', 'data')
+)
+def update_main_div_style(window_size_data):
+    if window_size_data is None:
+        raise dash.exceptions.PreventUpdate
+
+    window_width = window_size_data['width']
+    if window_width > 800:
+        return {'margin': '110px'}
+    else:
+        return {'margin': '0px'}
+
+app.layout = html.Div(
     [
-        # Title
-        dbc.Row(html.H1("Ethereum Reorg Dashboard", style={'text-align': 'center','margin-top': '20px'}), className="mb-4"),
+        dbc.Container(
+        [
+            # Title
+            dbc.Row(html.H1("Ethereum Reorg Dashboard", style={'text-align': 'center','margin-top': '20px'}), className="mb-4"),
 
-        html.H5(
-            ['Built with 🖤 by ', html.A('Toni Wahrstätter', href='https://twitter.com/nero_eth', target='_blank')],
-            className="mb-4 smaller-text" # Apply the class
-        ),
+            html.H5(
+                ['Built with 🖤 by ', html.A('Toni Wahrstätter', href='https://twitter.com/nero_eth', target='_blank')],
+                className="mb-4 smaller-text" # Apply the class
+            ),
 
-        # DataTable
-        dbc.Row(
-            dbc.Col(
-                dash_table.DataTable(
-                    style_cell_conditional=table_styles(799),
-                    id='table',
-                    columns=[
-                        {"name": i, 
-                         "id": i, 
-                         'presentation': 'markdown'} if i == 'Slot' else {"name": i, "id": i} for i in df_table.columns
-                    ],
-                    data=df_table.to_dict('records'),
-                    page_size=20,
-                    style_table={'overflowX': 'auto'},
-                    style_cell={'whiteSpace': 'normal','height': 'auto'},
-                    style_data_conditional=[{'if': {'row_index': 'odd'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
-                    style_header={'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
-                    style_header_conditional=[
-                        {'if': {'column_id': 'Slot'}, 'text-align': 'center'},
-                        {'if': {'column_id': 'Slot Nr. in Epoch'}, 'text-align': 'center'},
-                    ],
-                    css=[dict(selector="p", rule="margin: 0; text-align: center")],
-                ),
-                className="mb-4", md=12
-            )
-        ),
+            # DataTable
+            dbc.Row(
+                dbc.Col(
+                    dash_table.DataTable(
+                        style_cell_conditional=table_styles(799),
+                        id='table',
+                        columns=[
+                            {"name": i, 
+                             "id": i, 
+                             'presentation': 'markdown'} if i == 'Slot' else {"name": i, "id": i} for i in df_table.columns
+                        ],
+                        data=df_table.to_dict('records'),
+                        page_size=20,
+                        style_table={'overflowX': 'auto'},
+                        style_cell={'whiteSpace': 'normal','height': 'auto'},
+                        style_data_conditional=[{'if': {'row_index': 'odd'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
+                        style_header={'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
+                        style_header_conditional=[
+                            {'if': {'column_id': 'Slot'}, 'text-align': 'center'},
+                            {'if': {'column_id': 'Slot Nr. in Epoch'}, 'text-align': 'center'},
+                        ],
+                        css=[dict(selector="p", rule="margin: 0; text-align: center")],
+                    ),
+                    className="mb-4", md=12
+                )
+            ),
 
-        # Graphs
-        dbc.Row(dbc.Col(dcc.Graph(id='graph1', figure=fig1), md=12, className="mb-4")),
-        dbc.Row(dbc.Col(dcc.Graph(id='graph7', figure=fig7), md=12, className="mb-4")),
-        dbc.Row(dbc.Col(dcc.Graph(id='graph3', figure=fig3), md=12, className="mb-4")),
-        dbc.Row(dbc.Col(dcc.Graph(id='graph2', figure=fig2), md=12, className="mb-4")),
-        dbc.Row(dbc.Col(dcc.Graph(id='graph4', figure=fig4), md=12, className="mb-4")),
-        dbc.Row(dbc.Col(dcc.Graph(id='graph5', figure=fig5), md=12, className="mb-4")),
-        dbc.Row(dbc.Col(dcc.Graph(id='graph6', figure=fig6), md=12, className="mb-4")),
+            # Graphs
+            dbc.Row(dbc.Col(dcc.Graph(id='graph1', figure=fig1), md=12, className="mb-4")),
+            dbc.Row(dbc.Col(dcc.Graph(id='graph7', figure=fig7), md=12, className="mb-4")),
+            dbc.Row(dbc.Col(dcc.Graph(id='graph3', figure=fig3), md=12, className="mb-4")),
+            dbc.Row(dbc.Col(dcc.Graph(id='graph2', figure=fig2), md=12, className="mb-4")),
+            dbc.Row(dbc.Col(dcc.Graph(id='graph4', figure=fig4), md=12, className="mb-4")),
+            dbc.Row(dbc.Col(dcc.Graph(id='graph5', figure=fig5), md=12, className="mb-4")),
+            dbc.Row(dbc.Col(dcc.Graph(id='graph6', figure=fig6), md=12, className="mb-4")),
 
-        # Additional Components
-        dbc.Row(dcc.Interval(id='window-size-trigger', interval=5000, n_intervals=0, max_intervals=1)),
-        dcc.Store(id='window-size-store',data={'width': 800})
-    ],
-    fluid=True,
+            # Additional Components
+            dbc.Row(dcc.Interval(id='window-size-trigger', interval=5000, n_intervals=0, max_intervals=1)),
+            dcc.Store(id='window-size-store',data={'width': 800})
+        ],
+        fluid=True,
+    )],
+    id='main-div'  # This ID is used in the callback to update the style
 )
 
 
