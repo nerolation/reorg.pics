@@ -660,14 +660,14 @@ app.index_string = '''
         <meta name="twitter:site" content="@nero_ETH">
         <meta name="twitter:title" content="MEV-Boost Relay API Dashboard">
         <meta name="twitter:description" content="Selected comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
-        <meta name="twitter:image" content="./assets/reorg.jpeg">
+        <meta name="twitter:image" content="./assets/reorg.png">
         <meta property="og:title" content="MEV-Boost" relay="" api="" dashboard="">
         <meta property="og:site_name" content="reorg.pics">
         <meta property="og:url" content="reorg.pics">
         <meta property="og:description" content="Selected comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
         <meta property="og:type" content="website">
-        <link rel="shortcut icon" href="./assets/reorg.jpeg">
-        <meta property="og:image" content="./assets/reorg.jpeg">
+        <link rel="shortcut icon" href="./assets/reorg.png">
+        <meta property="og:image" content="./assets/reorg.png">
         <meta name="description" content="Up-to-date comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
         <meta name="keywords" content="Ethereum, Reorg, Consensus, Dashboard">
         <meta name="author" content="Toni Wahrstätter">
