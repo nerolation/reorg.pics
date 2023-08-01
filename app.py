@@ -657,8 +657,6 @@ def create_reorger_validator_layout(width=801):
 def create_reorger_validator(df_90, df_60, df_30, df_14, df_7, order, df):
     df = df[df["validator"] != "missed"]
     _df = df['validator'].value_counts().reset_index()
-    print(_df)
-    print(order)
     _df = pd.merge(_df,order,how="left", left_on="validator", right_on="validator")
     _df["validator"]= _df["validator"].apply(lambda x: x[0].upper()+x[1:])
     _df.columns = ['validator', 'count', 'slots']
