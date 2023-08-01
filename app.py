@@ -794,17 +794,17 @@ app.index_string = '''
         <meta charset="UTF-8">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@nero_ETH">
-        <meta name="twitter:title" content="MEV-Boost Relay API Dashboard">
-        <meta name="twitter:description" content="Selected comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
+        <meta name="twitter:title" content="Ethereum Reorg Dashboard">
+        <meta name="twitter:description" content="Selected comparative visualizations on reorged blocks on Ethereum.">
         <meta name="twitter:image" content="https://raw.githubusercontent.com/nerolation/reorg.pics/main/assets/reorg.png">
-        <meta property="og:title" content="MEV-Boost" relay="" api="" dashboard="">
+        <meta property="og:title" content="Reorg.pics" relay="" api="" dashboard="">
         <meta property="og:site_name" content="reorg.pics">
         <meta property="og:url" content="reorg.pics">
-        <meta property="og:description" content="Selected comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
+        <meta property="og:description" content="Selected comparative visualizations on reorged blocks on Ethereum.">
         <meta property="og:type" content="website">
         <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/reorg.pics/main/assets/reorg.png">
         <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/reorg.pics/main/assets/reorg.png">
-        <meta name="description" content="Up-to-date comparative visualizations on MEV-Boost and Proposer Builder Separation on Ethereum.">
+        <meta name="description" content="Selected comparative visualizations on reorged blocks on Ethereum.">
         <meta name="keywords" content="Ethereum, Reorg, Consensus, Dashboard">
         <meta name="author" content="Toni Wahrstätter">
         {%metas%}
@@ -852,16 +852,16 @@ def update_main_div_style(window_size_data):
 
     window_width = window_size_data['width']
     if window_width > 800:
-        return {'margin': '110px'}
+        return {'margin-right': '110px', 'margin-left': '110px'}
     else:
-        return {'margin': '0px'}
+        return {}
 
 app.layout = html.Div(
     [
         dbc.Container(
         [
             # Title
-            dbc.Row(html.H1("Ethereum Reorg Dashboard", style={'text-align': 'center','margin-top': '10px'}), className="mb-4"),
+            dbc.Row(html.H1("Ethereum Reorg Dashboard", style={'text-align': 'center','margin-top': '20px'}), className="mb-4"),
 
             html.H5(
                 ['Built with 🖤 by ', html.A('Toni Wahrstätter', href='https://twitter.com/nero_eth', target='_blank')],
@@ -906,7 +906,7 @@ app.layout = html.Div(
             dbc.Row(dbc.Col(dcc.Graph(id='graph8', figure=fig8), md=12, className="mb-4")),
 
             # Additional Components
-            dbc.Row(dcc.Interval(id='window-size-trigger', interval=5000, n_intervals=0, max_intervals=1)),
+            dbc.Row(dcc.Interval(id='window-size-trigger', interval=1000, n_intervals=0, max_intervals=1)),
             dcc.Store(id='window-size-store',data={'width': 800})
         ],
         fluid=True,
