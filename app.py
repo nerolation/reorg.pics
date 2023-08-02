@@ -8,6 +8,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import dash_bootstrap_components as dbc
+import numpy as np
 from dash import Input, Output
 from plotly.subplots import make_subplots
 
@@ -15,10 +16,15 @@ from plotly.subplots import make_subplots
 # Data preparation
 def prepare_data():
     df = pd.read_csv("reorg-data.csv")
+    #df = df[~df['cl_client'].str.contains('Unknown')]
     df2 = pd.read_csv("validator_slots.csv")
+    df2 = df2[~df2['validator'].str.contains('Unknown')]
     df3 = pd.read_csv("relay_slots.csv")
+    df3 = df3[~df3['relay'].str.contains('Unknown')]
     df4 = pd.read_csv("builder_slots.csv")
+    df4 = df4[~df4['builder'].str.contains('Unknown')]
     df5 = pd.read_csv("clclient_slots.csv")
+    df5 = df5[~df5['cl_client'].str.contains('Unknown')]
     
     def max_slot(slot):
         return int(slot.split("[")[1].split("]")[0])
@@ -26,7 +32,17 @@ def prepare_data():
     dfreorger = pd.read_csv("reorgers-data.csv")
     dfreorger = dfreorger[dfreorger["slot"].apply(max_slot) > max(dfreorger["slot"].apply(max_slot)) - 7200*60]
     
+    df_30 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*30]
+    df_table = df_30.rename(columns={"slot": "Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
+    df_table.sort_values("Slot", ascending=False, inplace=True)
+    df_table = df_table[["Slot", "CL Client", "Val. ID", "Date", "Slot Nr. in Epoch"]].drop_duplicates()
+    #df_table["Val. ID"] = df_table["Val. ID"]#.replace(0, np.NaN)
+    df_table["Slot Nr. in Epoch"] = df_table["Slot Nr. in Epoch"].astype(int)
+    df_table["Val. ID"] = df_table["Val. ID"].astype(int)
+    #df_table['slot_sort'] = df_table['Slot'].apply(lambda x: int(x.split("[")[1].split("]")[0]))  # Update the split function as needed
+
     
+    df = df[~df['cl_client'].str.contains('Unknown')]
     
     df_90 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*90]
     df_60 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*60]
@@ -34,9 +50,7 @@ def prepare_data():
     df_14 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*14]
     df_7 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*7]
     
-    df_table = df_30.rename(columns={"slot": "Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
-    df_table.sort_values("Slot", ascending=False, inplace=True)
-    df_table = df_table[["Slot", "CL Client", "Val. ID", "Date", "Slot Nr. in Epoch"]].drop_duplicates()
+    
     
     df_per_sie_60 = df_60.groupby(["cl_client", "slot_in_epoch"])['slot'].count().reset_index().sort_values("slot_in_epoch")
     #df_per_sie_60.set_index('slot_in_epoch', inplace=True)
@@ -367,7 +381,7 @@ def create_fig_for_validators(df_90, df, df_30, df_14, df_7, order):
     _df = _df[_df["count"] > 0]
     _df["validator"] = _df["validator"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df.sort_values("relative_count", ascending=False, inplace=True)
-    _df = _df.iloc[0:7]
+    _df = _df.iloc[0:12]
     fig = make_subplots(rows=1, cols=1)
     fig.add_trace(
         go.Bar(x=_df['relative_count'], y=_df['validator'], orientation='h',
@@ -462,7 +476,7 @@ def create_fig_for_relays(df_90, df, df_30, df_14, df_7, order):
     _df["relay"] = _df["relay"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
     _df.sort_values("relative_count", ascending=False, inplace=True)
-    _df = _df.iloc[0:7]
+    _df = _df.iloc[0:11]
     fig = make_subplots(rows=1, cols=1)
     fig.add_trace(
         go.Bar(x=_df['relative_count'], y=_df['relay'], orientation='h',
@@ -563,7 +577,7 @@ def create_reorger_builder(df_90, df_60, df_30, df_14, df_7, order, df):
     _df["builder"] = _df["builder"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
     _df.sort_values("relative_count", ascending=False, inplace=True)    
-    _df = _df.iloc[0:7]
+    _df = _df.iloc[0:12]
     fig = make_subplots(rows=1, cols=1)
     fig.add_trace(
         go.Bar(x=_df['relative_count'], y=_df['builder'], orientation='h',
@@ -665,7 +679,7 @@ def create_reorger_validator(df_90, df_60, df_30, df_14, df_7, order, df):
     _df["validator"] = _df["validator"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df["validator"]= _df["validator"].apply(lambda x: x[0].upper()+x[1:])
     _df.sort_values("relative_count", ascending=False, inplace=True)    
-    _df = _df.iloc[0:7]
+    _df = _df.iloc[0:12]
     fig = make_subplots(rows=1, cols=1)
     fig.add_trace(
         go.Bar(x=_df['relative_count'], y=_df['validator'], orientation='h',
@@ -766,7 +780,7 @@ def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
     _df["relay"] = _df["relay"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
     _df.sort_values("relative_count", ascending=False, inplace=True)    
-    _df = _df.iloc[0:7]
+    _df = _df.iloc[0:11]
     fig = make_subplots(rows=1, cols=1)
     fig.add_trace(
         go.Bar(x=_df['relative_count'], y=_df['relay'], orientation='h',
@@ -861,7 +875,7 @@ def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
     _df = _df[_df["count"] > 0]
     _df["validator"] = _df["builder"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df.sort_values("relative_count", ascending=False, inplace=True)
-    _df = _df.iloc[0:7]
+    _df = _df.iloc[0:12]
     fig = make_subplots(rows=1, cols=1)
     fig.add_trace(
         go.Bar(x=_df['relative_count'], y=_df['builder'], orientation='h',
@@ -996,8 +1010,8 @@ def create_figures(df_90, df_60, df_30, df_14, df_7, df_per_sie_60, df_per_sie_3
     fig6 = create_fig_for_builders(df_90, df_60, df_30, df_14, df_7, df4)
     fig7 = create_fig_stacked(df_90, df_60, df_30, df_14, df_7, df5)
     fig8 = create_reorger_relay(df_90, df_60, df_30, df_14, df_7, df3, dfreorger)
-    fig9 = create_reorger_builder(df_90, df_60, df_30, df_14, df_7, df4, dfreorger)
-    fig10 = create_reorger_validator(df_90, df_60, df_30, df_14, df_7, df2, dfreorger)
+    fig9 = create_reorger_validator(df_90, df_60, df_30, df_14, df_7, df2, dfreorger)
+    fig10 = create_reorger_builder(df_90, df_60, df_30, df_14, df_7, df4, dfreorger)
     return fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, fig9, fig10
 
 df_90, df_60, df_30, df_14, df_7, df_table, df_per_sie_60, df_per_sie_30, df_per_sie_14, df_per_sie_7, df2, df3, df4, df5, dfreorger = prepare_data()
@@ -1113,19 +1127,24 @@ app.layout = html.Div(
                         columns=[
                             {"name": i, 
                              "id": i, 
-                             'presentation': 'markdown'} if i == 'Slot' else {"name": i, "id": i} for i in df_table.columns
-                        ],
+                             'presentation': 'markdown'} if i == 'Slot' else {"name": i, "id": i} for i in df_table.columns#[:-1]
+                        ],# + [{"name": 'slot_sort', "id": 'slot_sort', "hidden": True}],
                         data=df_table.to_dict('records'),
                         page_size=20,
                         style_table={'overflowX': 'auto'},
                         style_cell={'whiteSpace': 'normal','height': 'auto'},
-                        style_data_conditional=[{'if': {'row_index': 'odd'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
+                        style_data_conditional=[
+                            {'if': {'row_index': 'odd'}, 'backgroundColor': 'rgb(248, 248, 248)'},
+                        ],
                         style_header={'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
                         style_header_conditional=[
                             {'if': {'column_id': 'Slot'}, 'text-align': 'center'},
                             {'if': {'column_id': 'Slot Nr. in Epoch'}, 'text-align': 'center'},
                         ],
                         css=[dict(selector="p", rule="margin: 0; text-align: center")],
+                        sort_action="native",
+                        sort_mode="multi"
+
                     ),
                     className="mb-4", md=12
                 )
@@ -1255,6 +1274,28 @@ def update_layout8(window_size_data):
     width = window_size_data['width']
     fig8.update_layout(**create_reorger_relay_layout(width))
     return fig8
+
+@app.callback(
+    Output('graph9', 'figure'),
+    Input('window-size-store', 'data')
+)
+def update_layout9(window_size_data):
+    if window_size_data is None:
+        raise dash.exceptions.PreventUpdate
+    width = window_size_data['width']
+    fig9.update_layout(**create_reorger_validator_layout(width))
+    return fig9
+
+@app.callback(
+    Output('graph10', 'figure'),
+    Input('window-size-store', 'data')
+)
+def update_layout10(window_size_data):
+    if window_size_data is None:
+        raise dash.exceptions.PreventUpdate
+    width = window_size_data['width']
+    fig10.update_layout(**create_reorger_builder_layout(width))
+    return fig10
 
 if __name__ == '__main__':
     #app.run_server(debug=True)
