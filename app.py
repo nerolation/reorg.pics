@@ -15,16 +15,16 @@ from plotly.subplots import make_subplots
 
 # Data preparation
 def prepare_data():
-    df = pd.read_csv("reorg-data.csv")
+    df = pd.read_csv("reorg-data.csv").replace("Unknown", "Unknown/missed")
     #df = df[~df['cl_client'].str.contains('Unknown')]
-    df2 = pd.read_csv("validator_slots.csv")
-    df2 = df2[~df2['validator'].str.contains('Unknown')]
-    df3 = pd.read_csv("relay_slots.csv")
-    df3 = df3[~df3['relay'].str.contains('Unknown')]
-    df4 = pd.read_csv("builder_slots.csv")
-    df4 = df4[~df4['builder'].str.contains('Unknown')]
-    df5 = pd.read_csv("clclient_slots.csv")
-    df5 = df5[~df5['cl_client'].str.contains('Unknown')]
+    df2 = pd.read_csv("validator_slots.csv").replace("Unknown", "Unknown/missed")
+    #df2 = df2[~df2['validator'].str.contains('Unknown')]
+    df3 = pd.read_csv("relay_slots.csv").replace("Unknown", "Unknown/missed")
+    #df3 = df3[~df3['relay'].str.contains('Unknown')]
+    df4 = pd.read_csv("builder_slots.csv").replace("Unknown", "Unknown/missed")
+    #df4 = df4[~df4['builder'].str.contains('Unknown')]
+    df5 = pd.read_csv("clclient_slots.csv").replace("Unknown", "Unknown/missed")
+    #df5 = df5[~df5['cl_client'].str.contains('Unknown')]
     
     def max_slot(slot):
         return int(slot.split("[")[1].split("]")[0])
@@ -42,7 +42,7 @@ def prepare_data():
     #df_table['slot_sort'] = df_table['Slot'].apply(lambda x: int(x.split("[")[1].split("]")[0]))  # Update the split function as needed
 
     
-    df = df[~df['cl_client'].str.contains('Unknown')]
+    #df = df[~df['cl_client'].str.contains('Unknown')]
     
     df_90 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*90]
     df_60 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*60]
@@ -145,10 +145,10 @@ def fig3_layout(width=801):
 
 def create_fig3(df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
     fig = make_subplots(rows=1, cols=1)
-    df_per_sie_60 = df_per_sie_60[df_per_sie_60["cl_client"] != "missed"]
+    df_per_sie_60 = df_per_sie_60[~df_per_sie_60['cl_client'].str.contains('missed')]
     df = df[df["cl_client"] != "missed"]
-    df_per_sie_14 = df_per_sie_14[df_per_sie_14["cl_client"] != "missed"]
-    df_per_sie_7 = df_per_sie_7[df_per_sie_7["cl_client"] != "missed"]
+    df_per_sie_14 = df_per_sie_14[~df_per_sie_14['cl_client'].str.contains('missed')]
+    df_per_sie_7 = df_per_sie_7[~df_per_sie_7['cl_client'].str.contains('missed')]
     
 
     # Colors array (can be extended with more colors)
@@ -223,7 +223,7 @@ def fig2_layout(width=801):
 
 
 def create_fig2(df_90, df, df_30, df_14, df_7, order):
-    df = df[df["cl_client"] != "missed"]
+    df = df[~df['cl_client'].str.contains('missed')]
     _df = df['cl_client'].value_counts().reset_index()
     _df = pd.merge(_df,order,how="left", left_on="cl_client", right_on="cl_client")
     _df["cl_client"]= _df["cl_client"].apply(lambda x: x[0].upper()+x[1:])
@@ -311,10 +311,13 @@ def create_fig1(df_90, df_60, df, df_14, df_7):
     #grouped_data["relative_count"] = grouped_data["slot"]/grouped_data["sum"]
 
     # Add a trace for each unique client
+
     for client in grouped_data['cl_client'].unique():
         client_data = grouped_data[grouped_data['cl_client'] == client]
+        visibility = "legendonly" if "missed" in client else True
+        
         fig1.add_trace(
-            go.Scatter(x=client_data['date'], y=client_data['slot'], mode='lines', name=client, stackgroup='A')
+            go.Scatter(x=client_data['date'], y=client_data['slot'], mode='lines', name=client, stackgroup='A', visible=visibility)
         )
         fig1.add_trace(
             go.Scatter(x=client_data['date'], y=client_data['relative_count'], mode='lines', name=client, stackgroup='B', visible=False)
@@ -921,7 +924,7 @@ def fig7_layout(width=801):
     else:
         font_size = 20
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Missed Slots over Time<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Missed Slots Over Time<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
         xaxis_title='Date',
         yaxis_title='Slots',
         margin=dict(l=20, r=20, t=80, b=20),
@@ -969,6 +972,7 @@ def fig7_layout(width=801):
     )
 
 def create_fig_stacked(df_90, df_60, df, df_14, df_7, order):
+    df = df[~df['cl_client'].str.contains('Unknown')]
     df = df[df["cl_client"] != "missed"]
     df.loc[:,"date"] = df["date"].apply(lambda x: x.split(" ")[0])
     _df = df.groupby(["date","cl_client"])["slot"].count().reset_index()
