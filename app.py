@@ -90,10 +90,15 @@ def fig3_layout(width=801):
         font_size = 18
     return dict(
         title=f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Nr. Missed in Epoch</span>',
-        xaxis_title='Date',
+        xaxis_title='Slot',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
         barmode='stack',
+        hovermode="x unified",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         legend=dict(
             x=1,           # x position of the legend (1 corresponds to the right end of the plot)
             y=1,           # y position of the legend (1 corresponds to the top of the plot)
@@ -102,11 +107,17 @@ def fig3_layout(width=801):
             bgcolor="rgba(255, 255, 255, 0.5)" # You can set a background color for readability if needed
         ),
         xaxis=dict(
-            fixedrange=True, # Disables zooming/panning on the x-axis,
-            tickvals=list(range(32))
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,
+            tickvals=list(range(32))     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         updatemenus=[dict(
             buttons=[
@@ -162,7 +173,7 @@ def create_fig3(df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
         visible = True
         for j in (df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
             k = j[j["cl_client"] == client]
-            fig.add_trace(go.Bar(x=k["slot_in_epoch"], y=k["slot"], name=client, marker_color=colors[i], visible=visible))
+            fig.add_trace(go.Bar(x=k["slot_in_epoch"], y=k["slot"], name=client, marker_color=colors[i], visible=visible,hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>'))
             visible = False
         
 
@@ -177,21 +188,32 @@ def fig2_layout(width=801):
     else:
         font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Client',
+        hovermode = "closest",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
-                xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+        xaxis=dict(
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         updatemenus=[dict(
             type="buttons",
             buttons=[
-                dict(args=[{"visible": [True,False]},
+                dict(args=[{"visible": [True]*5+5*[False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             # "height":500,
                             "xaxis.title": "%",
@@ -201,7 +223,7 @@ def fig2_layout(width=801):
                     method="update"
                 )
                 ,
-                dict(args=[{"visible": [False,True]},
+                dict(args=[{"visible": [False]*5+5*[True]},
                                {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absulute Nr. of Missed Slots per Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                                 # "height":500,
                                 "xaxis.title": "slots",
@@ -231,17 +253,40 @@ def create_fig2(df_90, df, df_30, df_14, df_7, order):
     _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df.sort_values("relative_count", ascending=False, inplace=True)
     fig2 = make_subplots(rows=1, cols=1)
-    fig2.add_trace(
-        go.Bar(x=_df['relative_count'], y=_df['cl_client'], orientation='h', 
-               marker=dict(color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'])) # Add more colors if needed
-    )
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+    for index, row in _df.iterrows():
+        client = row['cl_client']
+        relative_count = row['relative_count']
+        color = colors[index % len(colors)]
 
-    fig2.add_trace(
-        go.Bar(
-            x=_df['count'], y=_df['cl_client'], orientation='h', 
-            marker=dict(color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']), visible=False
+        fig2.add_trace(
+            go.Bar(
+                x=[relative_count], 
+                y=[client], 
+                orientation='h', 
+                marker=dict(color=color),
+                hovertemplate=f'<b>{client}: {relative_count}</b><extra></extra>',
+                showlegend=False
+            )
         )
-    )
+
+    # Create the absolute bars
+    for index, row in _df.iterrows():
+        client = row['cl_client']
+        count = row['count']
+        color = colors[index % len(colors)]
+
+        fig2.add_trace(
+            go.Bar(
+                x=[count], 
+                y=[client], 
+                orientation='h', 
+                marker=dict(color=color), 
+                visible=False,
+                hovertemplate=f'<b>{client}: {count}</b><extra></extra>',
+                showlegend=False
+            )
+        )
     fig2.update_layout(**fig2_layout())
     fig2.update_yaxes(title_standoff=5)
     return fig2
@@ -257,6 +302,11 @@ def fig1_layout(width=801):
         yaxis_title='#Blocks',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
+        hovermode = "x unified",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         legend=dict(
             x=0,           # x position of the legend (1 corresponds to the right end of the plot)
             y=1,           # y position of the legend (1 corresponds to the top of the plot)
@@ -265,10 +315,16 @@ def fig1_layout(width=801):
             bgcolor="rgba(255, 255, 255, 0.7)" # You can set a background color for readability if needed
         ),
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         updatemenus=[dict(
             type="buttons",
@@ -317,10 +373,10 @@ def create_fig1(df_90, df_60, df, df_14, df_7):
         visibility = "legendonly" if "missed" in client else True
         
         fig1.add_trace(
-            go.Scatter(x=client_data['date'], y=client_data['slot'], mode='lines', name=client, stackgroup='A', visible=visibility)
+            go.Scatter(x=client_data['date'], y=client_data['slot'], mode='lines', name=client, stackgroup='A', visible=visibility, hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>')
         )
         fig1.add_trace(
-            go.Scatter(x=client_data['date'], y=client_data['relative_count'], mode='lines', name=client, stackgroup='B', visible=False)
+            go.Scatter(x=client_data['date'], y=client_data['relative_count'], mode='lines', name=client, stackgroup='B', visible=False, hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>')
         )
         
 
@@ -339,23 +395,34 @@ def fig4_layout(width=801):
         yaxis_title='Validator',
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size=font_size),
+        hovermode = "closest",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         updatemenus=[dict(
             type="buttons",
             buttons=[
-                dict(args=[{"visible": [True,False]},
+                dict(args=[{"visible": [True]*12+12*[False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
-                dict(args=[{"visible": [False,True]},
+                dict(args=[{"visible":  [False]*12+12*[True]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
@@ -386,39 +453,40 @@ def create_fig_for_validators(df_90, df, df_30, df_14, df_7, order):
     _df.sort_values("relative_count", ascending=False, inplace=True)
     _df = _df.iloc[0:12]
     fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(
-        go.Bar(x=_df['relative_count'], y=_df['validator'], orientation='h',
-               marker=dict(color = [
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ]) # Add more colors if needed
-    ))
+    colors= ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf']
+    for index, row in _df.iterrows():
+        validator = row['validator']
+        relative_count = row['relative_count']
+        color = colors[index % len(colors)]
 
-    fig.add_trace(
-        go.Bar(
-            x=_df['count'], y=_df['validator'], orientation='h',
-            marker=dict(color = [
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ]), visible=False
+        fig.add_trace(
+            go.Bar(
+                x=[relative_count], 
+                y=[validator], 
+                orientation='h', 
+                marker=dict(color=color),
+                hovertemplate=f'<b>{validator}: {relative_count}</b><extra></extra>',
+                showlegend=False
+            )
         )
-    )
+
+    # Create the absolute bars
+    for index, row in _df.iterrows():
+        validator = row['validator']
+        count = row['count']
+        color = colors[index % len(colors)]
+
+        fig.add_trace(
+            go.Bar(
+                x=[count], 
+                y=[validator], 
+                orientation='h', 
+                marker=dict(color=color), 
+                visible=False,
+                hovertemplate=f'<b>{validator}: {count}</b><extra></extra>',
+                showlegend=False
+            )
+        )
     fig.update_layout(**fig4_layout())
     fig.update_yaxes(title_standoff=5)
     return fig
@@ -434,23 +502,34 @@ def fig5_layout(width=801):
         yaxis_title='Relay',
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size=font_size),
+        hovermode = "closest",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         updatemenus=[dict(
             type="buttons",
             buttons=[
-                dict(args=[{"visible": [True,False]},
+                dict(args=[{"visible": [True]*10+10*[False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
-                dict(args=[{"visible": [False,True]},
+                dict(args=[{"visible": [False]*10+10*[True]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
@@ -481,39 +560,40 @@ def create_fig_for_relays(df_90, df, df_30, df_14, df_7, order):
     _df.sort_values("relative_count", ascending=False, inplace=True)
     _df = _df.iloc[0:11]
     fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(
-        go.Bar(x=_df['relative_count'], y=_df['relay'], orientation='h',
-               marker=dict(color=[
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ])) # Add more colors if needed
-    )
+    colors= ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf']
+    for index, row in _df.iterrows():
+        relay = row['relay']
+        relative_count = row['relative_count']
+        color = colors[index % len(colors)]
 
-    fig.add_trace(
-        go.Bar(
-            x=_df['count'], y=_df['relay'], orientation='h',
-            marker=dict(color = [
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ]), visible=False
+        fig.add_trace(
+            go.Bar(
+                x=[relative_count], 
+                y=[relay], 
+                orientation='h', 
+                marker=dict(color=color),
+                hovertemplate=f'<b>{relay}: {relative_count}</b><extra></extra>',
+                showlegend=False
+            )
         )
-    )
+
+    # Create the absolute bars
+    for index, row in _df.iterrows():
+        relay = row['relay']
+        count = row['count']
+        color = colors[index % len(colors)]
+
+        fig.add_trace(
+            go.Bar(
+                x=[count], 
+                y=[relay], 
+                orientation='h', 
+                marker=dict(color=color), 
+                visible=False,
+                hovertemplate=f'<b>{relay}: {count}</b><extra></extra>',
+                showlegend=False
+            )
+        )
     fig.update_layout(**fig5_layout())
     fig.update_yaxes(title_standoff=5)
     return fig
@@ -534,24 +614,35 @@ def create_reorger_builder_layout(width=801):
         yaxis_title='Builder',
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size=font_size),
+        hovermode = "closest",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         paper_bgcolor= "#eee",
         updatemenus=[dict(
             type="buttons",
             buttons=[
-                dict(args=[{"visible": [True,False]},
+                dict(args=[{"visible": [True]*12+12*[False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
-                dict(args=[{"visible": [False,True]},
+                dict(args=[{"visible":[False]*12+12*[True]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Slots by Reorging Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
@@ -582,39 +673,40 @@ def create_reorger_builder(df_90, df_60, df_30, df_14, df_7, order, df):
     _df.sort_values("relative_count", ascending=False, inplace=True)    
     _df = _df.iloc[0:12]
     fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(
-        go.Bar(x=_df['relative_count'], y=_df['builder'], orientation='h',
-               marker=dict(color=[
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ])) # Add more colors if needed
-    )
+    colors= ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf']
+    for index, row in _df.iterrows():
+        builder = row['builder']
+        relative_count = row['relative_count']
+        color = colors[index % len(colors)]
 
-    fig.add_trace(
-        go.Bar(
-            x=_df['count'], y=_df['builder'], orientation='h',
-            marker=dict(color = [
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ]), visible=False
+        fig.add_trace(
+            go.Bar(
+                x=[relative_count], 
+                y=[builder], 
+                orientation='h', 
+                marker=dict(color=color),
+                hovertemplate=f'<b>{builder}: {relative_count}</b><extra></extra>',
+                showlegend=False
+            )
         )
-    )
+
+    # Create the absolute bars
+    for index, row in _df.iterrows():
+        builder = row['builder']
+        count = row['count']
+        color = colors[index % len(colors)]
+
+        fig.add_trace(
+            go.Bar(
+                x=[count], 
+                y=[builder], 
+                orientation='h', 
+                marker=dict(color=color), 
+                visible=False,
+                hovertemplate=f'<b>{builder}: {count}</b><extra></extra>',
+                showlegend=False
+            )
+        )
     fig.update_layout(**create_reorger_builder_layout())
     fig.update_yaxes(title_standoff=5)
     return fig
@@ -635,11 +727,22 @@ def create_reorger_validator_layout(width=801):
         yaxis_title='Validator',
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size=font_size),
+        hovermode = "closest",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         paper_bgcolor= "#eee",
         updatemenus=[dict(
@@ -647,14 +750,14 @@ def create_reorger_validator_layout(width=801):
             direction = "left",
 
             buttons=[
-                dict(args=[{"visible": [True,False]},
+                dict(args=[{"visible": [True]*12+12*[False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
-                dict(args=[{"visible": [False,True]},
+                dict(args=[{"visible": [False]*12+12*[True]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Slots by Reorging Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
@@ -684,39 +787,41 @@ def create_reorger_validator(df_90, df_60, df_30, df_14, df_7, order, df):
     _df.sort_values("relative_count", ascending=False, inplace=True)    
     _df = _df.iloc[0:12]
     fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(
-        go.Bar(x=_df['relative_count'], y=_df['validator'], orientation='h',
-               marker=dict(color=[
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ])) # Add more colors if needed
-    )
+    colors= ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf']
+    for index, row in _df.iterrows():
+        validator = row['validator']
+        relative_count = row['relative_count']
+        color = colors[index % len(colors)]
 
-    fig.add_trace(
-        go.Bar(
-            x=_df['count'], y=_df['validator'], orientation='h',
-            marker=dict(color = [
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ]), visible=False
+        fig.add_trace(
+            go.Bar(
+                x=[relative_count], 
+                y=[validator], 
+                orientation='h', 
+                marker=dict(color=color),
+                hovertemplate=f'<b>{validator}: {relative_count}</b><extra></extra>',
+                showlegend=False
+            )
         )
-    )
+
+    # Create the absolute bars
+    for index, row in _df.iterrows():
+        validator = row['validator']
+        count = row['count']
+        color = colors[index % len(colors)]
+
+        fig.add_trace(
+            go.Bar(
+                x=[count], 
+                y=[validator], 
+                orientation='h', 
+                marker=dict(color=color), 
+                visible=False,
+                hovertemplate=f'<b>{validator}: {count}</b><extra></extra>',
+                showlegend=False
+            )
+        )
+    
     fig.update_layout(**create_reorger_validator_layout())
     fig.update_yaxes(title_standoff=5)
     return fig
@@ -737,24 +842,35 @@ def create_reorger_relay_layout(width=801):
         yaxis_title='Relay',
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size=font_size),
+        hovermode = "closest",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         paper_bgcolor= "#eee",
         updatemenus=[dict(
             type="buttons",
             buttons=[
-                dict(args=[{"visible": [True,False]},
+                dict(args=[{"visible": [True]*10+10*[False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Nr. of Slots by Reorging Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
-                dict(args=[{"visible": [False,True]},
+                dict(args=[{"visible": [False]*10+10*[True]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Slots by Reorging Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
@@ -785,39 +901,40 @@ def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
     _df.sort_values("relative_count", ascending=False, inplace=True)    
     _df = _df.iloc[0:11]
     fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(
-        go.Bar(x=_df['relative_count'], y=_df['relay'], orientation='h',
-               marker=dict(color=[
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ])) # Add more colors if needed
-    )
+    colors= ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf']
+    for index, row in _df.iterrows():
+        relay = row['relay']
+        relative_count = row['relative_count']
+        color = colors[index % len(colors)]
 
-    fig.add_trace(
-        go.Bar(
-            x=_df['count'], y=_df['relay'], orientation='h',
-            marker=dict(color = [
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ]), visible=False
+        fig.add_trace(
+            go.Bar(
+                x=[relative_count], 
+                y=[relay], 
+                orientation='h', 
+                marker=dict(color=color),
+                hovertemplate=f'<b>{relay}: {relative_count}</b><extra></extra>',
+                showlegend=False
+            )
         )
-    )
+
+    # Create the absolute bars
+    for index, row in _df.iterrows():
+        relay = row['relay']
+        count = row['count']
+        color = colors[index % len(colors)]
+
+        fig.add_trace(
+            go.Bar(
+                x=[count], 
+                y=[relay], 
+                orientation='h', 
+                marker=dict(color=color), 
+                visible=False,
+                hovertemplate=f'<b>{relay}: {count}</b><extra></extra>',
+                showlegend=False
+            )
+        )
     fig.update_layout(**create_reorger_relay_layout())
     fig.update_yaxes(title_standoff=5)
     return fig
@@ -833,23 +950,34 @@ def fig6_layout(width=801):
         yaxis_title='Builder',
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size=font_size),
+        hovermode = "closest",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         updatemenus=[dict(
             type="buttons",
             buttons=[
-                dict(args=[{"visible": [True,False]},
+                dict(args=[{"visible": [True]*12+12*[False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
-                dict(args=[{"visible": [False,True]},
+                dict(args=[{"visible": [False]*12+12*[True]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
@@ -880,39 +1008,54 @@ def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
     _df.sort_values("relative_count", ascending=False, inplace=True)
     _df = _df.iloc[0:12]
     fig = make_subplots(rows=1, cols=1)
-    fig.add_trace(
-        go.Bar(x=_df['relative_count'], y=_df['builder'], orientation='h',
-               marker=dict(color = [
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ]) # Add more colors if needed
-    ))
+    
+    colors = [
+        '#1f77b4', # blue
+        '#ff7f0e', # orange
+        '#2ca02c', # green
+        '#d62728', # red
+        '#9467bd', # purple
+        '#8c564b', # brown
+        '#e377c2', # pink
+        '#7f7f7f', # grey
+        '#bcbd22', # olive
+        '#17becf'  # teal
+            ]
+    for index, row in _df.iterrows():
+        builder = row['builder']
+        relative_count = row['relative_count']
+        color = colors[index % len(colors)]
 
-    fig.add_trace(
-        go.Bar(
-            x=_df['count'], y=_df['builder'], orientation='h',
-            marker=dict(color = [
-                '#1f77b4', # blue
-                '#ff7f0e', # orange
-                '#2ca02c', # green
-                '#d62728', # red
-                '#9467bd', # purple
-                '#8c564b', # brown
-                '#e377c2', # pink
-                '#7f7f7f', # grey
-                '#bcbd22', # olive
-                '#17becf'  # teal
-            ]), visible=False
+        fig.add_trace(
+            go.Bar(
+                x=[relative_count], 
+                y=[builder], 
+                orientation='h', 
+                marker=dict(color=color),
+                hovertemplate=f'<b>{builder}: {relative_count}</b><extra></extra>',
+                showlegend=False
+            )
         )
-    )
+
+    # Create the absolute bars
+    for index, row in _df.iterrows():
+        builder = row['builder']
+        count = row['count']
+        color = colors[index % len(colors)]
+
+        fig.add_trace(
+            go.Bar(
+                x=[count], 
+                y=[builder], 
+                orientation='h', 
+                marker=dict(color=color), 
+                visible=False,
+                hovertemplate=f'<b>{builder}: {count}</b><extra></extra>',
+                showlegend=False
+            )
+        )
+    
+
     fig.update_layout(**fig6_layout())
     fig.update_yaxes(title_standoff=5)
     
@@ -924,17 +1067,28 @@ def fig7_layout(width=801):
     else:
         font_size = 20
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Missed Slots Over Time<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
         xaxis_title='Date',
         yaxis_title='Slots',
         margin=dict(l=20, r=20, t=80, b=20),
         font=dict(family="Ubuntu Mono", size=font_size),
+        hovermode = "x unified",
+        hoverlabel=dict(
+            font_size=font_size,
+            font_family="Ubuntu Mono"
+        ),
         barmode='stack',
         xaxis=dict(
-            fixedrange=True # Disables zooming/panning on the x-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff"   ,     
+            gridwidth=1.5   ,     
         ),
         yaxis=dict(
-            fixedrange=True # Disables zooming/panning on the y-axis
+            fixedrange=True, 
+            showgrid=True,
+            gridcolor="#ffffff",
+            gridwidth=1.5,
         ),
         legend=dict(
             x=1,           # x position of the legend (1 corresponds to the right end of the plot)
@@ -994,8 +1148,21 @@ def create_fig_stacked(df_90, df_60, df, df_14, df_7, order):
     # Add traces for each client
     for i, client in enumerate(_df["cl_client"].unique()):
         df = _df[_df["cl_client"] == client]
-        fig.add_trace(go.Bar(x=df["date"], y=df["relative_count"], name=client, marker_color=colors[i], visible=False))
-        fig.add_trace(go.Bar(x=df["date"], y=df["slot"], name=client, marker_color=colors[i]))
+        fig.add_trace(
+            go.Bar(
+                x=df["date"], 
+                y=df["relative_count"], 
+                name=client, 
+                marker_color=colors[i], 
+                visible=False, 
+                hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>'
+             )
+        )
+        fig.add_trace(
+            go.Bar(x=df["date"], y=df["slot"], 
+                   name=client, marker_color=colors[i],hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>'
+                  )
+        )
         
     fig.update_layout(**fig7_layout())
     
@@ -1134,7 +1301,7 @@ app.layout = html.Div(
                              'presentation': 'markdown'} if i == 'Slot' else {"name": i, "id": i} for i in df_table.columns#[:-1]
                         ],# + [{"name": 'slot_sort', "id": 'slot_sort', "hidden": True}],
                         data=df_table.to_dict('records'),
-                        page_size=20,
+                        page_size=15,
                         style_table={'overflowX': 'auto'},
                         style_cell={'whiteSpace': 'normal','height': 'auto'},
                         style_data_conditional=[
@@ -1147,7 +1314,7 @@ app.layout = html.Div(
                         ],
                         css=[dict(selector="p", rule="margin: 0; text-align: center")],
                         sort_action="native",
-                        sort_mode="multi"
+                        sort_mode="single"
 
                     ),
                     className="mb-4", md=12
@@ -1174,8 +1341,6 @@ app.layout = html.Div(
     )],
     id='main-div'  # This ID is used in the callback to update the style
 )
-
-
 
 
 # Callbacks
