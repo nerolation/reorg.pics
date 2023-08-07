@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 from datetime import datetime
 import pandas as pd
 import os
+from google.cloud import bigquery
 
 
-# In[ ]:
+# In[2]:
 
 
 def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
@@ -24,7 +25,7 @@ def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
 set_google_credentials("./config/","google-creds.json")
 
 
-# In[ ]:
+# In[3]:
 
 
 def slot_to_time(slot):
@@ -40,7 +41,38 @@ def add_link_to_slot(slot):
     return f'[{slot}](https://beaconcha.in/slot/{slot})'
 
 
-# In[ ]:
+# In[4]:
+
+
+query = """CREATE OR REPLACE TABLE `ethereum-data-nero.ethdata.beaconchain_pace` AS 
+WITH all_slots AS (
+    SELECT MIN(slot) AS start, MAX(slot) AS _end
+    FROM `ethereum-data-nero.ethdata.beaconchain_pace`
+),
+numbers_series AS (
+    SELECT slot_nr
+    FROM all_slots, UNNEST(GENERATE_ARRAY(start, _end)) AS slot_nr
+)
+
+SELECT DISTINCT * FROM (
+    SELECT 
+        ns.slot_nr AS slot,
+        COALESCE(t.cl_client, "missed") AS cl_client,
+        COALESCE(t.validator_id, 0) AS validator_id
+    FROM numbers_series ns
+    LEFT JOIN `ethereum-data-nero.ethdata.beaconchain_pace` t ON ns.slot_nr = t.slot
+)
+ORDER BY slot desc;"""
+def remove_duplicates():
+    print("removing duplicates...")
+    client.query(query)
+    
+    
+client = bigquery.Client()
+remove_duplicates()
+
+
+# In[5]:
 
 
 query = """
@@ -72,7 +104,7 @@ df
 
 
 
-# In[ ]:
+# In[6]:
 
 
 #def max_slot(slot):
@@ -81,13 +113,13 @@ df
 #df[~df["relay"].isna()].sort_values("slot", ascending=False).head(2000).to_csv("missed-slot-data.csv", index=False)
 
 
-# In[ ]:
+# In[7]:
 
 
 #df = df.sort_values("slot", ascending=False)#.head(1000)
 
 
-# In[ ]:
+# In[8]:
 
 
 #pd.read_csv("missed-slot-data.csv")
@@ -99,7 +131,7 @@ df
 
 
 
-# In[ ]:
+# In[9]:
 
 
 query = """
@@ -160,7 +192,7 @@ df_reorg
 df_reorg.to_csv("reorgers-data.csv", index=None)
 
 
-# In[ ]:
+# In[10]:
 
 
 df.to_csv("reorg-data.csv", index=None)
@@ -180,7 +212,7 @@ order by slots desc
 df5.to_csv("clclient_slots.csv", index=None)
 
 
-# In[ ]:
+# In[11]:
 
 
 print("finished")
