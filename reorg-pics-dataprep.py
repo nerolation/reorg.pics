@@ -75,6 +75,33 @@ df
 # In[ ]:
 
 
+#def max_slot(slot):
+#    return int(slot.split("[")[1].split("]")[0])
+##df["slot"] = df["slot"].apply(max_slot)
+#df[~df["relay"].isna()].sort_values("slot", ascending=False).head(2000).to_csv("missed-slot-data.csv", index=False)
+
+
+# In[ ]:
+
+
+#df = df.sort_values("slot", ascending=False)#.head(1000)
+
+
+# In[ ]:
+
+
+#pd.read_csv("missed-slot-data.csv")
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
 query = """
   SELECT
   DISTINCT AA.slot,
