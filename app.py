@@ -89,7 +89,7 @@ def fig3_layout(width=801):
     else:
         font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Nr. Missed in Epoch</span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Missed Slot Nr. in Epoch</span>',
         xaxis_title='Slot',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
@@ -157,7 +157,7 @@ def fig3_layout(width=801):
 def create_fig3(df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
     fig = make_subplots(rows=1, cols=1)
     df_per_sie_60 = df_per_sie_60[~df_per_sie_60['cl_client'].str.contains('missed')]
-    df = df[df["cl_client"] != "missed"]
+    df = df[~df['cl_client'].str.contains('missed')]
     df_per_sie_14 = df_per_sie_14[~df_per_sie_14['cl_client'].str.contains('missed')]
     df_per_sie_7 = df_per_sie_7[~df_per_sie_7['cl_client'].str.contains('missed')]
     
@@ -552,6 +552,7 @@ def create_fig_for_relays(df_90, df, df_30, df_14, df_7, order):
     _df = df['relay'].value_counts().reset_index()
     _df = pd.merge(_df,order,how="left", left_on="relay", right_on="relay")
     _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
+    order["relay"]= order["relay"].apply(lambda x: x[0].upper()+x[1:])
     _df.columns = ['relay', 'count', 'slots']
     _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df = _df[_df["count"] > 0]
@@ -576,6 +577,9 @@ def create_fig_for_relays(df_90, df, df_30, df_14, df_7, order):
                 showlegend=False
             )
         )
+    for i in order["relay"]:
+        if i not in _df['relay'].values.tolist():
+            fig.add_trace(go.Bar())
 
     # Create the absolute bars
     for index, row in _df.iterrows():
@@ -594,6 +598,9 @@ def create_fig_for_relays(df_90, df, df_30, df_14, df_7, order):
                 showlegend=False
             )
         )
+    for i in order["relay"]:
+        if i not in _df['relay'].values.tolist():
+            fig.add_trace(go.Bar())
     fig.update_layout(**fig5_layout())
     fig.update_yaxes(title_standoff=5)
     return fig
@@ -663,8 +670,9 @@ def create_reorger_builder_layout(width=801):
 def create_reorger_builder(df_90, df_60, df_30, df_14, df_7, order, df):
     df = df[df["builder"] != "missed"]
     _df = df['builder'].value_counts().reset_index()
-    _df = pd.merge(_df,order,how="left", left_on="builder", right_on="builder")
     _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
+    order["builder"]= order["builder"].apply(lambda x: x[0].upper()+x[1:])
+    _df = pd.merge(_df,order,how="left", left_on="builder", right_on="builder")
     _df.columns = ['builder', 'count', 'slots']
     _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df = _df[_df["count"] > 0]
@@ -689,6 +697,9 @@ def create_reorger_builder(df_90, df_60, df_30, df_14, df_7, order, df):
                 showlegend=False
             )
         )
+    for i in order["builder"]:
+        if i not in _df['builder'].values.tolist():
+            fig.add_trace(go.Bar())
 
     # Create the absolute bars
     for index, row in _df.iterrows():
@@ -707,6 +718,9 @@ def create_reorger_builder(df_90, df_60, df_30, df_14, df_7, order, df):
                 showlegend=False
             )
         )
+    for i in order["builder"]:
+        if i not in _df['builder'].values.tolist():
+            fig.add_trace(go.Bar())
     fig.update_layout(**create_reorger_builder_layout())
     fig.update_yaxes(title_standoff=5)
     return fig
@@ -891,13 +905,14 @@ def create_reorger_relay_layout(width=801):
 def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
     df = df[df["relay"] != "missed"]
     _df = df['relay'].value_counts().reset_index()
-    _df = pd.merge(_df,order,how="left", left_on="relay", right_on="relay")
     _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
+    order["relay"]= order["relay"].apply(lambda x: x[0].upper()+x[1:])
+    _df = pd.merge(_df,order,how="left", left_on="relay", right_on="relay")
     _df.columns = ['relay', 'count', 'slots']
     _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df = _df[_df["count"] > 0]
     _df["relay"] = _df["relay"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
-    _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
+    order["relay"] = order["relay"].apply(lambda x: x[0:9]+"..." if x.startswith("0x") else x)
     _df.sort_values("relative_count", ascending=False, inplace=True)    
     _df = _df.iloc[0:11]
     fig = make_subplots(rows=1, cols=1)
@@ -906,6 +921,7 @@ def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
         relay = row['relay']
         relative_count = row['relative_count']
         color = colors[index % len(colors)]
+        print(relay, str(relative_count))
 
         fig.add_trace(
             go.Bar(
@@ -917,6 +933,11 @@ def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
                 showlegend=False
             )
         )
+    
+    for i in order["relay"]:
+        if i not in _df['relay'].values.tolist():
+            fig.add_trace(go.Bar())
+
 
     # Create the absolute bars
     for index, row in _df.iterrows():
@@ -935,9 +956,14 @@ def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
                 showlegend=False
             )
         )
+        
+    for i in order["relay"]:
+        if i not in _df['relay'].values.tolist():
+            fig.add_trace(go.Bar())
     fig.update_layout(**create_reorger_relay_layout())
     fig.update_yaxes(title_standoff=5)
     return fig
+
 
 def fig6_layout(width=801):
     if width <= 800:
@@ -970,14 +996,14 @@ def fig6_layout(width=801):
         updatemenus=[dict(
             type="buttons",
             buttons=[
-                dict(args=[{"visible": [True]*12+12*[False]},
+                dict(args=[{"visible": [True]*10+10*[False]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
-                dict(args=[{"visible": [False]*12+12*[True]},
+                dict(args=[{"visible": [False]*10+10*[True]},
                            {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
@@ -1001,6 +1027,7 @@ def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
     _df = df['builder'].value_counts().reset_index()
     _df = pd.merge(_df,order,how="left", left_on="builder", right_on="builder")
     _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
+    order["builder"]= order["builder"].apply(lambda x: x[0].upper()+x[1:])
     _df.columns = ['builder', 'count', 'slots']
     _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df = _df[_df["count"] > 0]
@@ -1036,6 +1063,9 @@ def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
                 showlegend=False
             )
         )
+    for i in order["builder"]:
+        if i not in _df['builder'].values.tolist():
+            fig.add_trace(go.Bar())
 
     # Create the absolute bars
     for index, row in _df.iterrows():
@@ -1054,7 +1084,9 @@ def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
                 showlegend=False
             )
         )
-    
+    for i in order["builder"]:
+        if i not in _df['builder'].values.tolist():
+            fig.add_trace(go.Bar())
 
     fig.update_layout(**fig6_layout())
     fig.update_yaxes(title_standoff=5)
