@@ -55,7 +55,7 @@ numbers_series AS (
 )
 
 SELECT DISTINCT * FROM (
-    SELECT 
+    SELECT DISTINCT
         ns.slot_nr AS slot,
         COALESCE(t.cl_client, "missed") AS cl_client,
         COALESCE(t.validator_id, 0) AS validator_id
