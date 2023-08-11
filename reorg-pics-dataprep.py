@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 from datetime import datetime
@@ -10,7 +10,7 @@ import os
 from google.cloud import bigquery
 
 
-# In[2]:
+# In[ ]:
 
 
 def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
@@ -25,7 +25,7 @@ def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
 set_google_credentials("./config/","google-creds.json")
 
 
-# In[3]:
+# In[ ]:
 
 
 def slot_to_time(slot):
@@ -41,7 +41,7 @@ def add_link_to_slot(slot):
     return f'[{slot}](https://beaconcha.in/slot/{slot})'
 
 
-# In[4]:
+# In[ ]:
 
 
 query = """CREATE OR REPLACE TABLE `ethereum-data-nero.ethdata.beaconchain_pace` AS 
@@ -57,7 +57,7 @@ numbers_series AS (
 SELECT DISTINCT * FROM (
     SELECT DISTINCT
         ns.slot_nr AS slot,
-        COALESCE(t.cl_client, "missed") AS cl_client,
+        COALESCE(t.cl_client, "Unknown") AS cl_client,
         COALESCE(t.validator_id, 0) AS validator_id
     FROM numbers_series ns
     LEFT JOIN `ethereum-data-nero.ethdata.beaconchain_pace` t ON ns.slot_nr = t.slot
@@ -72,7 +72,7 @@ client = bigquery.Client()
 remove_duplicates()
 
 
-# In[5]:
+# In[ ]:
 
 
 query = """
@@ -104,7 +104,7 @@ df
 
 
 
-# In[6]:
+# In[ ]:
 
 
 #def max_slot(slot):
@@ -113,13 +113,13 @@ df
 #df[~df["relay"].isna()].sort_values("slot", ascending=False).head(2000).to_csv("missed-slot-data.csv", index=False)
 
 
-# In[7]:
+# In[ ]:
 
 
 #df = df.sort_values("slot", ascending=False)#.head(1000)
 
 
-# In[8]:
+# In[ ]:
 
 
 #pd.read_csv("missed-slot-data.csv")
@@ -131,7 +131,7 @@ df
 
 
 
-# In[9]:
+# In[ ]:
 
 
 query = """
@@ -192,7 +192,7 @@ df_reorg
 df_reorg.to_csv("reorgers-data.csv", index=None)
 
 
-# In[10]:
+# In[ ]:
 
 
 df.to_csv("reorg-data.csv", index=None)
@@ -212,7 +212,7 @@ order by slots desc
 df5.to_csv("clclient_slots.csv", index=None)
 
 
-# In[11]:
+# In[ ]:
 
 
 print("finished")
