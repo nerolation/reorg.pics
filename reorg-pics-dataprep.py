@@ -63,6 +63,10 @@ SELECT DISTINCT * FROM (
     LEFT JOIN `ethereum-data-nero.ethdata.beaconchain_pace` t ON ns.slot_nr = t.slot
 )
 ORDER BY slot desc;"""
+
+query = """CREATE OR REPLACE TABLE `ethereum-data-nero.ethdata.beaconchain_pace` AS 
+SELECT DISTINCT * FROM `ethereum-data-nero.ethdata.beaconchain_pace`
+ORDER BY slot desc;"""
 def remove_duplicates():
     print("removing duplicates...")
     client.query(query)
