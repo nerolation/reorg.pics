@@ -58,7 +58,7 @@ SELECT DISTINCT * FROM (
     SELECT DISTINCT
         ns.slot_nr AS slot,
         COALESCE(t.cl_client, "Unknown") AS cl_client,
-        COALESCE(t.validator_id, 0) AS validator_id
+        COALESCE(t.validator_id, 0) AS validator_id,
     FROM numbers_series ns
     LEFT JOIN `ethereum-data-nero.ethdata.beaconchain_pace` t ON ns.slot_nr = t.slot
 )
@@ -81,7 +81,11 @@ remove_duplicates()
 
 query = """
     SELECT
-      DISTINCT AA.slot, AA.cl_client, AA.validator_id, BB.validator, BB.builder, BB.relay FROM (
+      DISTINCT 
+          AA.slot, AA.parent_slot, AA.cl_client, AA.validator_id, 
+           BB.validator, BB.builder, 
+          BB.relay 
+    FROM (
         SELECT
       DISTINCT *
     FROM
@@ -103,9 +107,19 @@ query = """
 df = pd.read_gbq(query)
 df["date"] = df["slot"].apply(slot_to_time)
 df["slot_in_epoch"] = df["slot"].apply(slot_in_epoch)
+df["parent_slot"] = df.apply(
+    lambda x: str(x["parent_slot"]) + " (" + str(x["parent_slot"] - x["slot"]) + ")" if x["parent_slot"] != 0 else 0, 
+    axis=1
+)
 df["slot"] = df["slot"].apply(add_link_to_slot)
 df
 
+
+
+# In[ ]:
+
+
+#df[[df.columns[0]] + [df.columns[3]] + df.columns[1:3].values.tolist() + df.columns[4:].values.tolist()]
 
 
 # In[ ]:
@@ -220,10 +234,4 @@ df5.to_csv("clclient_slots.csv", index=None)
 
 
 print("finished")
-
-
-# In[ ]:
-
-
-
 

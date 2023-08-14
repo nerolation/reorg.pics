@@ -33,22 +33,24 @@ def prepare_data():
     dfreorger = dfreorger[dfreorger["slot"].apply(max_slot) > max(dfreorger["slot"].apply(max_slot)) - 7200*60]
     
     df_30 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*30]
-    df_table = df_30.rename(columns={"slot": "Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
+    df_table = df_30.rename(columns={"slot": "Slot", "parent_slot": "Parent Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
     df_table.sort_values("Slot", ascending=False, inplace=True)
-    df_table = df_table[["Slot", "CL Client", "Val. ID", "Date", "Slot Nr. in Epoch"]].drop_duplicates()
+    df_table = df_table[["Slot", "Parent Slot", "CL Client", "Val. ID", "Date", "Slot Nr. in Epoch"]].drop_duplicates()
     #df_table["Val. ID"] = df_table["Val. ID"]#.replace(0, np.NaN)
     df_table["Slot Nr. in Epoch"] = df_table["Slot Nr. in Epoch"].astype(int)
     df_table["Val. ID"] = df_table["Val. ID"].astype(int)
+    df_table["Parent Slot"] = df_table["Parent Slot"].astype(str)
+    
     #df_table['slot_sort'] = df_table['Slot'].apply(lambda x: int(x.split("[")[1].split("]")[0]))  # Update the split function as needed
 
     
     #df = df[~df['cl_client'].str.contains('Unknown')]
     
-    df_90 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*90]
-    df_60 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*60]
-    df_30 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*30]
-    df_14 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*14]
-    df_7 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*7]
+    df_90 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*90].drop("parent_slot", axis=1)
+    df_60 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*60].drop("parent_slot", axis=1)
+    df_30 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*30].drop("parent_slot", axis=1)
+    df_14 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*14].drop("parent_slot", axis=1)
+    df_7 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*7].drop("parent_slot", axis=1)
     
     
     
@@ -1272,6 +1274,7 @@ def table_styles(width):
     return [
         {'if': {'column_id': 'Slot Nr. in Epoch'}, 'maxWidth': '30px', 'text-align': 'center', 'fontSize': font_size},
         {'if': {'column_id': 'Slot'}, 'textAlign': 'right', 'maxWidth': '40px', 'fontSize': font_size},
+        {'if': {'column_id': 'Parent Slot'}, 'textAlign': 'center', 'maxWidth': '40px', 'fontSize': font_size},
         {'if': {'column_id': 'Val. ID'}, 'maxWidth': '30px', 'fontSize': font_size},
         {'if': {'column_id': 'Date'}, 'maxWidth': '80px', 'fontSize': font_size},
         {'if': {'column_id': 'CL Client'}, 'maxWidth': '80px', 'fontSize': font_size}
@@ -1342,6 +1345,7 @@ app.layout = html.Div(
                         style_header={'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
                         style_header_conditional=[
                             {'if': {'column_id': 'Slot'}, 'text-align': 'center'},
+                            {'if': {'column_id': 'Parent Slot'}, 'text-align': 'center'},
                             {'if': {'column_id': 'Slot Nr. in Epoch'}, 'text-align': 'center'},
                         ],
                         css=[dict(selector="p", rule="margin: 0; text-align: center")],
