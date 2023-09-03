@@ -91,7 +91,7 @@ def fig3_layout(width=801):
     else:
         font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Missed Slot Nr. in Epoch</span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Reorged Slot Nr. in Epoch</span>',
         xaxis_title='Slot',
         margin=dict(l=20, r=20, t=40, b=20),
         font=dict(family="Ubuntu Mono", size = font_size),
@@ -130,7 +130,7 @@ def fig3_layout(width=801):
                 )
                 ,
                 dict(args=[{"visible": [True if i %4==1 else False for i in range(20)]},
-                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Nr. Missed in Epoch</span>',}],
+                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Slot Nr. Reorged in Epoch</span>',}],
                         label="30 days",
                         method="update"
                 ),
@@ -190,7 +190,7 @@ def fig2_layout(width=801):
     else:
         font_size = 18
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Client',
         hovermode = "closest",
@@ -216,7 +216,7 @@ def fig2_layout(width=801):
             type="buttons",
             buttons=[
                 dict(args=[{"visible": [True]*5+5*[False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             # "height":500,
                             "xaxis.title": "%",
                             #"annotations": k
@@ -226,7 +226,7 @@ def fig2_layout(width=801):
                 )
                 ,
                 dict(args=[{"visible": [False]*5+5*[True]},
-                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absulute Nr. of Missed Slots per Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                               {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absulute Nr. of Reorged Slots per Client<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                                 # "height":500,
                                 "xaxis.title": "slots",
                                 #"annotations": k
@@ -299,7 +299,7 @@ def fig1_layout(width=801):
     else:
         font_size = 20
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Number of Missed Blocks Over Time</span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Number of Reorged Blocks Over Time</span>',
         xaxis_title='Date',
         yaxis_title='#Blocks',
         margin=dict(l=20, r=20, t=40, b=20),
@@ -392,7 +392,7 @@ def fig4_layout(width=801):
     else:
         font_size = 20
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Validator',
         margin=dict(l=20, r=20, t=80, b=20),
@@ -418,14 +418,14 @@ def fig4_layout(width=801):
             type="buttons",
             buttons=[
                 dict(args=[{"visible": [True]*12+12*[False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
                 dict(args=[{"visible":  [False]*12+12*[True]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Reorged Slots per Validator<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
                     label="Absolute",
@@ -499,7 +499,7 @@ def fig5_layout(width=801):
     else:
         font_size = 20
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Relay',
         margin=dict(l=20, r=20, t=80, b=20),
@@ -525,14 +525,14 @@ def fig5_layout(width=801):
             type="buttons",
             buttons=[
                 dict(args=[{"visible": [True]*10+10*[False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
                 dict(args=[{"visible": [False]*10+10*[True]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Reorged Slots per Relay<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
                     label="Absolute",
@@ -973,7 +973,7 @@ def fig6_layout(width=801):
     else:
         font_size = 20
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
         xaxis_title='%',
         yaxis_title='Builder',
         margin=dict(l=20, r=20, t=80, b=20),
@@ -999,14 +999,14 @@ def fig6_layout(width=801):
             type="buttons",
             buttons=[
                 dict(args=[{"visible": [True]*10+10*[False]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
                 dict(args=[{"visible": [False]*10+10*[True]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Reorged Slots per Builder<br><span style="font-size:{font_size-3}px;">(last 60 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
                     label="Absolute",
@@ -1101,7 +1101,7 @@ def fig7_layout(width=801):
     else:
         font_size = 20
     return dict(
-        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+        title=f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Reorged Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
         xaxis_title='Date',
         yaxis_title='Slots',
         margin=dict(l=20, r=20, t=80, b=20),
@@ -1135,14 +1135,14 @@ def fig7_layout(width=801):
             type="buttons",
             buttons=[
                 dict(args=[{"visible": [True if i %2==0 else False for i in range(10)]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Missed Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Relative Share of Reorged Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
                             "xaxis.title": "%",
                            }],
                     label="Relative",
                     method="update"
                 ),
                 dict(args=[{"visible": [False if i %2==0 else True for i in range(10)]},
-                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Missed Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
+                           {"title": f'<span style="font-size: {font_size}px;font-weight:bold;">Absolute Nr. of Reorged Slots per CL Client<br><span style="font-size:{font_size-3}px;">(last 30 days)</span></span>',
                             "xaxis.title": "slots",
                            }],
                     label="Absolute",
