@@ -57,6 +57,7 @@ numbers_series AS (
 SELECT DISTINCT * FROM (
     SELECT DISTINCT
         ns.slot_nr AS slot,
+        COALESCE(t.parent_slot, 0) AS parent_slot,
         COALESCE(t.cl_client, "Unknown") AS cl_client,
         COALESCE(t.validator_id, 0) AS validator_id,
     FROM numbers_series ns
@@ -70,6 +71,7 @@ ORDER BY slot desc;"""
 def remove_duplicates():
     print("removing duplicates...")
     client.query(query)
+    print("duplicates removed.")
     
     
 client = bigquery.Client()
