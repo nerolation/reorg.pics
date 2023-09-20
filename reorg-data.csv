@@ -17216,43 +17216,43 @@ slot,parent_slot,cl_client,validator_id,validator,builder,relay,date,slot_in_epo
 [6706236](https://beaconcha.in/slot/6706236),0,Unknown,0,,,,2023-06-20 22:07:35,28
 [6706276](https://beaconcha.in/slot/6706276),0,Unknown,0,,,,2023-06-20 22:15:35,4
 [6706711](https://beaconcha.in/slot/6706711),0,Unknown,0,,,,2023-06-20 23:42:35,23
-[6706849](https://beaconcha.in/slot/6706849),0,Lighthouse,529991,lido,builder0x69,blocknative,2023-06-21 00:10:11,1
-[6707039](https://beaconcha.in/slot/6707039),0,Unknown,0,missed,,,2023-06-21 00:48:11,31
-[6707042](https://beaconcha.in/slot/6707042),0,Unknown,0,missed,,,2023-06-21 00:48:47,2
-[6707333](https://beaconcha.in/slot/6707333),0,Unknown,0,missed,,,2023-06-21 01:46:59,5
-[6707522](https://beaconcha.in/slot/6707522),0,Prysm,670640,missed,,,2023-06-21 02:24:47,2
-[6707990](https://beaconcha.in/slot/6707990),0,Unknown,0,missed,,,2023-06-21 03:58:23,22
-[6708312](https://beaconcha.in/slot/6708312),0,Unknown,0,missed,,,2023-06-21 05:02:47,24
-[6708721](https://beaconcha.in/slot/6708721),0,Unknown,0,missed,,,2023-06-21 06:24:35,17
-[6708772](https://beaconcha.in/slot/6708772),0,Unknown,0,missed,,,2023-06-21 06:34:47,4
-[6708867](https://beaconcha.in/slot/6708867),0,Unknown,0,missed,,,2023-06-21 06:53:47,3
-[6708924](https://beaconcha.in/slot/6708924),0,Unknown,0,missed,,,2023-06-21 07:05:11,28
-[6708958](https://beaconcha.in/slot/6708958),0,Unknown,0,missed,,,2023-06-21 07:11:59,30
-[6708961](https://beaconcha.in/slot/6708961),0,Lighthouse,600999,staked.us,beaverbuild.org,bloxroute (max profit),2023-06-21 07:12:35,1
-[6708973](https://beaconcha.in/slot/6708973),0,Unknown,0,missed,,,2023-06-21 07:14:59,13
-[6709303](https://beaconcha.in/slot/6709303),0,Unknown,0,missed,,,2023-06-21 08:20:59,23
-[6709696](https://beaconcha.in/slot/6709696),0,Unknown,0,missed,,,2023-06-21 09:39:35,0
-[6709700](https://beaconcha.in/slot/6709700),0,Unknown,0,missed,,,2023-06-21 09:40:23,4
-[6709793](https://beaconcha.in/slot/6709793),0,Lighthouse,458616,lido,beaverbuild.org,bloxroute (max profit),2023-06-21 09:58:59,1
-[6710240](https://beaconcha.in/slot/6710240),0,Unknown,0,missed,,,2023-06-21 11:28:23,0
-[6710319](https://beaconcha.in/slot/6710319),0,Unknown,0,missed,,,2023-06-21 11:44:11,15
-[6710465](https://beaconcha.in/slot/6710465),0,Lighthouse,372171,lido,beaverbuild.org,bloxroute (max profit),2023-06-21 12:13:23,1
-[6710626](https://beaconcha.in/slot/6710626),0,Prysm,442550,rocketpool,builder0x69,blocknative,2023-06-21 12:45:35,2
-[6710928](https://beaconcha.in/slot/6710928),0,Unknown,0,missed,,,2023-06-21 13:45:59,16
-[6711297](https://beaconcha.in/slot/6711297),0,Unknown,0,missed,,,2023-06-21 14:59:47,1
-[6711852](https://beaconcha.in/slot/6711852),0,Unknown,0,missed,,,2023-06-21 16:50:47,12
-[6711883](https://beaconcha.in/slot/6711883),0,Teku,533644,missed,,,2023-06-21 16:56:59,11
-[6711960](https://beaconcha.in/slot/6711960),0,Unknown,0,missed,,,2023-06-21 17:12:23,24
-[6712111](https://beaconcha.in/slot/6712111),0,Unknown,0,missed,,,2023-06-21 17:42:35,15
-[6712503](https://beaconcha.in/slot/6712503),0,Unknown,0,missed,,,2023-06-21 19:00:59,23
-[6712700](https://beaconcha.in/slot/6712700),0,Unknown,0,missed,,,2023-06-21 19:40:23,28
-[6712778](https://beaconcha.in/slot/6712778),0,Teku,499973,missed,,,2023-06-21 19:55:59,10
-[6712924](https://beaconcha.in/slot/6712924),0,Unknown,0,missed,,,2023-06-21 20:25:11,28
-[6713149](https://beaconcha.in/slot/6713149),0,Lighthouse,350780,missed,,,2023-06-21 21:10:11,29
-[6713162](https://beaconcha.in/slot/6713162),0,Unknown,0,missed,,,2023-06-21 21:12:47,10
-[6713596](https://beaconcha.in/slot/6713596),0,Unknown,0,missed,,,2023-06-21 22:39:35,28
-[6713814](https://beaconcha.in/slot/6713814),0,Unknown,0,missed,,,2023-06-21 23:23:11,22
-[6713896](https://beaconcha.in/slot/6713896),0,Unknown,0,missed,,,2023-06-21 23:39:35,8
+[6706849](https://beaconcha.in/slot/6706849),0,Lighthouse,529991,,,,2023-06-21 00:10:11,1
+[6707039](https://beaconcha.in/slot/6707039),0,Unknown,0,,,,2023-06-21 00:48:11,31
+[6707042](https://beaconcha.in/slot/6707042),0,Unknown,0,,,,2023-06-21 00:48:47,2
+[6707333](https://beaconcha.in/slot/6707333),0,Unknown,0,,,,2023-06-21 01:46:59,5
+[6707522](https://beaconcha.in/slot/6707522),0,Prysm,670640,,,,2023-06-21 02:24:47,2
+[6707990](https://beaconcha.in/slot/6707990),0,Unknown,0,,,,2023-06-21 03:58:23,22
+[6708312](https://beaconcha.in/slot/6708312),0,Unknown,0,,,,2023-06-21 05:02:47,24
+[6708721](https://beaconcha.in/slot/6708721),0,Unknown,0,,,,2023-06-21 06:24:35,17
+[6708772](https://beaconcha.in/slot/6708772),0,Unknown,0,,,,2023-06-21 06:34:47,4
+[6708867](https://beaconcha.in/slot/6708867),0,Unknown,0,,,,2023-06-21 06:53:47,3
+[6708924](https://beaconcha.in/slot/6708924),0,Unknown,0,,,,2023-06-21 07:05:11,28
+[6708958](https://beaconcha.in/slot/6708958),0,Unknown,0,,,,2023-06-21 07:11:59,30
+[6708961](https://beaconcha.in/slot/6708961),0,Lighthouse,600999,,,,2023-06-21 07:12:35,1
+[6708973](https://beaconcha.in/slot/6708973),0,Unknown,0,,,,2023-06-21 07:14:59,13
+[6709303](https://beaconcha.in/slot/6709303),0,Unknown,0,,,,2023-06-21 08:20:59,23
+[6709696](https://beaconcha.in/slot/6709696),0,Unknown,0,,,,2023-06-21 09:39:35,0
+[6709700](https://beaconcha.in/slot/6709700),0,Unknown,0,,,,2023-06-21 09:40:23,4
+[6709793](https://beaconcha.in/slot/6709793),0,Lighthouse,458616,,,,2023-06-21 09:58:59,1
+[6710240](https://beaconcha.in/slot/6710240),0,Unknown,0,,,,2023-06-21 11:28:23,0
+[6710319](https://beaconcha.in/slot/6710319),0,Unknown,0,,,,2023-06-21 11:44:11,15
+[6710465](https://beaconcha.in/slot/6710465),0,Lighthouse,372171,,,,2023-06-21 12:13:23,1
+[6710626](https://beaconcha.in/slot/6710626),0,Prysm,442550,,,,2023-06-21 12:45:35,2
+[6710928](https://beaconcha.in/slot/6710928),0,Unknown,0,,,,2023-06-21 13:45:59,16
+[6711297](https://beaconcha.in/slot/6711297),0,Unknown,0,,,,2023-06-21 14:59:47,1
+[6711852](https://beaconcha.in/slot/6711852),0,Unknown,0,,,,2023-06-21 16:50:47,12
+[6711883](https://beaconcha.in/slot/6711883),0,Teku,533644,,,,2023-06-21 16:56:59,11
+[6711960](https://beaconcha.in/slot/6711960),0,Unknown,0,,,,2023-06-21 17:12:23,24
+[6712111](https://beaconcha.in/slot/6712111),0,Unknown,0,,,,2023-06-21 17:42:35,15
+[6712503](https://beaconcha.in/slot/6712503),0,Unknown,0,,,,2023-06-21 19:00:59,23
+[6712700](https://beaconcha.in/slot/6712700),0,Unknown,0,,,,2023-06-21 19:40:23,28
+[6712778](https://beaconcha.in/slot/6712778),0,Teku,499973,,,,2023-06-21 19:55:59,10
+[6712924](https://beaconcha.in/slot/6712924),0,Unknown,0,,,,2023-06-21 20:25:11,28
+[6713149](https://beaconcha.in/slot/6713149),0,Lighthouse,350780,,,,2023-06-21 21:10:11,29
+[6713162](https://beaconcha.in/slot/6713162),0,Unknown,0,,,,2023-06-21 21:12:47,10
+[6713596](https://beaconcha.in/slot/6713596),0,Unknown,0,,,,2023-06-21 22:39:35,28
+[6713814](https://beaconcha.in/slot/6713814),0,Unknown,0,,,,2023-06-21 23:23:11,22
+[6713896](https://beaconcha.in/slot/6713896),0,Unknown,0,,,,2023-06-21 23:39:35,8
 [6714154](https://beaconcha.in/slot/6714154),0,Unknown,0,missed,,,2023-06-22 00:31:11,10
 [6714177](https://beaconcha.in/slot/6714177),0,Unknown,0,missed,,,2023-06-22 00:35:47,1
 [6714707](https://beaconcha.in/slot/6714707),0,Unknown,0,missed,,,2023-06-22 02:21:47,19
@@ -17966,8 +17966,8 @@ slot,parent_slot,cl_client,validator_id,validator,builder,relay,date,slot_in_epo
 [6812164](https://beaconcha.in/slot/6812164),0,Unknown,0,missed,,,2023-07-05 15:13:11,4
 [6812577](https://beaconcha.in/slot/6812577),0,Unknown,0,missed,,,2023-07-05 16:35:47,1
 [6812819](https://beaconcha.in/slot/6812819),0,Unknown,0,missed,,,2023-07-05 17:24:11,19
-[6812976](https://beaconcha.in/slot/6812976),0,Lighthouse,546694,frax finance,rsync-builder.xyz,bloxroute (max profit),2023-07-05 17:55:35,16
 [6812976](https://beaconcha.in/slot/6812976),0,Lighthouse,546694,frax finance,rsync-builder.xyz,bloxroute (regulated),2023-07-05 17:55:35,16
+[6812976](https://beaconcha.in/slot/6812976),0,Lighthouse,546694,frax finance,rsync-builder.xyz,bloxroute (max profit),2023-07-05 17:55:35,16
 [6813226](https://beaconcha.in/slot/6813226),0,Unknown,0,missed,,,2023-07-05 18:45:35,10
 [6813320](https://beaconcha.in/slot/6813320),0,Unknown,0,missed,,,2023-07-05 19:04:23,8
 [6813516](https://beaconcha.in/slot/6813516),0,Unknown,0,missed,,,2023-07-05 19:43:35,12
@@ -19863,8 +19863,8 @@ slot,parent_slot,cl_client,validator_id,validator,builder,relay,date,slot_in_epo
 [7156575](https://beaconcha.in/slot/7156575),0,Unknown,0,missed,,,2023-08-22 11:15:23,31
 [7156851](https://beaconcha.in/slot/7156851),0,Unknown,0,missed,,,2023-08-22 12:10:35,19
 [7157057](https://beaconcha.in/slot/7157057),0,Unknown,0,missed,,,2023-08-22 12:51:47,1
-[7157249](https://beaconcha.in/slot/7157249),0,Lighthouse,314323,rocketpool,beaverbuild.org,bloxroute (max profit),2023-08-22 13:30:11,1
 [7157249](https://beaconcha.in/slot/7157249),0,Lighthouse,314323,rocketpool,beaverbuild.org,bloxroute (regulated),2023-08-22 13:30:11,1
+[7157249](https://beaconcha.in/slot/7157249),0,Lighthouse,314323,rocketpool,beaverbuild.org,bloxroute (max profit),2023-08-22 13:30:11,1
 [7157281](https://beaconcha.in/slot/7157281),0,Unknown,0,missed,,,2023-08-22 13:36:35,1
 [7157497](https://beaconcha.in/slot/7157497),0,Unknown,0,missed,,,2023-08-22 14:19:47,25
 [7157598](https://beaconcha.in/slot/7157598),0,Unknown,0,missed,,,2023-08-22 14:39:59,30
@@ -20443,6 +20443,6 @@ slot,parent_slot,cl_client,validator_id,validator,builder,relay,date,slot_in_epo
 [7357983](https://beaconcha.in/slot/7357983),7357982 (-1),Lighthouse,84405,missed,,,2023-09-19 10:36:59,31
 [7359489](https://beaconcha.in/slot/7359489),7359488 (-1),Lighthouse,441283,missed,,,2023-09-19 15:38:11,1
 [7359874](https://beaconcha.in/slot/7359874),7359860 (-14),Lighthouse,559781,missed,,,2023-09-19 16:55:11,2
-[7359905](https://beaconcha.in/slot/7359905),7359903 (-2),Lighthouse,632059,stakefish,beaverbuild.org,bloxroute (regulated),2023-09-19 17:01:23,1
 [7359905](https://beaconcha.in/slot/7359905),7359903 (-2),Lighthouse,632059,stakefish,beaverbuild.org,bloxroute (max profit),2023-09-19 17:01:23,1
+[7359905](https://beaconcha.in/slot/7359905),7359903 (-2),Lighthouse,632059,stakefish,beaverbuild.org,bloxroute (regulated),2023-09-19 17:01:23,1
 [7360189](https://beaconcha.in/slot/7360189),7360188 (-1),Lighthouse,773763,missed,,,2023-09-19 17:58:11,29
