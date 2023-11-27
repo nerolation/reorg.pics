@@ -20064,66 +20064,50 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7196122](https://beaconcha.in/slot/7196122),0,,,,,2023-08-27 23:04:47,26
 [7196215](https://beaconcha.in/slot/7196215),0,,,,,2023-08-27 23:23:23,23
 [7196319](https://beaconcha.in/slot/7196319),0,,,,,2023-08-27 23:44:11,31
-[7196464](https://beaconcha.in/slot/7196464),0,0xb995be1ca2a9a10a3be16a606dcee8078f65a74217597dd6c824cfdd75e2cdc2379769a7bf44c3a0b53db2470293c6ca,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-28 00:13:11,16
-[7196467](https://beaconcha.in/slot/7196467),0,0x94a664cd2e135e945389bd411ab34e0d727d12fda18abc20c15286b6aae4e7bfaa7e4b7ef0ae7b7bda6295dce08c8b74,builder0x69,blocknative,Prysm,2023-08-28 00:13:47,19
-[7196526](https://beaconcha.in/slot/7196526),0,lido,Blocknative,blocknative,Lighthouse,2023-08-28 00:25:35,14
-[7196564](https://beaconcha.in/slot/7196564),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-28 00:33:11,20
-[7196844](https://beaconcha.in/slot/7196844),0,harbour,,,Prysm,2023-08-28 01:29:11,12
-[7196883](https://beaconcha.in/slot/7196883),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-28 01:36:59,19
-[7196883](https://beaconcha.in/slot/7196883),0,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-28 01:36:59,19
-[7197101](https://beaconcha.in/slot/7197101),0,lido,builder0x69,blocknative,Prysm,2023-08-28 02:20:35,13
-[7197197](https://beaconcha.in/slot/7197197),0,0x97bc5e5e9f524499b9fd20ad4c02f6d0398e47a544abccb9f1878c4889a71391e49e912a694220edcff64396a3e5a42d,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-28 02:39:47,13
-[7197381](https://beaconcha.in/slot/7197381),0,frax finance,,,Prysm,2023-08-28 03:16:35,5
-[7197528](https://beaconcha.in/slot/7197528),0,kraken,,,Prysm,2023-08-28 03:45:59,24
-[7198021](https://beaconcha.in/slot/7198021),0,lido,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-08-28 05:24:35,5
-[7198021](https://beaconcha.in/slot/7198021),0,lido,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-08-28 05:24:35,5
-[7198021](https://beaconcha.in/slot/7198021),0,lido,beaverbuild.org,blocknative,Lighthouse,2023-08-28 05:24:35,5
-[7198083](https://beaconcha.in/slot/7198083),0,okx,rsync-builder.xyz,blocknative,Prysm,2023-08-28 05:36:59,3
-[7198083](https://beaconcha.in/slot/7198083),0,okx,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-28 05:36:59,3
-[7198083](https://beaconcha.in/slot/7198083),0,okx,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-28 05:36:59,3
-[7198154](https://beaconcha.in/slot/7198154),0,0xaddbd619a93a059e27a80036494cee004ff50e6e3e8b1d792a00f4f6e56c45ece69b80f2716986d1e3f5420b689bdb89,Blocknative,blocknative,Lighthouse,2023-08-28 05:51:11,10
-[7198752](https://beaconcha.in/slot/7198752),0,stakefish,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-28 07:50:47,0
-[7199743](https://beaconcha.in/slot/7199743),0,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-28 11:08:59,31
-[7199743](https://beaconcha.in/slot/7199743),0,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-28 11:08:59,31
-[7199777](https://beaconcha.in/slot/7199777),0,0xa623e63bfbafea38f40a8c2f6caebad1a343ec5dc296c97f9ade0062de079f3d0fdcde293d7bd21dd4526bf7b92e09bd,,,Lighthouse,2023-08-28 11:15:47,1
-[7199791](https://beaconcha.in/slot/7199791),0,coinbase,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-28 11:18:35,15
-[7199941](https://beaconcha.in/slot/7199941),0,lido,Blocknative,blocknative,Lighthouse,2023-08-28 11:48:35,5
-[7199974](https://beaconcha.in/slot/7199974),0,figment,Blocknative,blocknative,Lighthouse,2023-08-28 11:55:11,6
-[7200037](https://beaconcha.in/slot/7200037),37713,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-28 12:07:47,5
-[7200037](https://beaconcha.in/slot/7200037),37713,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-28 12:07:47,5
-[7200037](https://beaconcha.in/slot/7200037),37713,lido,beaverbuild.org,blocknative,Prysm,2023-08-28 12:07:47,5
-[7200083](https://beaconcha.in/slot/7200083),0,p2p.org,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-28 12:16:59,19
-[7200083](https://beaconcha.in/slot/7200083),0,p2p.org,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-28 12:16:59,19
-[7200522](https://beaconcha.in/slot/7200522),0,bitstamp,Blocknative,blocknative,Prysm,2023-08-28 13:44:47,10
-[7200524](https://beaconcha.in/slot/7200524),0,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-28 13:45:11,12
-[7200524](https://beaconcha.in/slot/7200524),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-28 13:45:11,12
-[7200524](https://beaconcha.in/slot/7200524),0,lido,rsync-builder.xyz,blocknative,Prysm,2023-08-28 13:45:11,12
-[7200604](https://beaconcha.in/slot/7200604),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-28 14:01:11,28
-[7200741](https://beaconcha.in/slot/7200741),99206,lido,rsync-builder.xyz,blocknative,Teku,2023-08-28 14:28:35,5
-[7200959](https://beaconcha.in/slot/7200959),703512,lido,,,Lighthouse,2023-08-28 15:12:11,31
-[7201037](https://beaconcha.in/slot/7201037),0,abyss finance,beaverbuild.org,blocknative,Prysm,2023-08-28 15:27:47,13
-[7201037](https://beaconcha.in/slot/7201037),0,abyss finance,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-28 15:27:47,13
-[7201310](https://beaconcha.in/slot/7201310),0,stakefish,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-08-28 16:22:23,30
-[7201440](https://beaconcha.in/slot/7201440),795097,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-28 16:48:23,0
-[7201504](https://beaconcha.in/slot/7201504),705729,binance,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-08-28 17:01:11,0
-[7201584](https://beaconcha.in/slot/7201584),0,lido,Blocknative,blocknative,Teku,2023-08-28 17:17:11,16
-[7201712](https://beaconcha.in/slot/7201712),0,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-28 17:42:47,16
-[7201827](https://beaconcha.in/slot/7201827),0,0xa32db7b517932c99657c24c1e7fb3b02aa4c983aa6e26f1790ddc85f3ee6c2a028a33cefcce9d8a6592d8b200042ec7e,BloXroute,bloxroute (max profit),Prysm,2023-08-28 18:05:47,3
-[7201984](https://beaconcha.in/slot/7201984),595850,stakefish,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-08-28 18:37:11,0
-[7201984](https://beaconcha.in/slot/7201984),595850,stakefish,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-08-28 18:37:11,0
-[7202610](https://beaconcha.in/slot/7202610),0,lido,,,Lighthouse,2023-08-28 20:42:23,18
-[7202640](https://beaconcha.in/slot/7202640),0,lido,beaverbuild.org,bloxroute (max profit),Nimbus,2023-08-28 20:48:23,16
-[7202640](https://beaconcha.in/slot/7202640),0,lido,beaverbuild.org,bloxroute (regulated),Nimbus,2023-08-28 20:48:23,16
-[7203013](https://beaconcha.in/slot/7203013),0,lido,rsync-builder.xyz,bloxroute (max profit),Nimbus,2023-08-28 22:02:59,5
-[7203013](https://beaconcha.in/slot/7203013),0,lido,rsync-builder.xyz,blocknative,Nimbus,2023-08-28 22:02:59,5
-[7203013](https://beaconcha.in/slot/7203013),0,lido,rsync-builder.xyz,bloxroute (regulated),Nimbus,2023-08-28 22:02:59,5
-[7203201](https://beaconcha.in/slot/7203201),0,0x8492d036635a5204e1aae33c9f7f0e5a0d8a6af951c28ab5f883ff3a8e11b0a82f7ff7907bcdba71c0de3a6ae5962c92,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-28 22:40:35,1
+[7196464](https://beaconcha.in/slot/7196464),0,,,,,2023-08-28 00:13:11,16
+[7196467](https://beaconcha.in/slot/7196467),0,,,,,2023-08-28 00:13:47,19
+[7196526](https://beaconcha.in/slot/7196526),0,,,,,2023-08-28 00:25:35,14
+[7196564](https://beaconcha.in/slot/7196564),0,,,,,2023-08-28 00:33:11,20
+[7196844](https://beaconcha.in/slot/7196844),0,,,,,2023-08-28 01:29:11,12
+[7196883](https://beaconcha.in/slot/7196883),0,,,,,2023-08-28 01:36:59,19
+[7197101](https://beaconcha.in/slot/7197101),0,,,,,2023-08-28 02:20:35,13
+[7197197](https://beaconcha.in/slot/7197197),0,,,,,2023-08-28 02:39:47,13
+[7197381](https://beaconcha.in/slot/7197381),0,,,,,2023-08-28 03:16:35,5
+[7197528](https://beaconcha.in/slot/7197528),0,,,,,2023-08-28 03:45:59,24
+[7198021](https://beaconcha.in/slot/7198021),0,,,,,2023-08-28 05:24:35,5
+[7198083](https://beaconcha.in/slot/7198083),0,,,,,2023-08-28 05:36:59,3
+[7198154](https://beaconcha.in/slot/7198154),0,,,,,2023-08-28 05:51:11,10
+[7198752](https://beaconcha.in/slot/7198752),0,,,,,2023-08-28 07:50:47,0
+[7199743](https://beaconcha.in/slot/7199743),0,,,,,2023-08-28 11:08:59,31
+[7199777](https://beaconcha.in/slot/7199777),0,,,,,2023-08-28 11:15:47,1
+[7199791](https://beaconcha.in/slot/7199791),0,,,,,2023-08-28 11:18:35,15
+[7199941](https://beaconcha.in/slot/7199941),0,,,,,2023-08-28 11:48:35,5
+[7199974](https://beaconcha.in/slot/7199974),0,,,,,2023-08-28 11:55:11,6
+[7200037](https://beaconcha.in/slot/7200037),37713,,,,,2023-08-28 12:07:47,5
+[7200083](https://beaconcha.in/slot/7200083),0,,,,,2023-08-28 12:16:59,19
+[7200522](https://beaconcha.in/slot/7200522),0,,,,,2023-08-28 13:44:47,10
+[7200524](https://beaconcha.in/slot/7200524),0,,,,,2023-08-28 13:45:11,12
+[7200604](https://beaconcha.in/slot/7200604),0,,,,,2023-08-28 14:01:11,28
+[7200741](https://beaconcha.in/slot/7200741),99206,,,,,2023-08-28 14:28:35,5
+[7200959](https://beaconcha.in/slot/7200959),703512,,,,,2023-08-28 15:12:11,31
+[7201037](https://beaconcha.in/slot/7201037),0,,,,,2023-08-28 15:27:47,13
+[7201310](https://beaconcha.in/slot/7201310),0,,,,,2023-08-28 16:22:23,30
+[7201440](https://beaconcha.in/slot/7201440),795097,,,,,2023-08-28 16:48:23,0
+[7201504](https://beaconcha.in/slot/7201504),705729,,,,,2023-08-28 17:01:11,0
+[7201584](https://beaconcha.in/slot/7201584),0,,,,,2023-08-28 17:17:11,16
+[7201712](https://beaconcha.in/slot/7201712),0,,,,,2023-08-28 17:42:47,16
+[7201827](https://beaconcha.in/slot/7201827),0,,,,,2023-08-28 18:05:47,3
+[7201984](https://beaconcha.in/slot/7201984),595850,,,,,2023-08-28 18:37:11,0
+[7202610](https://beaconcha.in/slot/7202610),0,,,,,2023-08-28 20:42:23,18
+[7202640](https://beaconcha.in/slot/7202640),0,,,,,2023-08-28 20:48:23,16
+[7203013](https://beaconcha.in/slot/7203013),0,,,,,2023-08-28 22:02:59,5
+[7203201](https://beaconcha.in/slot/7203201),0,,,,,2023-08-28 22:40:35,1
 [7203819](https://beaconcha.in/slot/7203819),0,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-29 00:44:11,11
 [7203885](https://beaconcha.in/slot/7203885),0,lido,lightspeedbuilder.info,aestus,Lighthouse,2023-08-29 00:57:23,13
 [7203930](https://beaconcha.in/slot/7203930),0,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-29 01:06:23,26
 [7203930](https://beaconcha.in/slot/7203930),0,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-29 01:06:23,26
-[7204071](https://beaconcha.in/slot/7204071),0,0xa23e10419ecc59002df26ee7bd87f6ab563c13d5297b5b3543f61a43b8dd0b3ac58fbf0e7e13c63383116130fa9da780,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-08-29 01:34:35,7
 [7204071](https://beaconcha.in/slot/7204071),0,0xa23e10419ecc59002df26ee7bd87f6ab563c13d5297b5b3543f61a43b8dd0b3ac58fbf0e7e13c63383116130fa9da780,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-08-29 01:34:35,7
+[7204071](https://beaconcha.in/slot/7204071),0,0xa23e10419ecc59002df26ee7bd87f6ab563c13d5297b5b3543f61a43b8dd0b3ac58fbf0e7e13c63383116130fa9da780,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-08-29 01:34:35,7
 [7204135](https://beaconcha.in/slot/7204135),0,figment,Blocknative,blocknative,Lighthouse,2023-08-29 01:47:23,7
 [7204177](https://beaconcha.in/slot/7204177),0,abyss finance,,,Prysm,2023-08-29 01:55:47,17
 [7204448](https://beaconcha.in/slot/7204448),0,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-29 02:49:59,0
@@ -20189,11 +20173,11 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7210299](https://beaconcha.in/slot/7210299),0,lido,rsync-builder.xyz,blocknative,Lighthouse,2023-08-29 22:20:11,27
 [7210342](https://beaconcha.in/slot/7210342),0,stakefish,builder0x69,flashbots,Prysm,2023-08-29 22:28:47,6
 [7210401](https://beaconcha.in/slot/7210401),345663,lido,Blocknative,blocknative,Nimbus,2023-08-29 22:40:35,1
-[7210444](https://beaconcha.in/slot/7210444),0,0x94a64d6817fe59f26d509fb6d18c90ab87d3c1f9d40d34c4e493c9f1e7b8b9d0008e3ae79714b50bfcfadfa59e51853e,rsync-builder.xyz,blocknative,Lighthouse,2023-08-29 22:49:11,12
 [7210444](https://beaconcha.in/slot/7210444),0,0x94a64d6817fe59f26d509fb6d18c90ab87d3c1f9d40d34c4e493c9f1e7b8b9d0008e3ae79714b50bfcfadfa59e51853e,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-08-29 22:49:11,12
+[7210444](https://beaconcha.in/slot/7210444),0,0x94a64d6817fe59f26d509fb6d18c90ab87d3c1f9d40d34c4e493c9f1e7b8b9d0008e3ae79714b50bfcfadfa59e51853e,rsync-builder.xyz,blocknative,Lighthouse,2023-08-29 22:49:11,12
 [7210444](https://beaconcha.in/slot/7210444),0,0x94a64d6817fe59f26d509fb6d18c90ab87d3c1f9d40d34c4e493c9f1e7b8b9d0008e3ae79714b50bfcfadfa59e51853e,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-08-29 22:49:11,12
-[7210659](https://beaconcha.in/slot/7210659),0,lido,rsync-builder.xyz,bloxroute (regulated),Teku,2023-08-29 23:32:11,3
 [7210659](https://beaconcha.in/slot/7210659),0,lido,rsync-builder.xyz,bloxroute (max profit),Teku,2023-08-29 23:32:11,3
+[7210659](https://beaconcha.in/slot/7210659),0,lido,rsync-builder.xyz,bloxroute (regulated),Teku,2023-08-29 23:32:11,3
 [7210930](https://beaconcha.in/slot/7210930),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-30 00:26:23,18
 [7210930](https://beaconcha.in/slot/7210930),0,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-30 00:26:23,18
 [7211417](https://beaconcha.in/slot/7211417),0,lido,builder0x69,blocknative,Teku,2023-08-30 02:03:47,25
@@ -20231,8 +20215,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7214821](https://beaconcha.in/slot/7214821),827816,stakefish,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-30 13:24:35,5
 [7214826](https://beaconcha.in/slot/7214826),792847,stakefish,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-30 13:25:35,10
 [7215198](https://beaconcha.in/slot/7215198),0,lido,,,Lighthouse,2023-08-30 14:39:59,30
-[7215324](https://beaconcha.in/slot/7215324),0,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-30 15:05:11,28
 [7215324](https://beaconcha.in/slot/7215324),0,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-30 15:05:11,28
+[7215324](https://beaconcha.in/slot/7215324),0,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-30 15:05:11,28
 [7215369](https://beaconcha.in/slot/7215369),0,0x8d96e62c0153957157f3b5e8e93a0327d8efdf61818ff9acc52e802d9b61d754806837f206f58f36578f808a25b22598,Blocknative,blocknative,Lighthouse,2023-08-30 15:14:11,9
 [7215495](https://beaconcha.in/slot/7215495),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-30 15:39:23,7
 [7215495](https://beaconcha.in/slot/7215495),0,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-30 15:39:23,7
@@ -20257,8 +20241,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7217780](https://beaconcha.in/slot/7217780),0,binance,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-30 23:16:23,20
 [7217922](https://beaconcha.in/slot/7217922),0,figment,beaverbuild.org,blocknative,Lighthouse,2023-08-30 23:44:47,2
 [7218034](https://beaconcha.in/slot/7218034),0,figment,beaverbuild.org,blocknative,Nimbus,2023-08-31 00:07:11,18
-[7218113](https://beaconcha.in/slot/7218113),521158,swell,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-08-31 00:22:59,1
 [7218113](https://beaconcha.in/slot/7218113),521158,swell,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-08-31 00:22:59,1
+[7218113](https://beaconcha.in/slot/7218113),521158,swell,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-08-31 00:22:59,1
 [7218191](https://beaconcha.in/slot/7218191),0,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-31 00:38:35,15
 [7218191](https://beaconcha.in/slot/7218191),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-31 00:38:35,15
 [7218223](https://beaconcha.in/slot/7218223),0,0x8f9a8b2e668338ca67ad5492b9476ed8c618c963171cc545eaba14e6f46532501e6eb9c340d0dc248b749383daa22061,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-08-31 00:44:59,15
@@ -20270,8 +20254,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7218600](https://beaconcha.in/slot/7218600),0,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-31 02:00:23,8
 [7218771](https://beaconcha.in/slot/7218771),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-08-31 02:34:35,19
 [7218808](https://beaconcha.in/slot/7218808),0,0x8332360a7b97f23c3061045ebf50cfa0e781751f7bcf1474430fa2e714d9450f6c272b48981fbdd660170f504217f567,,,Prysm,2023-08-31 02:41:59,24
-[7219575](https://beaconcha.in/slot/7219575),0,0x9146e7071d7f25aecc806acb9eb9b3dcb33c5d6f4647d3bfdfcd9a5e850887bccbe7021821610cef1b2ce93b6cbe6798,beaverbuild.org,blocknative,Prysm,2023-08-31 05:15:23,23
 [7219575](https://beaconcha.in/slot/7219575),0,0x9146e7071d7f25aecc806acb9eb9b3dcb33c5d6f4647d3bfdfcd9a5e850887bccbe7021821610cef1b2ce93b6cbe6798,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-31 05:15:23,23
+[7219575](https://beaconcha.in/slot/7219575),0,0x9146e7071d7f25aecc806acb9eb9b3dcb33c5d6f4647d3bfdfcd9a5e850887bccbe7021821610cef1b2ce93b6cbe6798,beaverbuild.org,blocknative,Prysm,2023-08-31 05:15:23,23
 [7219575](https://beaconcha.in/slot/7219575),0,0x9146e7071d7f25aecc806acb9eb9b3dcb33c5d6f4647d3bfdfcd9a5e850887bccbe7021821610cef1b2ce93b6cbe6798,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-31 05:15:23,23
 [7219655](https://beaconcha.in/slot/7219655),0,0xa8d419228178f73dc78855d0ee8b8eb196068ab417c420bfc12ad6ed3def0ca7f06e94ddbd49fcf3b3bb7c64534505b4,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-08-31 05:31:23,7
 [7219837](https://beaconcha.in/slot/7219837),0,stakefish,beaverbuild.org,bloxroute (regulated),Prysm,2023-08-31 06:07:47,29
@@ -20301,8 +20285,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7223728](https://beaconcha.in/slot/7223728),0,0x942b90016b1feadd4a2683af5140880b0080803d83c4dac2eca3683049d38177a4afac8f65b0f8dd717c7acf3e92e6c4,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-08-31 19:05:59,16
 [7223902](https://beaconcha.in/slot/7223902),0,0x98df6efef0f7a1117ced267680874fc73de74b297c804b508bc2295bb1ebc7f2fdd52c29f7a72d5375b62349398eab7e,Blocknative,blocknative,Teku,2023-08-31 19:40:47,30
 [7223909](https://beaconcha.in/slot/7223909),0,lido,beaverbuild.org,blocknative,Lighthouse,2023-08-31 19:42:11,5
-[7223944](https://beaconcha.in/slot/7223944),0,stakefish,beaverbuild.org,bloxroute (regulated),Teku,2023-08-31 19:49:11,8
 [7223944](https://beaconcha.in/slot/7223944),0,stakefish,beaverbuild.org,bloxroute (max profit),Teku,2023-08-31 19:49:11,8
+[7223944](https://beaconcha.in/slot/7223944),0,stakefish,beaverbuild.org,bloxroute (regulated),Teku,2023-08-31 19:49:11,8
 [7224110](https://beaconcha.in/slot/7224110),0,binance,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-08-31 20:22:23,14
 [7224112](https://beaconcha.in/slot/7224112),0,0x8fe0cc86bfa47956cde27a026fa63c95c7374ad9d717292be787ea069ba90c955db8c6ccd4700af0cac028a7ff504dfc,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-31 20:22:47,16
 [7224184](https://beaconcha.in/slot/7224184),0,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-08-31 20:37:11,24
@@ -20371,8 +20355,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7232876](https://beaconcha.in/slot/7232876),0,0xa528ceb7672fc43918af14048e0754aed5e10b1712375a8f37c73184f308afd339c9f9b6e0cdddfcaf4ad636b965b0dd,beaverbuild.org,bloxroute (regulated),Teku,2023-09-02 01:35:35,12
 [7233153](https://beaconcha.in/slot/7233153),0,lido,,,Lighthouse,2023-09-02 02:30:59,1
 [7233283](https://beaconcha.in/slot/7233283),0,lido,rsync-builder.xyz,bloxroute (max profit),Teku,2023-09-02 02:56:59,3
-[7233346](https://beaconcha.in/slot/7233346),0,bitcoin suisse,rsync-builder.xyz,bloxroute (regulated),Nimbus,2023-09-02 03:09:35,2
 [7233346](https://beaconcha.in/slot/7233346),0,bitcoin suisse,rsync-builder.xyz,bloxroute (max profit),Nimbus,2023-09-02 03:09:35,2
+[7233346](https://beaconcha.in/slot/7233346),0,bitcoin suisse,rsync-builder.xyz,bloxroute (regulated),Nimbus,2023-09-02 03:09:35,2
 [7233440](https://beaconcha.in/slot/7233440),308082,0x83343dbdc4212a4cecca3dbf4638cea54faa7c5a2a5d5da573da6ee51059a99407fdb388a134bacdf2652f8cd7096d33,,,Prysm,2023-09-02 03:28:23,0
 [7233491](https://beaconcha.in/slot/7233491),0,coinbase,,,Lighthouse,2023-09-02 03:38:35,19
 [7233634](https://beaconcha.in/slot/7233634),0,0xb7e08a331b7ee884a3b1c908e09eadc7518f0d112fd813cc575e3cd5afdd5d17bf5db5d98ef0298f09be577078c166d2,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-09-02 04:07:11,2
@@ -20391,8 +20375,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7234657](https://beaconcha.in/slot/7234657),0,stakefish,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-09-02 07:31:47,1
 [7234851](https://beaconcha.in/slot/7234851),0,lido,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-09-02 08:10:35,3
 [7234903](https://beaconcha.in/slot/7234903),0,stakefish,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-09-02 08:20:59,23
-[7234945](https://beaconcha.in/slot/7234945),805280,bitcoin suisse,beaverbuild.org,blocknative,Teku,2023-09-02 08:29:23,1
 [7234945](https://beaconcha.in/slot/7234945),805280,bitcoin suisse,beaverbuild.org,bloxroute (max profit),Teku,2023-09-02 08:29:23,1
+[7234945](https://beaconcha.in/slot/7234945),805280,bitcoin suisse,beaverbuild.org,blocknative,Teku,2023-09-02 08:29:23,1
 [7234945](https://beaconcha.in/slot/7234945),805280,bitcoin suisse,beaverbuild.org,bloxroute (regulated),Teku,2023-09-02 08:29:23,1
 [7235060](https://beaconcha.in/slot/7235060),0,bitcoin suisse,beaverbuild.org,bloxroute (max profit),Teku,2023-09-02 08:52:23,20
 [7235060](https://beaconcha.in/slot/7235060),0,bitcoin suisse,beaverbuild.org,bloxroute (regulated),Teku,2023-09-02 08:52:23,20
@@ -20411,8 +20395,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7236505](https://beaconcha.in/slot/7236505),0,figment,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-09-02 13:41:23,25
 [7236801](https://beaconcha.in/slot/7236801),0,0xb4755275530022377d87819e8ea68af8ed41e45942cb50afa78432e42effe6040921b256cccc6af1f744fbcb22d3f009,Blocknative,blocknative,Nimbus,2023-09-02 14:40:35,1
 [7236844](https://beaconcha.in/slot/7236844),0,stakefish,rsync-builder.xyz,blocknative,Lighthouse,2023-09-02 14:49:11,12
-[7236844](https://beaconcha.in/slot/7236844),0,stakefish,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-09-02 14:49:11,12
 [7236844](https://beaconcha.in/slot/7236844),0,stakefish,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-09-02 14:49:11,12
+[7236844](https://beaconcha.in/slot/7236844),0,stakefish,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-09-02 14:49:11,12
 [7236869](https://beaconcha.in/slot/7236869),0,0xb95d0391d0cecbdfeaf0eeecbec623a96056e47314e424d678b3e60f315575509fdb77deb7c9a9271562446f95e22deb,rsync-builder.xyz,blocknative,Prysm,2023-09-02 14:54:11,5
 [7236902](https://beaconcha.in/slot/7236902),0,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-09-02 15:00:47,6
 [7237115](https://beaconcha.in/slot/7237115),0,staked.us,BloXroute,bloxroute (max profit),Prysm,2023-09-02 15:43:23,27
@@ -20426,21 +20410,21 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7237650](https://beaconcha.in/slot/7237650),0,bitcoin suisse,beaverbuild.org,bloxroute (max profit),Teku,2023-09-02 17:30:23,18
 [7237650](https://beaconcha.in/slot/7237650),0,bitcoin suisse,beaverbuild.org,bloxroute (regulated),Teku,2023-09-02 17:30:23,18
 [7237858](https://beaconcha.in/slot/7237858),0,lido,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-09-02 18:11:59,2
-[7237858](https://beaconcha.in/slot/7237858),0,lido,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-09-02 18:11:59,2
 [7237858](https://beaconcha.in/slot/7237858),0,lido,rsync-builder.xyz,blocknative,Lighthouse,2023-09-02 18:11:59,2
-[7237967](https://beaconcha.in/slot/7237967),0,binance,beaverbuild.org,blocknative,Prysm,2023-09-02 18:33:47,15
+[7237858](https://beaconcha.in/slot/7237858),0,lido,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-09-02 18:11:59,2
 [7237967](https://beaconcha.in/slot/7237967),0,binance,beaverbuild.org,bloxroute (max profit),Prysm,2023-09-02 18:33:47,15
+[7237967](https://beaconcha.in/slot/7237967),0,binance,beaverbuild.org,blocknative,Prysm,2023-09-02 18:33:47,15
 [7238080](https://beaconcha.in/slot/7238080),788353,tokenpocket,rsync-builder.xyz,blocknative,Lighthouse,2023-09-02 18:56:23,0
 [7238080](https://beaconcha.in/slot/7238080),788353,tokenpocket,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-09-02 18:56:23,0
-[7238260](https://beaconcha.in/slot/7238260),0,0x8706e3842d49e04f5a4799dccc700df06e8600ce3420f7d945d14a1b700763e270f90c4c6d498ea494f8994ecd89d96d,beaverbuild.org,blocknative,Prysm,2023-09-02 19:32:23,20
 [7238260](https://beaconcha.in/slot/7238260),0,0x8706e3842d49e04f5a4799dccc700df06e8600ce3420f7d945d14a1b700763e270f90c4c6d498ea494f8994ecd89d96d,beaverbuild.org,bloxroute (max profit),Prysm,2023-09-02 19:32:23,20
+[7238260](https://beaconcha.in/slot/7238260),0,0x8706e3842d49e04f5a4799dccc700df06e8600ce3420f7d945d14a1b700763e270f90c4c6d498ea494f8994ecd89d96d,beaverbuild.org,blocknative,Prysm,2023-09-02 19:32:23,20
 [7238439](https://beaconcha.in/slot/7238439),0,0xac917fd0525990818d5f75b67ca51188a00b85ef238446c2e7f635dea9f113c3abac3ef5e04a3b11b1c2f4ec59950b49,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-09-02 20:08:11,7
 [7238497](https://beaconcha.in/slot/7238497),0,lido,builder0x69,blocknative,Prysm,2023-09-02 20:19:47,1
 [7238686](https://beaconcha.in/slot/7238686),0,lido,rsync-builder.xyz,bloxroute (regulated),Nimbus,2023-09-02 20:57:35,30
 [7238689](https://beaconcha.in/slot/7238689),0,rocketpool,beaverbuild.org,bloxroute (max profit),Teku,2023-09-02 20:58:11,1
 [7238723](https://beaconcha.in/slot/7238723),0,0x82e8c49ffa3b9cc6133f268876e0eed5206acc232dede81a0b68959d0c31b72dd1859201de4bc96a3383bf6e6defff0d,beaverbuild.org,bloxroute (max profit),Prysm,2023-09-02 21:04:59,3
-[7238733](https://beaconcha.in/slot/7238733),0,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-09-02 21:06:59,13
 [7238733](https://beaconcha.in/slot/7238733),0,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-09-02 21:06:59,13
+[7238733](https://beaconcha.in/slot/7238733),0,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-09-02 21:06:59,13
 [7238733](https://beaconcha.in/slot/7238733),0,lido,beaverbuild.org,blocknative,Prysm,2023-09-02 21:06:59,13
 [7238891](https://beaconcha.in/slot/7238891),0,lido,beaverbuild.org,blocknative,Lighthouse,2023-09-02 21:38:35,11
 [7238907](https://beaconcha.in/slot/7238907),0,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-09-02 21:41:47,27
@@ -20473,24 +20457,24 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7243353](https://beaconcha.in/slot/7243353),0,bitfinex,beaverbuild.org,bloxroute (max profit),Prysm,2023-09-03 12:30:59,25
 [7243353](https://beaconcha.in/slot/7243353),0,bitfinex,beaverbuild.org,blocknative,Prysm,2023-09-03 12:30:59,25
 [7243366](https://beaconcha.in/slot/7243366),0,lido,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-09-03 12:33:35,6
-[7243366](https://beaconcha.in/slot/7243366),0,lido,beaverbuild.org,blocknative,Lighthouse,2023-09-03 12:33:35,6
 [7243366](https://beaconcha.in/slot/7243366),0,lido,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-09-03 12:33:35,6
+[7243366](https://beaconcha.in/slot/7243366),0,lido,beaverbuild.org,blocknative,Lighthouse,2023-09-03 12:33:35,6
 [7243395](https://beaconcha.in/slot/7243395),0,lido,,,Lighthouse,2023-09-03 12:39:23,3
 [7243426](https://beaconcha.in/slot/7243426),0,figment,rsync-builder.xyz,blocknative,Lighthouse,2023-09-03 12:45:35,2
 [7243426](https://beaconcha.in/slot/7243426),0,figment,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-09-03 12:45:35,2
 [7243585](https://beaconcha.in/slot/7243585),0,0xb638493083849801584a3a68361c775986c1ab1e8a03d75a4297d480175bbe26c7e9eb152029283c7670c52da5a7d6a7,beaverbuild.org,bloxroute (max profit),Nimbus,2023-09-03 13:17:23,1
-[7243660](https://beaconcha.in/slot/7243660),0,bitcoin suisse,beaverbuild.org,bloxroute (max profit),Nimbus,2023-09-03 13:32:23,12
 [7243660](https://beaconcha.in/slot/7243660),0,bitcoin suisse,beaverbuild.org,bloxroute (regulated),Nimbus,2023-09-03 13:32:23,12
+[7243660](https://beaconcha.in/slot/7243660),0,bitcoin suisse,beaverbuild.org,bloxroute (max profit),Nimbus,2023-09-03 13:32:23,12
 [7243660](https://beaconcha.in/slot/7243660),0,bitcoin suisse,beaverbuild.org,blocknative,Nimbus,2023-09-03 13:32:23,12
 [7243850](https://beaconcha.in/slot/7243850),0,0x8ed2556d2b08af6cbe8e9537f54e5222b4fa16747575c8e6debd7e3f70110f817059fff6838a9cf846420f4ea56c3b9b,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-09-03 14:10:23,10
-[7243850](https://beaconcha.in/slot/7243850),0,0x8ed2556d2b08af6cbe8e9537f54e5222b4fa16747575c8e6debd7e3f70110f817059fff6838a9cf846420f4ea56c3b9b,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-09-03 14:10:23,10
 [7243850](https://beaconcha.in/slot/7243850),0,0x8ed2556d2b08af6cbe8e9537f54e5222b4fa16747575c8e6debd7e3f70110f817059fff6838a9cf846420f4ea56c3b9b,beaverbuild.org,blocknative,Lighthouse,2023-09-03 14:10:23,10
+[7243850](https://beaconcha.in/slot/7243850),0,0x8ed2556d2b08af6cbe8e9537f54e5222b4fa16747575c8e6debd7e3f70110f817059fff6838a9cf846420f4ea56c3b9b,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-09-03 14:10:23,10
 [7243922](https://beaconcha.in/slot/7243922),0,0x8da04415e9aa77538969c6becdf352ecc37217839b4dbb5272bc2739f4bb20f69cda8bb3afabae528f38778b8b39a9f3,,,Prysm,2023-09-03 14:24:47,18
 [7243964](https://beaconcha.in/slot/7243964),0,0x992cc1268cfee9c50943a22ad556c70423067abfcc73937afc89d72f2401f3ff79089b746bd50f6127b2cb05d08f6d6e,,,Prysm,2023-09-03 14:33:11,28
 [7243969](https://beaconcha.in/slot/7243969),625984,lido,beaverbuild.org,bloxroute (regulated),Nimbus,2023-09-03 14:34:11,1
 [7243969](https://beaconcha.in/slot/7243969),625984,lido,beaverbuild.org,bloxroute (max profit),Nimbus,2023-09-03 14:34:11,1
-[7244135](https://beaconcha.in/slot/7244135),0,lido,beaverbuild.org,blocknative,Lighthouse,2023-09-03 15:07:23,7
 [7244135](https://beaconcha.in/slot/7244135),0,lido,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-09-03 15:07:23,7
+[7244135](https://beaconcha.in/slot/7244135),0,lido,beaverbuild.org,blocknative,Lighthouse,2023-09-03 15:07:23,7
 [7244135](https://beaconcha.in/slot/7244135),0,lido,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-09-03 15:07:23,7
 [7244429](https://beaconcha.in/slot/7244429),0,coinbase,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-09-03 16:06:11,13
 [7245857](https://beaconcha.in/slot/7245857),806454,figment,rsync-builder.xyz,blocknative,Lighthouse,2023-09-03 20:51:47,1
@@ -20559,8 +20543,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7345058](https://beaconcha.in/slot/7345058),584003,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-09-17 15:31:59,2
 [7345377](https://beaconcha.in/slot/7345377),489265,0x9533ac1061c28308c613599a8aed267123caafc52b17dd38a4033be5fd1852decd58671dcbd1354bbf83a2fdf11c546c,Blocknative,blocknative,Lighthouse,2023-09-17 16:35:47,1
 [7347455](https://beaconcha.in/slot/7347455),106715,0xb6471c0496b2fda992878dfd6a1146cc2982a6e997a485e6604372fad1f00a2c6238242ab83c177d3976d619e3248a32,rsync-builder.xyz,blocknative,Lighthouse,2023-09-17 23:31:23,31
-[7347455](https://beaconcha.in/slot/7347455),106715,0xb6471c0496b2fda992878dfd6a1146cc2982a6e997a485e6604372fad1f00a2c6238242ab83c177d3976d619e3248a32,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-09-17 23:31:23,31
 [7347455](https://beaconcha.in/slot/7347455),106715,0xb6471c0496b2fda992878dfd6a1146cc2982a6e997a485e6604372fad1f00a2c6238242ab83c177d3976d619e3248a32,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-09-17 23:31:23,31
+[7347455](https://beaconcha.in/slot/7347455),106715,0xb6471c0496b2fda992878dfd6a1146cc2982a6e997a485e6604372fad1f00a2c6238242ab83c177d3976d619e3248a32,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-09-17 23:31:23,31
 [7349883](https://beaconcha.in/slot/7349883),437869,lido,beaverbuild.org,bloxroute (max profit),Nimbus,2023-09-18 07:36:59,27
 [7349883](https://beaconcha.in/slot/7349883),437869,lido,beaverbuild.org,bloxroute (regulated),Nimbus,2023-09-18 07:36:59,27
 [7351364](https://beaconcha.in/slot/7351364),513272,coinbase,BloXroute,bloxroute (max profit),Lighthouse,2023-09-18 12:33:11,4
@@ -20583,8 +20567,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7365562](https://beaconcha.in/slot/7365562),819853,lido,,,Lighthouse,2023-09-20 11:52:47,26
 [7367786](https://beaconcha.in/slot/7367786),842391,frax finance,,,Lighthouse,2023-09-20 19:17:35,10
 [7371288](https://beaconcha.in/slot/7371288),581795,0xa323921e43018406c5341f13f3178902cbe5350ab7df49e610694de6523d8577938b3e41197c45cb41af90561369137b,,,Prysm,2023-09-21 06:57:59,24
-[7373665](https://beaconcha.in/slot/7373665),884495,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-09-21 14:53:23,1
 [7373665](https://beaconcha.in/slot/7373665),884495,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-09-21 14:53:23,1
+[7373665](https://beaconcha.in/slot/7373665),884495,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-09-21 14:53:23,1
 [7376264](https://beaconcha.in/slot/7376264),640726,0xb43b9694daaa45fb27d8af20b1c7fba3dca7b8d7dadb92e610f8ad9a59624ed018ecac40d2871f388669519b099b1b0c,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-09-21 23:33:11,8
 [7378205](https://beaconcha.in/slot/7378205),864712,lido,rsync-builder.xyz,blocknative,Prysm,2023-09-22 06:01:23,29
 [7378205](https://beaconcha.in/slot/7378205),864712,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-09-22 06:01:23,29
@@ -20662,8 +20646,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7511105](https://beaconcha.in/slot/7511105),210511,figment,builder0x69,flashbots,Lighthouse,2023-10-10 17:01:23,1
 [7512240](https://beaconcha.in/slot/7512240),198657,0x99f7aa549425b06e769bf1937957c3bb67cfd14319f29f9335a07784336aa7e037c9cb6180b1d57db91dad28b897c0d7,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-10-10 20:48:23,16
 [7515265](https://beaconcha.in/slot/7515265),898158,lido,beaverbuild.org,agnostic Gnosis,Prysm,2023-10-11 06:53:23,1
-[7515265](https://beaconcha.in/slot/7515265),898158,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-10-11 06:53:23,1
 [7515265](https://beaconcha.in/slot/7515265),898158,lido,beaverbuild.org,ultrasound,Prysm,2023-10-11 06:53:23,1
+[7515265](https://beaconcha.in/slot/7515265),898158,lido,beaverbuild.org,bloxroute (regulated),Prysm,2023-10-11 06:53:23,1
 [7515265](https://beaconcha.in/slot/7515265),898158,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-10-11 06:53:23,1
 [7515417](https://beaconcha.in/slot/7515417),351617,0x8bfb02f7a7466d73463ff23ba559f393a949f6daae247f59cc2d3326866a74684d9548c4097ab82281fc0c9a7d6129c4,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-10-11 07:23:47,25
 [7515417](https://beaconcha.in/slot/7515417),351617,0x8bfb02f7a7466d73463ff23ba559f393a949f6daae247f59cc2d3326866a74684d9548c4097ab82281fc0c9a7d6129c4,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-10-11 07:23:47,25
@@ -20674,15 +20658,15 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7529176](https://beaconcha.in/slot/7529176),295075,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-10-13 05:15:35,24
 [7530055](https://beaconcha.in/slot/7530055),313315,celsius,,,Teku,2023-10-13 08:11:23,7
 [7531899](https://beaconcha.in/slot/7531899),811137,0xa1a0f86d8f426a9d4a0bd498f7f7cc4728a7a2ac8d20af11a64d5187e59c67e2083f266631c605d628ced9a3b3b6f540,Titan Builder,bloxroute (max profit),Prysm,2023-10-13 14:20:11,27
-[7536836](https://beaconcha.in/slot/7536836),764944,lido,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-10-14 06:47:35,4
 [7536836](https://beaconcha.in/slot/7536836),764944,lido,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-10-14 06:47:35,4
+[7536836](https://beaconcha.in/slot/7536836),764944,lido,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-10-14 06:47:35,4
 [7538433](https://beaconcha.in/slot/7538433),819629,lido,,,Lighthouse,2023-10-14 12:06:59,1
 [7539073](https://beaconcha.in/slot/7539073),638440,0xa1bc7f1b63f6a6a3e1409cd7687c5ca0dc395d3b80c19243a2fac4ec7b386b634fc3850ae1c1480e88428ad66cec826c,rsync-builder.xyz,flashbots,Lighthouse,2023-10-14 14:14:59,1
 [7539073](https://beaconcha.in/slot/7539073),638440,0xa1bc7f1b63f6a6a3e1409cd7687c5ca0dc395d3b80c19243a2fac4ec7b386b634fc3850ae1c1480e88428ad66cec826c,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-10-14 14:14:59,1
 [7539073](https://beaconcha.in/slot/7539073),638440,0xa1bc7f1b63f6a6a3e1409cd7687c5ca0dc395d3b80c19243a2fac4ec7b386b634fc3850ae1c1480e88428ad66cec826c,rsync-builder.xyz,agnostic Gnosis,Lighthouse,2023-10-14 14:14:59,1
 [7539073](https://beaconcha.in/slot/7539073),638440,0xa1bc7f1b63f6a6a3e1409cd7687c5ca0dc395d3b80c19243a2fac4ec7b386b634fc3850ae1c1480e88428ad66cec826c,rsync-builder.xyz,aestus,Lighthouse,2023-10-14 14:14:59,1
-[7539073](https://beaconcha.in/slot/7539073),638440,0xa1bc7f1b63f6a6a3e1409cd7687c5ca0dc395d3b80c19243a2fac4ec7b386b634fc3850ae1c1480e88428ad66cec826c,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-10-14 14:14:59,1
 [7539073](https://beaconcha.in/slot/7539073),638440,0xa1bc7f1b63f6a6a3e1409cd7687c5ca0dc395d3b80c19243a2fac4ec7b386b634fc3850ae1c1480e88428ad66cec826c,rsync-builder.xyz,ultrasound,Lighthouse,2023-10-14 14:14:59,1
+[7539073](https://beaconcha.in/slot/7539073),638440,0xa1bc7f1b63f6a6a3e1409cd7687c5ca0dc395d3b80c19243a2fac4ec7b386b634fc3850ae1c1480e88428ad66cec826c,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-10-14 14:14:59,1
 [7539810](https://beaconcha.in/slot/7539810),866438,kraken,,,Lighthouse,2023-10-14 16:42:23,2
 [7545216](https://beaconcha.in/slot/7545216),779061,lido,rsync-builder.xyz,bloxroute (regulated),Teku,2023-10-15 10:43:35,0
 [7545216](https://beaconcha.in/slot/7545216),779061,lido,rsync-builder.xyz,bloxroute (max profit),Teku,2023-10-15 10:43:35,0
@@ -20705,8 +20689,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7573706](https://beaconcha.in/slot/7573706),7512,0x980283b286755e02cc8956053de1821bc44697f0b24028377d5b285ac676b79aacd2fe3e1a4e0a699d6f7cfd6de517f9,,,Prysm,2023-10-19 09:41:35,10
 [7574738](https://beaconcha.in/slot/7574738),246504,lido,beaverbuild.org,bloxroute (max profit),Lodestar,2023-10-19 13:07:59,18
 [7575489](https://beaconcha.in/slot/7575489),520697,lido,rsync-builder.xyz,bloxroute (max profit),Nimbus,2023-10-19 15:38:11,1
-[7580225](https://beaconcha.in/slot/7580225),965513,stakefish,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-10-20 07:25:23,1
 [7580225](https://beaconcha.in/slot/7580225),965513,stakefish,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-10-20 07:25:23,1
+[7580225](https://beaconcha.in/slot/7580225),965513,stakefish,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-10-20 07:25:23,1
 [7586085](https://beaconcha.in/slot/7586085),697283,0x998b275846d997441306875923a06b4f01d67d24ed94101a90a58102e0914d9d9c4bef198ba152d494303802d0b62302,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-10-21 02:57:23,5
 [7588873](https://beaconcha.in/slot/7588873),7436,missed,,,,2023-10-21 12:14:59,9
 [7589078](https://beaconcha.in/slot/7589078),7528,lido,beaverbuild.org,bloxroute (max profit),Prysm,2023-10-21 12:55:59,22
@@ -20773,8 +20757,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7634529](https://beaconcha.in/slot/7634529),557142,binance,,,Lighthouse,2023-10-27 20:26:11,1
 [7636540](https://beaconcha.in/slot/7636540),7516,coinbase,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-10-28 03:08:23,28
 [7637089](https://beaconcha.in/slot/7637089),561635,lido,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-10-28 04:58:11,1
-[7638328](https://beaconcha.in/slot/7638328),152612,0x89fb643ebea48a000dd56cc37e34c253d25ea346ac66467b800fee0cd220cba72dafa9b4ea12f68f24c1fb083b8439db,beaverbuild.org,bloxroute (regulated),Nimbus,2023-10-28 09:05:59,24
 [7638328](https://beaconcha.in/slot/7638328),152612,0x89fb643ebea48a000dd56cc37e34c253d25ea346ac66467b800fee0cd220cba72dafa9b4ea12f68f24c1fb083b8439db,beaverbuild.org,bloxroute (max profit),Nimbus,2023-10-28 09:05:59,24
+[7638328](https://beaconcha.in/slot/7638328),152612,0x89fb643ebea48a000dd56cc37e34c253d25ea346ac66467b800fee0cd220cba72dafa9b4ea12f68f24c1fb083b8439db,beaverbuild.org,bloxroute (regulated),Nimbus,2023-10-28 09:05:59,24
 [7638850](https://beaconcha.in/slot/7638850),552525,lido,,,Prysm,2023-10-28 10:50:23,2
 [7639504](https://beaconcha.in/slot/7639504),584176,0xa4a5dc3739ea29dbf0dd997e68cc32e3d369272d232e07a24fbaf82ebb66b9aa353f76fe73abde41ef0bf7f3569f170f,,,Prysm,2023-10-28 13:01:11,16
 [7639575](https://beaconcha.in/slot/7639575),487664,0x8d08ba0636ef9f062ef987b49dc537368b9762a4e506e34aa653427913be8c86c83ce43fcb448835daf992314f29db63,rsync-builder.xyz,bloxroute (max profit),Lighthouse,2023-10-28 13:15:23,23
@@ -20903,8 +20887,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7706558](https://beaconcha.in/slot/7706558),421513,0xaac082ea2ecddd837314804e549627e62f309730105220e20d5261e1df2c4ff11c0aa1fa6792fa9aa97032da06316c44,,,Prysm,2023-11-06 20:31:59,30
 [7706722](https://beaconcha.in/slot/7706722),956704,lido,,,Lighthouse,2023-11-06 21:04:47,2
 [7707961](https://beaconcha.in/slot/7707961),5927,abyss finance,,,Prysm,2023-11-07 01:12:35,25
-[7709091](https://beaconcha.in/slot/7709091),449442,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-11-07 04:58:35,3
 [7709091](https://beaconcha.in/slot/7709091),449442,lido,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-11-07 04:58:35,3
+[7709091](https://beaconcha.in/slot/7709091),449442,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-11-07 04:58:35,3
 [7709732](https://beaconcha.in/slot/7709732),480602,lido,,,Prysm,2023-11-07 07:06:47,4
 [7710563](https://beaconcha.in/slot/7710563),21607,kraken,beaverbuild.org,bloxroute (regulated),Prysm,2023-11-07 09:52:59,3
 [7711822](https://beaconcha.in/slot/7711822),16983,abyss finance,,,Prysm,2023-11-07 14:04:47,14
@@ -20948,16 +20932,16 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7734647](https://beaconcha.in/slot/7734647),334740,0x8dca65e6fbbf99589e396f59b7470ef93050db00e26a8c69a09cf8ccb217b7701b54e4605ec82570128fd0b603af0172,,,Lighthouse,2023-11-10 18:09:47,23
 [7735091](https://beaconcha.in/slot/7735091),869869,0xa9ff8aba4aa11848b8351f8e55105351aab66bf9b7de0b9607f7e98258cb54c83edcbf5473961a967c404fd7ab9e527d,,,Lighthouse,2023-11-10 19:38:35,19
 [7735301](https://beaconcha.in/slot/7735301),551420,0x987e684d9fc50e84dbf1cd87d0d41cd43b81c49016af4697f37dc2c4c064d8900c6f7643688b1a34c3f20f2fb5015530,beaverbuild.org,bloxroute (max profit),Teku,2023-11-10 20:20:35,5
-[7735876](https://beaconcha.in/slot/7735876),716222,lido,beaverbuild.org,bloxroute (regulated),Nimbus,2023-11-10 22:15:35,4
 [7735876](https://beaconcha.in/slot/7735876),716222,lido,beaverbuild.org,bloxroute (max profit),Nimbus,2023-11-10 22:15:35,4
+[7735876](https://beaconcha.in/slot/7735876),716222,lido,beaverbuild.org,bloxroute (regulated),Nimbus,2023-11-10 22:15:35,4
 [7736033](https://beaconcha.in/slot/7736033),166804,lido,,,Lighthouse,2023-11-10 22:46:59,1
 [7736134](https://beaconcha.in/slot/7736134),118233,0x80b76ce79443a01089f804f8d11700281ba541cbf451d9eb934f0e295ef4d1154378b781ea019f206ac503942a20b5ee,beaverbuild.org,bloxroute (max profit),Nimbus,2023-11-10 23:07:11,6
 [7736263](https://beaconcha.in/slot/7736263),205689,figment,,,Lighthouse,2023-11-10 23:32:59,7
 [7736922](https://beaconcha.in/slot/7736922),427772,0x8ed6f36f0b42d7afca4b5853b2e1f823875d6bb463084da0e6557bf1673eafd6398e1365077b4c9fb6608e12611a5e4c,,,Nimbus,2023-11-11 01:44:47,26
 [7738018](https://beaconcha.in/slot/7738018),706605,0x8bbdb4339d0155f6282c50418a7773d653b02e0ff2447698ad7ffbc0595299622f9c686c71c66436f346b1cdfc0fc6a3,,,Prysm,2023-11-11 05:23:59,2
 [7738402](https://beaconcha.in/slot/7738402),1418,0xa7814b51cbe575c64b5f8a4cd390711e713761ea72d15f7258595e6df34860ab3fc50a735bb6f698c348e01111b30e60,,,Prysm,2023-11-11 06:40:47,2
-[7738564](https://beaconcha.in/slot/7738564),450671,okx,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-11-11 07:13:11,4
 [7738564](https://beaconcha.in/slot/7738564),450671,okx,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-11-11 07:13:11,4
+[7738564](https://beaconcha.in/slot/7738564),450671,okx,rsync-builder.xyz,bloxroute (regulated),Prysm,2023-11-11 07:13:11,4
 [7739361](https://beaconcha.in/slot/7739361),333945,lido,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-11-11 09:52:35,1
 [7739793](https://beaconcha.in/slot/7739793),27691,kraken,,,Prysm,2023-11-11 11:18:59,17
 [7740905](https://beaconcha.in/slot/7740905),108429,lido,,,Prysm,2023-11-11 15:01:23,9
@@ -20979,8 +20963,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7754418](https://beaconcha.in/slot/7754418),21559,figment,rsync-builder.xyz,bloxroute (regulated),Lighthouse,2023-11-13 12:03:59,18
 [7754774](https://beaconcha.in/slot/7754774),110327,stakefish,,,Prysm,2023-11-13 13:15:11,22
 [7756292](https://beaconcha.in/slot/7756292),826920,lido,beaverbuild.org,bloxroute (max profit),Lighthouse,2023-11-13 18:18:47,4
-[7756324](https://beaconcha.in/slot/7756324),1019109,stakehound,rsync-builder.xyz,bloxroute (regulated),Nimbus,2023-11-13 18:25:11,4
 [7756324](https://beaconcha.in/slot/7756324),1019109,stakehound,rsync-builder.xyz,bloxroute (max profit),Nimbus,2023-11-13 18:25:11,4
+[7756324](https://beaconcha.in/slot/7756324),1019109,stakehound,rsync-builder.xyz,bloxroute (regulated),Nimbus,2023-11-13 18:25:11,4
 [7756357](https://beaconcha.in/slot/7756357),511660,lido,,,Prysm,2023-11-13 18:31:47,5
 [7756820](https://beaconcha.in/slot/7756820),579199,abyss finance,,,Lighthouse,2023-11-13 20:04:23,20
 [7756871](https://beaconcha.in/slot/7756871),21545,lido,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-11-13 20:14:35,7
@@ -20999,8 +20983,8 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7768574](https://beaconcha.in/slot/7768574),57156,figment,beaverbuild.org,bloxroute (regulated),Lighthouse,2023-11-15 11:15:11,30
 [7769473](https://beaconcha.in/slot/7769473),27712,0x803a6779376549d3bd4c3102b1821dbf0ea38eb622f1368b69bd0b26fd3050737a94d72f812cee5650ffb1ba2f65c87e,,,Teku,2023-11-15 14:14:59,1
 [7770704](https://beaconcha.in/slot/7770704),29632,lido,rsync-builder.xyz,bloxroute (max profit),Prysm,2023-11-15 18:21:11,16
-[7773057](https://beaconcha.in/slot/7773057),644019,0x9644ef0594f404dd51a5687282ca31e2dede44365ceb5820a959a1e5dc12b325fe07113e220c9b83feb49be7ae4d3c04,builder0x69,ultrasound,Lighthouse,2023-11-16 02:11:47,1
 [7773057](https://beaconcha.in/slot/7773057),644019,0x9644ef0594f404dd51a5687282ca31e2dede44365ceb5820a959a1e5dc12b325fe07113e220c9b83feb49be7ae4d3c04,builder0x69,agnostic Gnosis,Lighthouse,2023-11-16 02:11:47,1
+[7773057](https://beaconcha.in/slot/7773057),644019,0x9644ef0594f404dd51a5687282ca31e2dede44365ceb5820a959a1e5dc12b325fe07113e220c9b83feb49be7ae4d3c04,builder0x69,ultrasound,Lighthouse,2023-11-16 02:11:47,1
 [7773281](https://beaconcha.in/slot/7773281),793522,okx,,,Prysm,2023-11-16 02:56:35,1
 [7773575](https://beaconcha.in/slot/7773575),21605,lido,,,Teku,2023-11-16 03:55:23,7
 [7775042](https://beaconcha.in/slot/7775042),670114,lido,,,Teku,2023-11-16 08:48:47,2
@@ -21140,3 +21124,6 @@ slot,validator_id,validator,builder,relay,cl_client,date,slot_in_epoch
 [7851068](https://beaconcha.in/slot/7851068),835481,lido,,,Lighthouse,2023-11-26 22:13:59,28
 [7851154](https://beaconcha.in/slot/7851154),316760,okx,beaverbuild.org,bloxroute (max profit),Prysm,2023-11-26 22:31:11,18
 [7851154](https://beaconcha.in/slot/7851154),316760,okx,beaverbuild.org,bloxroute (regulated),Prysm,2023-11-26 22:31:11,18
+[7852024](https://beaconcha.in/slot/7852024),503754,,,,,2023-11-27 01:25:11,24
+[7852040](https://beaconcha.in/slot/7852040),811194,,,,,2023-11-27 01:28:23,8
+[7852291](https://beaconcha.in/slot/7852291),618945,,,,,2023-11-27 02:18:35,3
