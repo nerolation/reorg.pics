@@ -21,7 +21,7 @@ def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = CONFIG \
         + GOOGLE_CREDENTIALS or input("No Google API credendials file provided." 
         + "Please specify path now:\n")
-        
+
 set_google_credentials("./config/","google-creds.json")
 
 
@@ -97,9 +97,9 @@ query = """
       SELECT
         slot
       FROM
-        `ethereum-data-nero.eth.validator_info`
+        `ethereum-data-nero.ethdata.beaconchain`
       WHERE
-        validator_id= "missed"
+        cl_client= "missed"
         )
     ) AA LEFT JOIN (
       SELECT DISTINCT slot, relay, builder, validator FROM `ethereum-data-nero.eth.mevboost_db` WHERE DATE(date) between DATE_SUB(current_date(), INTERVAL 90 DAY) and DATE_Add(current_date(), INTERVAL 1 DAY)
@@ -114,41 +114,6 @@ df["parent_slot"] = df.apply(
     axis=1
 )
 df["slot"] = df["slot"].apply(add_link_to_slot)
-df
-
-
-
-# In[ ]:
-
-
-#df[[df.columns[0]] + [df.columns[3]] + df.columns[1:3].values.tolist() + df.columns[4:].values.tolist()]
-
-
-# In[ ]:
-
-
-#def max_slot(slot):
-#    return int(slot.split("[")[1].split("]")[0])
-##df["slot"] = df["slot"].apply(max_slot)
-#df[~df["relay"].isna()].sort_values("slot", ascending=False).head(2000).to_csv("missed-slot-data.csv", index=False)
-
-
-# In[ ]:
-
-
-#df = df.sort_values("slot", ascending=False)#.head(1000)
-
-
-# In[ ]:
-
-
-#pd.read_csv("missed-slot-data.csv")
-
-
-# In[ ]:
-
-
-
 
 
 # In[ ]:
@@ -172,9 +137,9 @@ FROM (
     SELECT
       slot
     FROM
-      `ethereum-data-nero.eth.validator_info`
+      `ethereum-data-nero.ethdata.beaconchain`
     WHERE
-      validator_id= "missed" ) ) AA
+      cl_client= "missed" ) ) AA
 LEFT JOIN (
   SELECT
     DD.*,
@@ -209,8 +174,6 @@ df_reorg["slot_in_epoch"] = df_reorg["slot"].apply(slot_in_epoch)
 df_reorg["slot"] = df_reorg["slot"].apply(add_link_to_slot)
 df_reorg
 
-df_reorg.to_csv("reorgers-data.csv", index=None)
-
 
 # In[ ]:
 
@@ -232,8 +195,7 @@ order by slots desc
 df5.to_csv("clclient_slots.csv", index=None)
 
 
-# In[ ]:
-
 
 print("finished")
+
 
