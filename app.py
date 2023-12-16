@@ -247,6 +247,7 @@ def fig2_layout(width=801):
 
 
 def create_fig2(df_90, df, df_30, df_14, df_7, order):
+    df = df.drop("relay", axis=1).drop_duplicates()
     df = df[~df['cl_client'].str.contains('missed')]
     _df = df['cl_client'].value_counts().reset_index()
     _df = pd.merge(_df,order,how="left", left_on="cl_client", right_on="cl_client")
@@ -354,6 +355,7 @@ def fig1_layout(width=801):
     )
 
 def create_fig1(df_90, df_60, df, df_14, df_7):
+    df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["cl_client"] != "missed"]
     fig1 = make_subplots(rows=1, cols=1)
     df.loc[:,"date"] = df["date"].apply(lambda x: x.split(" ")[0])
@@ -444,6 +446,7 @@ def fig4_layout(width=801):
 
 
 def create_fig_for_validators(df_90, df, df_30, df_14, df_7, order):
+    df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["validator"] != "missed"]
     _df = df['validator'].value_counts().reset_index()
     _df = pd.merge(_df,order,how="left", left_on="validator", right_on="validator")
@@ -670,6 +673,7 @@ def create_reorger_builder_layout(width=801):
     )
 
 def create_reorger_builder(df_90, df_60, df_30, df_14, df_7, order, df):
+    df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["builder"] != "missed"]
     _df = df['builder'].value_counts().reset_index()
     _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
@@ -791,6 +795,7 @@ def create_reorger_validator_layout(width=801):
     )
 
 def create_reorger_validator(df_90, df_60, df_30, df_14, df_7, order, df):
+    df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["validator"] != "missed"]
     _df = df['validator'].value_counts().reset_index()
     _df = pd.merge(_df,order,how="left", left_on="validator", right_on="validator")
@@ -1025,6 +1030,7 @@ def fig6_layout(width=801):
 
 
 def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
+    df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["builder"] != "missed"]
     _df = df['builder'].value_counts().reset_index()
     _df = pd.merge(_df,order,how="left", left_on="builder", right_on="builder")
@@ -1160,6 +1166,7 @@ def fig7_layout(width=801):
     )
 
 def create_fig_stacked(df_90, df_60, df, df_14, df_7, order):
+    df = df.drop("relay", axis=1).drop_duplicates()
     df = df[~df['cl_client'].str.contains('Unknown')]
     df = df[df["cl_client"] != "missed"]
     df.loc[:,"date"] = df["date"].apply(lambda x: x.split(" ")[0])
