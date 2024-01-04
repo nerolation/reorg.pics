@@ -12,6 +12,12 @@ import numpy as np
 from dash import Input, Output
 from plotly.subplots import make_subplots
 
+clclientorder = ["Lighthouse", "Prysm", "Nimbus", "Teku", "Lodestar"]
+def orderclclient(df):
+    df.set_index("cl_client", inplace=True)
+    df = df.loc[clclientorder]
+    return df.reset_index()
+
 
 # Data preparation
 def prepare_data():
@@ -163,6 +169,10 @@ def create_fig3(df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
     df_per_sie_14 = df_per_sie_14[~df_per_sie_14['cl_client'].str.contains('missed')]
     df_per_sie_7 = df_per_sie_7[~df_per_sie_7['cl_client'].str.contains('missed')]
     
+    #df_per_sie_60 = orderclclient(df_per_sie_60)
+    #df_per_sie_14 = orderclclient(df_per_sie_14)
+    #df_per_sie_7 = orderclclient(df_per_sie_7)
+    
 
     # Colors array (can be extended with more colors)
     colors = [
@@ -171,9 +181,10 @@ def create_fig3(df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
     ]
 
     # Add traces for each client
-    for i, client in enumerate(df["cl_client"].unique()):
+    for i, client in enumerate(clclientorder):
         visible = True
         for j in (df_per_sie_60, df, df_per_sie_14, df_per_sie_7):
+            #j = orderclclient(j.reset_index())
             k = j[j["cl_client"] == client]
             fig.add_trace(go.Bar(x=k["slot_in_epoch"], y=k["slot"], name=client, marker_color=colors[i], visible=visible,hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>'))
             visible = False
@@ -257,6 +268,7 @@ def create_fig2(df_90, df, df_30, df_14, df_7, order):
     _df.sort_values("relative_count", ascending=False, inplace=True)
     fig2 = make_subplots(rows=1, cols=1)
     colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+    _df = orderclclient(_df)
     for index, row in _df.iterrows():
         client = row['cl_client']
         relative_count = row['relative_count']
@@ -370,17 +382,22 @@ def create_fig1(df_90, df_60, df, df_14, df_7):
         
     #grouped_data["relative_count"] = grouped_data["slot"]/grouped_data["sum"]
 
-    # Add a trace for each unique client
+    colors = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+        '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
+    ]
+    color_mapping = {client: color for client, color in zip(clclientorder, colors)}
 
+    grouped_data = orderclclient(grouped_data)
     for client in grouped_data['cl_client'].unique():
         client_data = grouped_data[grouped_data['cl_client'] == client]
         visibility = "legendonly" if "missed" in client else True
         
         fig1.add_trace(
-            go.Scatter(x=client_data['date'], y=client_data['slot'], mode='lines', name=client, stackgroup='A', visible=visibility, hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>')
+            go.Scatter(x=client_data['date'], y=client_data['slot'], mode='lines', name=client, stackgroup='A', visible=visibility, hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>', line=dict(color=color_mapping[client]))
         )
         fig1.add_trace(
-            go.Scatter(x=client_data['date'], y=client_data['relative_count'], mode='lines', name=client, stackgroup='B', visible=False, hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>')
+            go.Scatter(x=client_data['date'], y=client_data['relative_count'], mode='lines', name=client, stackgroup='B', visible=False, hovertemplate=f'<b>{client}: ' +  '%{y}</b><extra></extra>', line=dict(color=color_mapping[client]))
         )
         
 
@@ -1177,6 +1194,7 @@ def create_fig_stacked(df_90, df_60, df, df_14, df_7, order):
     _df.columns = ['date', 'cl_client', 'slot', 'slots']
     _df["relative_count"] = round(_df['slot'] / _df['slots'] * 100, 5)
     _df.sort_values("relative_count", ascending=False, inplace=True)
+    _df = orderclclient(_df)
 
     fig = make_subplots(rows=1, cols=1)
 
