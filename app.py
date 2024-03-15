@@ -13,9 +13,20 @@ from dash import Input, Output
 from plotly.subplots import make_subplots
 
 clclientorder = ["Lighthouse", "Prysm", "Nimbus", "Teku", "Lodestar"]
+
+
+def exclude_clients_not_shown(df):
+    _clients = df["cl_client"].unique()
+    _clclientorder = clclientorder
+    for i in clclientorder:
+        if i not in _clients:
+            _clclientorder.remove(i)
+    return _clclientorder
+
 def orderclclient(df):
+    _clientorder = exclude_clients_not_shown(df)
     df.set_index("cl_client", inplace=True)
-    df = df.loc[clclientorder]
+    df = df.loc[_clientorder]
     return df.reset_index()
 
 
