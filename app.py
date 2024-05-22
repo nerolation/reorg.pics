@@ -960,8 +960,7 @@ def create_reorger_relay_layout(width=801):
 def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
     df = df[df["relay"] != "missed"]
     _df = df['relay'].value_counts().reset_index()
-    _df = _df.rename(columns={'index': 'relay', 'relay': 'count'})
-    #_df.columns = ["relay", "count", "dfgd"]
+    _df.columns= ['relay', 'count']
     _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
     order["relay"]= order["relay"].apply(lambda x: x[0].upper()+x[1:])
     _df = pd.merge(_df,order,how="left", left_on="relay", right_on="relay")
