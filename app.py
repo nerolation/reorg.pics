@@ -1,4 +1,5 @@
 import os
+import re
 import dash
 from dash import dcc
 from dash import html
@@ -43,10 +44,21 @@ def prepare_data():
     df5 = pd.read_csv("clclient_slots.csv").replace("Unknown", "Unknown/missed")
     #df5 = df5[~df5['cl_client'].str.contains('Unknown')]
     
+    def clean_data(text):
+        if isinstance(text, str):
+            return re.sub(r'[^\x20-\x7E]', '', text)
+        return text
+    
+    df['builder'] = df['builder'].apply(clean_data)
+    df4['builder'] = df4['builder'].apply(clean_data)
+
+    
     def max_slot(slot):
         return int(slot.split("[")[1].split("]")[0])
     
     dfreorger = pd.read_csv("reorgers-data.csv")
+    dfreorger['builder'] = dfreorger['builder'].apply(clean_data)
+    
     dfreorger = dfreorger[dfreorger["slot"].apply(max_slot) > max(dfreorger["slot"].apply(max_slot)) - 7200*60]
     
     df_30 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*30]
@@ -68,6 +80,7 @@ def prepare_data():
     df_30 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*30].drop("parent_slot", axis=1)
     df_14 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*14].drop("parent_slot", axis=1)
     df_7 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*7].drop("parent_slot", axis=1)
+    
     
     
     
@@ -272,6 +285,8 @@ def create_fig2(df_90, df, df_30, df_14, df_7, order):
     df = df.drop("relay", axis=1).drop_duplicates()
     df = df[~df['cl_client'].str.contains('missed')]
     _df = df['cl_client'].value_counts().reset_index()
+    _df.columns = ["cl_client", "count"]
+ 
     _df = pd.merge(_df,order,how="left", left_on="cl_client", right_on="cl_client")
     _df["cl_client"]= _df["cl_client"].apply(lambda x: x[0].upper()+x[1:])
     _df.columns = ['cl_client', 'count', 'slots']
@@ -477,6 +492,7 @@ def create_fig_for_validators(df_90, df, df_30, df_14, df_7, order):
     df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["validator"] != "missed"]
     _df = df['validator'].value_counts().reset_index()
+    _df.columns = ["validator", "count"]
     _df = pd.merge(_df,order,how="left", left_on="validator", right_on="validator")
     _df["validator"]= _df["validator"].apply(lambda x: x[0].upper()+x[1:])
     _df.columns = ['validator', 'count', 'slots']
@@ -583,6 +599,8 @@ def fig5_layout(width=801):
 def create_fig_for_relays(df_90, df, df_30, df_14, df_7, order):
     df = df[df["relay"] != "missed"]
     _df = df['relay'].value_counts().reset_index()
+    _df.columns = ["relay", "count"]
+    
     _df = pd.merge(_df,order,how="left", left_on="relay", right_on="relay")
     _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
     order["relay"]= order["relay"].apply(lambda x: x[0].upper()+x[1:])
@@ -704,6 +722,7 @@ def create_reorger_builder(df_90, df_60, df_30, df_14, df_7, order, df):
     df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["builder"] != "missed"]
     _df = df['builder'].value_counts().reset_index()
+    _df.columns = ["builder", "count"]
     _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
     order["builder"]= order["builder"].apply(lambda x: x[0].upper()+x[1:])
     _df = pd.merge(_df,order,how="left", left_on="builder", right_on="builder")
@@ -826,6 +845,7 @@ def create_reorger_validator(df_90, df_60, df_30, df_14, df_7, order, df):
     df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["validator"] != "missed"]
     _df = df['validator'].value_counts().reset_index()
+    _df.columns = ["validator", "count"]
     _df = pd.merge(_df,order,how="left", left_on="validator", right_on="validator")
     _df["validator"]= _df["validator"].apply(lambda x: x[0].upper()+x[1:])
     _df.columns = ['validator', 'count', 'slots']
@@ -940,9 +960,12 @@ def create_reorger_relay_layout(width=801):
 def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
     df = df[df["relay"] != "missed"]
     _df = df['relay'].value_counts().reset_index()
+    _df = _df.rename(columns={'index': 'relay', 'relay': 'count'})
+    #_df.columns = ["relay", "count", "dfgd"]
     _df["relay"]= _df["relay"].apply(lambda x: x[0].upper()+x[1:])
     order["relay"]= order["relay"].apply(lambda x: x[0].upper()+x[1:])
     _df = pd.merge(_df,order,how="left", left_on="relay", right_on="relay")
+    #_df.columns = ["relay", "count"]
     _df.columns = ['relay', 'count', 'slots']
     _df["relative_count"] = round(_df['count'] / _df['slots'] * 100, 5)
     _df = _df[_df["count"] > 0]
@@ -956,7 +979,7 @@ def create_reorger_relay(df_90, df_60, df_30, df_14, df_7, order, df):
         relay = row['relay']
         relative_count = row['relative_count']
         color = colors[index % len(colors)]
-        print(relay, str(relative_count))
+        #print(relay, str(relative_count))
 
         fig.add_trace(
             go.Bar(
@@ -1061,6 +1084,7 @@ def create_fig_for_builders(df_90, df, df_30, df_14, df_7, order):
     df = df.drop("relay", axis=1).drop_duplicates()
     df = df[df["builder"] != "missed"]
     _df = df['builder'].value_counts().reset_index()
+    _df.columns = ["builder", "count"]
     _df = pd.merge(_df,order,how="left", left_on="builder", right_on="builder")
     _df["builder"]= _df["builder"].apply(lambda x: x[0].upper()+x[1:])
     order["builder"]= order["builder"].apply(lambda x: x[0].upper()+x[1:])
@@ -1199,7 +1223,6 @@ def create_fig_stacked(df_90, df_60, df, df_14, df_7, order):
     df = df[df["cl_client"] != "missed"]
     df.loc[:,"date"] = df["date"].apply(lambda x: x.split(" ")[0])
     _df = df.groupby(["date","cl_client"])["slot"].count().reset_index()
-
     _df = pd.merge(_df,order,how="left", left_on="cl_client", right_on="cl_client")
     _df["cl_client"]= _df["cl_client"].apply(lambda x: x[0].upper()+x[1:])
     _df.columns = ['date', 'cl_client', 'slot', 'slots']

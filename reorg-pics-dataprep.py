@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 
 from datetime import datetime
 import pandas as pd
 import os
 from google.cloud import bigquery
+import re
 
 
-# In[ ]:
+# In[2]:
 
 
 def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
@@ -25,7 +26,7 @@ def set_google_credentials(CONFIG, GOOGLE_CREDENTIALS):
 set_google_credentials("./config/","google-creds.json")
 
 
-# In[ ]:
+# In[3]:
 
 
 def slot_to_time(slot):
@@ -39,6 +40,11 @@ def slot_in_epoch(slot):
     
 def add_link_to_slot(slot):
     return f'[{slot}](https://beaconcha.in/slot/{slot})'
+
+def clean_data(text):
+    if isinstance(text, str):
+        return re.sub(r'[^\x20-\x7E]', '', text)
+    return text
 
 
 # In[ ]:
@@ -78,7 +84,7 @@ client = bigquery.Client()
 remove_duplicates()
 
 
-# In[ ]:
+# In[34]:
 
 
 query = """
@@ -114,9 +120,10 @@ df["parent_slot"] = df.apply(
     axis=1
 )
 df["slot"] = df["slot"].apply(add_link_to_slot)
+df['builder'] = df['builder'].apply(clean_data)
 
 
-# In[ ]:
+# In[33]:
 
 
 query = """
@@ -168,14 +175,21 @@ ON
 ORDER BY
   slot
     """
+import re
 df_reorg = pd.read_gbq(query)
 df_reorg["date"] = df_reorg["slot"].apply(slot_to_time)
 df_reorg["slot_in_epoch"] = df_reorg["slot"].apply(slot_in_epoch)
 df_reorg["slot"] = df_reorg["slot"].apply(add_link_to_slot)
+
+
+
+df_reorg['builder'] = df_reorg['builder'].apply(clean_data)
+df_reorg.to_csv("reorgers-data.csv", index=None)
+
 df_reorg
 
 
-# In[ ]:
+# In[36]:
 
 
 df.to_csv("reorg-data.csv", index=None)
@@ -197,5 +211,17 @@ df5.to_csv("clclient_slots.csv", index=None)
 
 
 print("finished")
+
+
+
+# In[37]:
+
+
+df
+
+
+# In[ ]:
+
+
 
 
