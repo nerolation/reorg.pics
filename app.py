@@ -63,7 +63,7 @@ def prepare_data():
     
     df_30 = df[df["slot"].apply(max_slot) > max(df["slot"].apply(max_slot)) - 7200*30]
     df_table = df_30.rename(columns={"slot": "Slot", "parent_slot": "Parent Slot", "cl_client": "CL Client", "validator_id": "Val. ID", "date": "Date", "slot_in_epoch": "Slot Nr. in Epoch"})
-    df_table.sort_values("Slot", ascending=False, inplace=True)
+    df_table.sort_values("Date", ascending=False, inplace=True)
     df_table = df_table[["Slot", "Parent Slot", "CL Client", "Val. ID", "Date", "Slot Nr. in Epoch"]].drop_duplicates()
     #df_table["Val. ID"] = df_table["Val. ID"]#.replace(0, np.NaN)
     df_table["Slot Nr. in Epoch"] = df_table["Slot Nr. in Epoch"].astype(int)
