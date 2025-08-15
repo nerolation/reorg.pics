@@ -167,8 +167,9 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        height=500,
+        height=450,
         margin=dict(l=80, r=40, t=100, b=80),
+        autosize=True,
         showlegend=True,
         legend=dict(
             orientation="h",
@@ -234,8 +235,9 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        height=500,
+        height=450,
         margin=dict(l=80, r=40, t=100, b=80),
+        autosize=True,
         showlegend=False,
         hoverlabel=dict(
             bgcolor='white',
@@ -313,8 +315,9 @@ def create_heatmap_chart(df, title="Reorg Activity Heatmap"):
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
-        height=600,
+        height=500,
         margin=dict(l=80, r=100, t=100, b=80),
+        autosize=True,
         hoverlabel=dict(
             bgcolor='white',
             font=dict(size=14, family='Ubuntu Mono'),
@@ -372,6 +375,7 @@ def create_depth_distribution_chart(df, title="Reorg Depth Distribution"):
         paper_bgcolor='rgba(0,0,0,0)',
         height=400,
         margin=dict(l=80, r=40, t=100, b=80),
+        autosize=True,
         showlegend=False,
         hoverlabel=dict(
             bgcolor='white',
@@ -431,6 +435,7 @@ def create_epoch_analysis_chart(df, title="Reorgs by Epoch"):
         paper_bgcolor='rgba(0,0,0,0)',
         height=400,
         margin=dict(l=80, r=40, t=100, b=80),
+        autosize=True,
         showlegend=False,
         hoverlabel=dict(
             bgcolor='white',
@@ -488,7 +493,7 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Reorg.pics</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -521,9 +526,15 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
         .container {{
             max-width: 1600px;
             margin: 0 auto;
-            padding: 30px;
+            padding: 20px;
             position: relative;
             z-index: 2;
+        }}
+        
+        @media (max-width: 768px) {{
+            .container {{
+                padding: 10px;
+            }}
         }}
         
         .header {{
@@ -638,18 +649,114 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
             border-bottom-color: white;
         }}
         
+        /* Mobile responsive styles */
         @media (max-width: 768px) {{
             .container {{
-                padding: 15px;
+                padding: 10px;
             }}
+            
+            .header {{
+                padding: 30px 15px;
+                border-radius: 15px;
+                margin-bottom: 20px;
+            }}
+            
             h1 {{
                 font-size: 2em;
             }}
+            
+            .subtitle {{
+                font-size: 0.9em;
+            }}
+            
+            .stats-grid {{
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin-bottom: 25px;
+            }}
+            
+            .stat-card {{
+                padding: 20px 15px;
+                border-radius: 15px;
+            }}
+            
             .stat-value {{
                 font-size: 2em;
             }}
+            
+            .stat-label {{
+                font-size: 0.75em;
+                letter-spacing: 1px;
+            }}
+            
+            .chart-container {{
+                padding: 15px;
+                border-radius: 15px;
+                margin-bottom: 20px;
+                min-height: 400px;
+            }}
+            
             .chart-grid {{
                 grid-template-columns: 1fr;
+                gap: 20px;
+            }}
+            
+            .table-container {{
+                padding: 15px;
+                border-radius: 15px;
+                margin-bottom: 20px;
+            }}
+            
+            .table-title {{
+                font-size: 1.4em;
+                margin-bottom: 15px;
+            }}
+            
+            table {{
+                font-size: 12px;
+            }}
+            
+            th {{
+                padding: 10px 8px;
+                font-size: 11px;
+            }}
+            
+            td {{
+                padding: 8px;
+                font-size: 11px;
+            }}
+            
+            .footer {{
+                padding: 20px 10px;
+                font-size: 0.8em;
+            }}
+        }}
+        
+        @media (max-width: 480px) {{
+            h1 {{
+                font-size: 1.6em;
+            }}
+            
+            .stats-grid {{
+                grid-template-columns: 1fr;
+            }}
+            
+            .stat-card {{
+                padding: 15px;
+            }}
+            
+            .stat-value {{
+                font-size: 1.8em;
+            }}
+            
+            .table-container {{
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }}
+            
+            table {{
+                min-width: 100%;
+                width: max-content;
             }}
         }}
         
@@ -840,13 +947,64 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
     </div>
     
     <script>
-        // Set Plotly config
+        // Set Plotly config for better mobile experience
         const config = {{
             responsive: true,
-            displayModeBar: false
+            displayModeBar: false,
+            scrollZoom: false,
+            doubleClick: false,
+            showTips: false,
+            modeBarButtonsToRemove: ['pan2d', 'select2d', 'lasso2d', 'resetScale2d', 'toggleSpikelines'],
+            toImageButtonOptions: {{
+                format: 'png',
+                filename: 'reorg_chart',
+                height: 500,
+                width: 700,
+                scale: 1
+            }}
         }};
         
+        // Function to update chart layouts for mobile
+        function updateChartsForMobile() {{
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {{
+                // Update all charts to have mobile-friendly settings
+                const chartDivs = document.querySelectorAll('[id^="chart_"]');
+                chartDivs.forEach(div => {{
+                    const plotDiv = document.getElementById(div.id);
+                    if (plotDiv && plotDiv._fullLayout) {{
+                        Plotly.relayout(plotDiv, {{
+                            'margin.l': 50,
+                            'margin.r': 20,
+                            'margin.t': 60,
+                            'margin.b': 50,
+                            'title.font.size': 18,
+                            'xaxis.title.font.size': 12,
+                            'yaxis.title.font.size': 12,
+                            'xaxis.tickfont.size': 10,
+                            'yaxis.tickfont.size': 10,
+                            'legend.font.size': 10,
+                            'height': 350
+                        }});
+                    }}
+                }});
+            }}
+        }}
+        
         {chart_scripts}
+        
+        // Update charts on load and resize
+        window.addEventListener('load', updateChartsForMobile);
+        window.addEventListener('resize', updateChartsForMobile);
+        
+        // Ensure charts resize properly
+        window.addEventListener('resize', () => {{
+            const chartDivs = document.querySelectorAll('[id^="chart_"]');
+            chartDivs.forEach(div => {{
+                Plotly.Plots.resize(div.id);
+            }});
+        }});
     </script>
 </body>
 </html>"""
