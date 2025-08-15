@@ -148,7 +148,8 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
             gridcolor='rgba(0,0,0,0.05)',
-            zeroline=False
+            zeroline=False,
+            fixedrange=True  # Prevent zoom/pan
         ),
         yaxis=dict(
             title='Number of Reorgs',
@@ -157,7 +158,8 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
             showgrid=True,
             gridcolor='rgba(0,0,0,0.05)',
             zeroline=True,
-            zerolinecolor='rgba(0,0,0,0.1)'
+            zerolinecolor='rgba(0,0,0,0.1)',
+            fixedrange=True  # Prevent zoom/pan
         ),
         hovermode='x unified',
         hoverlabel=dict(
@@ -224,14 +226,16 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
             tickmode='linear',
             tick0=0,
             dtick=1,
-            showgrid=False
+            showgrid=False,
+            fixedrange=True
         ),
         yaxis=dict(
             title='Number of Reorgs',
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)'
+            gridcolor='rgba(0,0,0,0.05)',
+            fixedrange=True
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
@@ -303,7 +307,8 @@ def create_heatmap_chart(df, title="Reorg Activity Heatmap"):
             title='Day of Week',
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
-            side='bottom'
+            side='bottom',
+            fixedrange=True
         ),
         yaxis=dict(
             title='Hour of Day (UTC)',
@@ -311,7 +316,8 @@ def create_heatmap_chart(df, title="Reorg Activity Heatmap"):
             tickfont=dict(size=14, family='Ubuntu Mono'),
             tickmode='linear',
             tick0=0,
-            dtick=1
+            dtick=1,
+            fixedrange=True
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
@@ -362,14 +368,16 @@ def create_depth_distribution_chart(df, title="Reorg Depth Distribution"):
             tickmode='linear',
             tick0=1,
             dtick=1,
-            showgrid=False
+            showgrid=False,
+            fixedrange=True
         ),
         yaxis=dict(
             title='Count',
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)'
+            gridcolor='rgba(0,0,0,0.05)',
+            fixedrange=True
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
@@ -422,14 +430,16 @@ def create_epoch_analysis_chart(df, title="Reorgs by Epoch"):
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)'
+            gridcolor='rgba(0,0,0,0.05)',
+            fixedrange=True
         ),
         yaxis=dict(
             title='Number of Reorgs',
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)'
+            gridcolor='rgba(0,0,0,0.05)',
+            fixedrange=True
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
@@ -947,14 +957,15 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
     </div>
     
     <script>
-        // Set Plotly config for better mobile experience
+        // Set Plotly config to prevent all interactions that could break charts
         const config = {{
             responsive: true,
-            displayModeBar: false,
-            scrollZoom: false,
-            doubleClick: false,
-            showTips: false,
-            modeBarButtonsToRemove: ['pan2d', 'select2d', 'lasso2d', 'resetScale2d', 'toggleSpikelines'],
+            displayModeBar: false,  // Hide all toolbar buttons
+            scrollZoom: false,      // Disable scroll zoom
+            doubleClick: false,     // Disable double-click zoom
+            showTips: false,        // Disable tooltips
+            editable: false,        // Disable editing
+            staticPlot: false,      // Keep hover but disable other interactions
             toImageButtonOptions: {{
                 format: 'png',
                 filename: 'reorg_chart',
@@ -994,16 +1005,75 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
         
         {chart_scripts}
         
-        // Update charts on load and resize
-        window.addEventListener('load', updateChartsForMobile);
-        window.addEventListener('resize', updateChartsForMobile);
+        // Function to safely resize charts
+        function safeResizeCharts() {{
+            try {{
+                const chartDivs = document.querySelectorAll('[id^="chart_"]');
+                chartDivs.forEach(div => {{
+                    if (div && div.id) {{
+                        const plotDiv = document.getElementById(div.id);
+                        if (plotDiv && plotDiv.data && plotDiv.layout) {{
+                            // Check if chart has valid dimensions
+                            const rect = plotDiv.getBoundingClientRect();
+                            if (rect.width > 0 && rect.height > 0) {{
+                                Plotly.Plots.resize(plotDiv);
+                            }} else {{
+                                // If chart collapsed, redraw it
+                                console.log('Redrawing collapsed chart:', div.id);
+                                const data = plotDiv.data;
+                                const layout = plotDiv.layout;
+                                Plotly.newPlot(div.id, data, layout, config);
+                            }}
+                        }}
+                    }}
+                }});
+            }} catch (error) {{
+                console.error('Error resizing charts:', error);
+            }}
+        }}
         
-        // Ensure charts resize properly
-        window.addEventListener('resize', () => {{
+        // Function to check and fix collapsed charts
+        function checkAndFixCharts() {{
             const chartDivs = document.querySelectorAll('[id^="chart_"]');
             chartDivs.forEach(div => {{
-                Plotly.Plots.resize(div.id);
+                const rect = div.getBoundingClientRect();
+                if (rect.height < 100) {{  // Chart likely collapsed
+                    console.log('Fixing collapsed chart:', div.id);
+                    const plotDiv = document.getElementById(div.id);
+                    if (plotDiv && plotDiv.data && plotDiv.layout) {{
+                        // Force redraw with minimum height
+                        const layout = plotDiv.layout;
+                        layout.height = layout.height || 400;
+                        Plotly.react(div.id, plotDiv.data, layout, config);
+                    }}
+                }}
             }});
+        }}
+        
+        // Update charts on load and resize
+        window.addEventListener('load', () => {{
+            updateChartsForMobile();
+            setTimeout(safeResizeCharts, 100);
+        }});
+        
+        // Debounced resize handler
+        let resizeTimeout;
+        window.addEventListener('resize', () => {{
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {{
+                updateChartsForMobile();
+                safeResizeCharts();
+            }}, 250);
+        }});
+        
+        // Periodically check for collapsed charts (every 5 seconds)
+        setInterval(checkAndFixCharts, 5000);
+        
+        // Fix charts on visibility change (tab switching)
+        document.addEventListener('visibilitychange', () => {{
+            if (!document.hidden) {{
+                setTimeout(safeResizeCharts, 100);
+            }}
         }});
     </script>
 </body>
