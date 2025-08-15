@@ -66,7 +66,7 @@ def fetch_reorg_data_pyxatu(days_back=90):
         print("Querying reorgs...")
         reorgs_raw = xatu.raw_query(reorg_query)
         
-        # Group by slot and take MINIMUM depth to avoid false positives
+       # Group by slot and take MINIMUM depth to avoid false positives
         print("Processing reorgs - taking minimum depth per slot...")
         reorgs_df = reorgs_raw.groupby('slot').agg({
             'depth': 'min',  # Take minimum depth to be conservative
@@ -102,21 +102,16 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
     df['date_str'] = df['date'].dt.strftime('%Y-%m-%d')
     daily_counts = df.groupby('date_str').size().reset_index(name='count')
     
-    # Add main trace with gradient fill
+    # Add main trace with gradient fill (no markers)
     fig.add_trace(go.Scatter(
         x=daily_counts['date_str'],
         y=daily_counts['count'],
-        mode='lines+markers',
+        mode='lines',  # Remove markers
         name='Daily Reorgs',
         line=dict(
             color=COLORS['primary'],
             width=3,
             shape='spline'
-        ),
-        marker=dict(
-            size=8,
-            color=COLORS['primary'],
-            line=dict(color='white', width=2)
         ),
         fill='tozeroy',
         fillcolor='rgba(99, 102, 241, 0.1)'
@@ -147,7 +142,7 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)',
+            gridcolor='rgba(0,0,0,0.1)',  # More visible gridlines
             zeroline=False,
             fixedrange=True  # Prevent zoom/pan
         ),
@@ -156,9 +151,9 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)',
+            gridcolor='rgba(0,0,0,0.1)',  # More visible gridlines
             zeroline=True,
-            zerolinecolor='rgba(0,0,0,0.1)',
+            zerolinecolor='rgba(0,0,0,0.15)',
             fixedrange=True  # Prevent zoom/pan
         ),
         hovermode='x unified',
@@ -167,8 +162,8 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
             font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['primary']
         ),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='white',
+        paper_bgcolor='white',
         height=450,
         margin=dict(l=80, r=40, t=100, b=80),
         autosize=True,
@@ -226,7 +221,8 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
             tickmode='linear',
             tick0=0,
             dtick=1,
-            showgrid=False,
+            showgrid=True,
+            gridcolor='rgba(0,0,0,0.1)',  # Add gridlines
             fixedrange=True
         ),
         yaxis=dict(
@@ -234,11 +230,11 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)',
+            gridcolor='rgba(0,0,0,0.1)',  # More visible gridlines
             fixedrange=True
         ),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='white',
+        paper_bgcolor='white',
         height=450,
         margin=dict(l=80, r=40, t=100, b=80),
         autosize=True,
@@ -252,7 +248,7 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
     
     return fig
 
-def create_heatmap_chart(df, title="Reorg Activity Heatmap"):
+def create_heatmap_chart(df, title="Reorg Activity Heatmap (Last 365 Days)"):
     """Create beautiful heatmap of reorgs by hour and day"""
     df['hour'] = df['date'].dt.hour
     df['day_of_week'] = df['date'].dt.day_name()
@@ -319,8 +315,8 @@ def create_heatmap_chart(df, title="Reorg Activity Heatmap"):
             dtick=1,
             fixedrange=True
         ),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='white',
+        paper_bgcolor='white',
         height=500,
         margin=dict(l=80, r=100, t=100, b=80),
         autosize=True,
@@ -368,7 +364,8 @@ def create_depth_distribution_chart(df, title="Reorg Depth Distribution"):
             tickmode='linear',
             tick0=1,
             dtick=1,
-            showgrid=False,
+            showgrid=True,
+            gridcolor='rgba(0,0,0,0.1)',  # Add gridlines
             fixedrange=True
         ),
         yaxis=dict(
@@ -376,11 +373,11 @@ def create_depth_distribution_chart(df, title="Reorg Depth Distribution"):
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)',
+            gridcolor='rgba(0,0,0,0.1)',  # More visible gridlines
             fixedrange=True
         ),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='white',
+        paper_bgcolor='white',
         height=400,
         margin=dict(l=80, r=40, t=100, b=80),
         autosize=True,
@@ -405,15 +402,11 @@ def create_epoch_analysis_chart(df, title="Reorgs by Epoch"):
     fig.add_trace(go.Scatter(
         x=recent_epochs['epoch'],
         y=recent_epochs['count'],
-        mode='lines+markers',
+        mode='lines',  # Remove markers
         line=dict(
             color=COLORS['tertiary'],
-            width=2
-        ),
-        marker=dict(
-            size=6,
-            color=COLORS['tertiary'],
-            line=dict(color='white', width=1)
+            width=2,
+            shape='spline'
         ),
         fill='tozeroy',
         fillcolor='rgba(236, 72, 153, 0.1)',
@@ -430,7 +423,7 @@ def create_epoch_analysis_chart(df, title="Reorgs by Epoch"):
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)',
+            gridcolor='rgba(0,0,0,0.1)',  # More visible gridlines
             fixedrange=True
         ),
         yaxis=dict(
@@ -438,11 +431,11 @@ def create_epoch_analysis_chart(df, title="Reorgs by Epoch"):
             titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
             tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
-            gridcolor='rgba(0,0,0,0.05)',
+            gridcolor='rgba(0,0,0,0.1)',  # More visible gridlines
             fixedrange=True
         ),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='white',
+        paper_bgcolor='white',
         height=400,
         margin=dict(l=80, r=40, t=100, b=80),
         autosize=True,
@@ -626,6 +619,14 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,0.5);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
+        }}
+        
+        .chart-container > div {{
+            width: 100% !important;
+            overflow: hidden;
         }}
         
         .chart-container:hover {{
@@ -637,6 +638,8 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
             grid-template-columns: repeat(auto-fit, minmax(700px, 1fr));
             gap: 30px;
             margin-bottom: 30px;
+            width: 100%;
+            box-sizing: border-box;
         }}
         
         .footer {{
@@ -956,124 +959,74 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
         </div>
     </div>
     
+    <style>
+        /* Loading overlay */
+        .loading-overlay {{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }}
+        .loading-text {{
+            font-family: 'Ubuntu Mono', monospace;
+            font-size: 24px;
+            color: #6366f1;
+        }}
+    </style>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-text">Loading charts...</div>
+    </div>
+    
     <script>
-        // Set Plotly config to prevent all interactions that could break charts
+        // Make charts FULLY STATIC - no interactions at all
         const config = {{
+            staticPlot: false,      // Allow hover interactions
             responsive: true,
-            displayModeBar: false,  // Hide all toolbar buttons
-            scrollZoom: false,      // Disable scroll zoom
-            doubleClick: false,     // Disable double-click zoom
-            showTips: false,        // Disable tooltips
-            editable: false,        // Disable editing
-            staticPlot: false,      // Keep hover but disable other interactions
-            toImageButtonOptions: {{
-                format: 'png',
-                filename: 'reorg_chart',
-                height: 500,
-                width: 700,
-                scale: 1
-            }}
+            displayModeBar: false,
+            scrollZoom: false,
+            doubleClick: false,
+            showTips: false,
+            editable: false
         }};
         
-        // Function to update chart layouts for mobile
-        function updateChartsForMobile() {{
-            const isMobile = window.innerWidth <= 768;
-            
-            if (isMobile) {{
-                // Update all charts to have mobile-friendly settings
-                const chartDivs = document.querySelectorAll('[id^="chart_"]');
-                chartDivs.forEach(div => {{
-                    const plotDiv = document.getElementById(div.id);
-                    if (plotDiv && plotDiv._fullLayout) {{
-                        Plotly.relayout(plotDiv, {{
-                            'margin.l': 50,
-                            'margin.r': 20,
-                            'margin.t': 60,
-                            'margin.b': 50,
-                            'title.font.size': 18,
-                            'xaxis.title.font.size': 12,
-                            'yaxis.title.font.size': 12,
-                            'xaxis.tickfont.size': 10,
-                            'yaxis.tickfont.size': 10,
-                            'legend.font.size': 10,
-                            'height': 350
-                        }});
-                    }}
-                }});
-            }}
-        }}
-        
+        // Render all charts
         {chart_scripts}
         
-        // Function to safely resize charts
-        function safeResizeCharts() {{
-            try {{
+        // Hide loading overlay once charts are rendered
+        window.addEventListener('load', () => {{
+            setTimeout(() => {{
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {{
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 300);
+                }}
+            }}, 100);
+        }});
+        
+        // Simple resize handler - only when needed
+        let resizeTimer;
+        window.addEventListener('resize', () => {{
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {{
                 const chartDivs = document.querySelectorAll('[id^="chart_"]');
                 chartDivs.forEach(div => {{
-                    if (div && div.id) {{
-                        const plotDiv = document.getElementById(div.id);
-                        if (plotDiv && plotDiv.data && plotDiv.layout) {{
-                            // Check if chart has valid dimensions
-                            const rect = plotDiv.getBoundingClientRect();
-                            if (rect.width > 0 && rect.height > 0) {{
-                                Plotly.Plots.resize(plotDiv);
-                            }} else {{
-                                // If chart collapsed, redraw it
-                                console.log('Redrawing collapsed chart:', div.id);
-                                const data = plotDiv.data;
-                                const layout = plotDiv.layout;
-                                Plotly.newPlot(div.id, data, layout, config);
-                            }}
+                    if (div && div.id && window.Plotly) {{
+                        try {{
+                            Plotly.Plots.resize(div.id);
+                        }} catch (e) {{
+                            // Silently fail if chart can't resize
                         }}
                     }}
                 }});
-            }} catch (error) {{
-                console.error('Error resizing charts:', error);
-            }}
-        }}
-        
-        // Function to check and fix collapsed charts
-        function checkAndFixCharts() {{
-            const chartDivs = document.querySelectorAll('[id^="chart_"]');
-            chartDivs.forEach(div => {{
-                const rect = div.getBoundingClientRect();
-                if (rect.height < 100) {{  // Chart likely collapsed
-                    console.log('Fixing collapsed chart:', div.id);
-                    const plotDiv = document.getElementById(div.id);
-                    if (plotDiv && plotDiv.data && plotDiv.layout) {{
-                        // Force redraw with minimum height
-                        const layout = plotDiv.layout;
-                        layout.height = layout.height || 400;
-                        Plotly.react(div.id, plotDiv.data, layout, config);
-                    }}
-                }}
-            }});
-        }}
-        
-        // Update charts on load and resize
-        window.addEventListener('load', () => {{
-            updateChartsForMobile();
-            setTimeout(safeResizeCharts, 100);
-        }});
-        
-        // Debounced resize handler
-        let resizeTimeout;
-        window.addEventListener('resize', () => {{
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {{
-                updateChartsForMobile();
-                safeResizeCharts();
-            }}, 250);
-        }});
-        
-        // Periodically check for collapsed charts (every 5 seconds)
-        setInterval(checkAndFixCharts, 5000);
-        
-        // Fix charts on visibility change (tab switching)
-        document.addEventListener('visibilitychange', () => {{
-            if (!document.hidden) {{
-                setTimeout(safeResizeCharts, 100);
-            }}
+            }}, 500); // Only resize after user stops resizing
         }});
     </script>
 </body>
@@ -1095,7 +1048,13 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
         script = f"""
         (function() {{
             var figure_{chart_index} = {fig_json};
-            Plotly.newPlot('{div_id}', figure_{chart_index}.data, figure_{chart_index}.layout, config);
+            var chartDiv = document.getElementById('{div_id}');
+            
+            // Override width to ensure it fits within container
+            figure_{chart_index}.layout.autosize = true;
+            figure_{chart_index}.layout.width = undefined;  // Let Plotly calculate width
+            
+            Plotly.newPlot(chartDiv, figure_{chart_index}.data, figure_{chart_index}.layout, config);
         }})();
         """
         chart_scripts.append(script)
@@ -1147,7 +1106,7 @@ def main():
         'time_series_7d': create_time_series_chart(df, "7-Day Reorg Trend", period_days=7),
         'slot_position': create_slot_position_chart(df),
         'heatmap': create_heatmap_chart(df),
-        'depth_distribution': create_depth_distribution_chart(df),
+        'depth_distribution': create_depth_distribution_chart(df, title="Reorg Depth Distribution (Last 365 Days)"),
         'epoch_analysis': create_epoch_analysis_chart(df)
     }
     
