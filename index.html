@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reorg.pics</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Ubuntu Mono', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 50px 30px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        h1 {
+            color: #1e293b;
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .stat-value {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 400;
+        }
+        
+        .chart-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .chart-container:hover {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(700px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95em;
+            letter-spacing: 1px;
+        }
+        
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+        
+        .footer a:hover {
+            border-bottom-color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .stat-value {
+                font-size: 2em;
+            }
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .loading {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Table styles */
+        .table-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+            overflow-x: auto;
+        }
+        
+        .table-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-family: 'Ubuntu Mono', monospace;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        th:first-child {
+            border-top-left-radius: 10px;
+        }
+        
+        th:last-child {
+            border-top-right-radius: 10px;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-size: 13px;
+            color: #334155;
+        }
+        
+        tbody tr {
+            transition: all 0.2s;
+        }
+        
+        tbody tr:hover {
+            background: rgba(99, 102, 241, 0.05);
+            transform: scale(1.01);
+        }
+        
+        td a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        
+        td a:hover {
+            color: #8b5cf6;
+            text-decoration: underline;
+        }
+        
+        .depth-normal {
+            color: #10b981;
+            font-weight: 700;
+        }
+        
+        .depth-warning {
+            color: #f59e0b;
+            font-weight: 700;
+        }
+        
+        .depth-danger {
+            color: #ef4444;
+            font-weight: 700;
+        }
+        
+        .table-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+            font-size: 12px;
+            color: #64748b;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Reorg.pics</h1>
+            <div class="subtitle">
+                Real-time blockchain reorganization monitoring | Powered by PyXatu
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">750</div>
+                <div class="stat-label">Total Reorgs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">84</div>
+                <div class="stat-label">Last 7 Days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">373</div>
+                <div class="stat-label">Last 30 Days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1.00</div>
+                <div class="stat-label">Avg Depth</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1</div>
+                <div class="stat-label">Max Depth</div>
+            </div>
+        </div>
+        
+        <div class="chart-container" id="chart_0"></div>
+<div class="chart-container" id="chart_1"></div>
+<div class="chart-container" id="chart_2"></div>
+<div class="chart-container" id="chart_3"></div>
+<div class="chart-container" id="chart_4"></div>
+<div class="chart-container" id="chart_5"></div>
+<div class="chart-container" id="chart_6"></div>
+        
+        <div class="table-container">
+            <div class="table-title">Recent Reorgs (Last 100)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Slot</th>
+                        <th>Epoch</th>
+                        <th>Depth</th>
+                        <th>Position</th>
+                        <th>Time (UTC)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12368782" target="_blank">12368782</a></td>
+                <td><a href="https://beaconcha.in/epoch/386524" target="_blank">386524</a></td>
+                <td class="depth-normal">1</td>
+                <td>14</td>
+                <td>2025-08-15 09:16:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12367970" target="_blank">12367970</a></td>
+                <td><a href="https://beaconcha.in/epoch/386499" target="_blank">386499</a></td>
+                <td class="depth-normal">1</td>
+                <td>2</td>
+                <td>2025-08-15 06:34:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12367953" target="_blank">12367953</a></td>
+                <td><a href="https://beaconcha.in/epoch/386498" target="_blank">386498</a></td>
+                <td class="depth-normal">1</td>
+                <td>17</td>
+                <td>2025-08-15 06:30:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12366981" target="_blank">12366981</a></td>
+                <td><a href="https://beaconcha.in/epoch/386468" target="_blank">386468</a></td>
+                <td class="depth-normal">1</td>
+                <td>5</td>
+                <td>2025-08-15 03:16:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12366481" target="_blank">12366481</a></td>
+                <td><a href="https://beaconcha.in/epoch/386452" target="_blank">386452</a></td>
+                <td class="depth-normal">1</td>
+                <td>17</td>
+                <td>2025-08-15 01:36:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12366346" target="_blank">12366346</a></td>
+                <td><a href="https://beaconcha.in/epoch/386448" target="_blank">386448</a></td>
+                <td class="depth-normal">1</td>
+                <td>10</td>
+                <td>2025-08-15 01:09:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12365156" target="_blank">12365156</a></td>
+                <td><a href="https://beaconcha.in/epoch/386411" target="_blank">386411</a></td>
+                <td class="depth-normal">1</td>
+                <td>4</td>
+                <td>2025-08-14 21:11:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12364864" target="_blank">12364864</a></td>
+                <td><a href="https://beaconcha.in/epoch/386402" target="_blank">386402</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-14 20:13:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12364316" target="_blank">12364316</a></td>
+                <td><a href="https://beaconcha.in/epoch/386384" target="_blank">386384</a></td>
+                <td class="depth-normal">1</td>
+                <td>28</td>
+                <td>2025-08-14 18:23:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12364309" target="_blank">12364309</a></td>
+                <td><a href="https://beaconcha.in/epoch/386384" target="_blank">386384</a></td>
+                <td class="depth-normal">1</td>
+                <td>21</td>
+                <td>2025-08-14 18:22:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12363837" target="_blank">12363837</a></td>
+                <td><a href="https://beaconcha.in/epoch/386369" target="_blank">386369</a></td>
+                <td class="depth-normal">1</td>
+                <td>29</td>
+                <td>2025-08-14 16:47:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12362643" target="_blank">12362643</a></td>
+                <td><a href="https://beaconcha.in/epoch/386332" target="_blank">386332</a></td>
+                <td class="depth-normal">1</td>
+                <td>19</td>
+                <td>2025-08-14 12:48:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12361959" target="_blank">12361959</a></td>
+                <td><a href="https://beaconcha.in/epoch/386311" target="_blank">386311</a></td>
+                <td class="depth-normal">1</td>
+                <td>7</td>
+                <td>2025-08-14 10:32:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12361216" target="_blank">12361216</a></td>
+                <td><a href="https://beaconcha.in/epoch/386288" target="_blank">386288</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-14 08:03:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12360384" target="_blank">12360384</a></td>
+                <td><a href="https://beaconcha.in/epoch/386262" target="_blank">386262</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-14 05:17:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12359425" target="_blank">12359425</a></td>
+                <td><a href="https://beaconcha.in/epoch/386232" target="_blank">386232</a></td>
+                <td class="depth-normal">1</td>
+                <td>1</td>
+                <td>2025-08-14 02:05:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12357888" target="_blank">12357888</a></td>
+                <td><a href="https://beaconcha.in/epoch/386184" target="_blank">386184</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-13 20:57:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12357760" target="_blank">12357760</a></td>
+                <td><a href="https://beaconcha.in/epoch/386180" target="_blank">386180</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-13 20:32:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12357745" target="_blank">12357745</a></td>
+                <td><a href="https://beaconcha.in/epoch/386179" target="_blank">386179</a></td>
+                <td class="depth-normal">1</td>
+                <td>17</td>
+                <td>2025-08-13 20:29:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12357376" target="_blank">12357376</a></td>
+                <td><a href="https://beaconcha.in/epoch/386168" target="_blank">386168</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-13 19:15:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12356380" target="_blank">12356380</a></td>
+                <td><a href="https://beaconcha.in/epoch/386136" target="_blank">386136</a></td>
+                <td class="depth-normal">1</td>
+                <td>28</td>
+                <td>2025-08-13 15:56:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12355488" target="_blank">12355488</a></td>
+                <td><a href="https://beaconcha.in/epoch/386109" target="_blank">386109</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-13 12:57:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12354274" target="_blank">12354274</a></td>
+                <td><a href="https://beaconcha.in/epoch/386071" target="_blank">386071</a></td>
+                <td class="depth-normal">1</td>
+                <td>2</td>
+                <td>2025-08-13 08:55:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12352885" target="_blank">12352885</a></td>
+                <td><a href="https://beaconcha.in/epoch/386027" target="_blank">386027</a></td>
+                <td class="depth-normal">1</td>
+                <td>21</td>
+                <td>2025-08-13 04:17:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12352864" target="_blank">12352864</a></td>
+                <td><a href="https://beaconcha.in/epoch/386027" target="_blank">386027</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-13 04:13:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12352277" target="_blank">12352277</a></td>
+                <td><a href="https://beaconcha.in/epoch/386008" target="_blank">386008</a></td>
+                <td class="depth-normal">1</td>
+                <td>21</td>
+                <td>2025-08-13 02:15:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12352238" target="_blank">12352238</a></td>
+                <td><a href="https://beaconcha.in/epoch/386007" target="_blank">386007</a></td>
+                <td class="depth-normal">1</td>
+                <td>14</td>
+                <td>2025-08-13 02:07:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12352007" target="_blank">12352007</a></td>
+                <td><a href="https://beaconcha.in/epoch/386000" target="_blank">386000</a></td>
+                <td class="depth-normal">1</td>
+                <td>7</td>
+                <td>2025-08-13 01:21:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12351894" target="_blank">12351894</a></td>
+                <td><a href="https://beaconcha.in/epoch/385996" target="_blank">385996</a></td>
+                <td class="depth-normal">1</td>
+                <td>22</td>
+                <td>2025-08-13 00:59:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12350368" target="_blank">12350368</a></td>
+                <td><a href="https://beaconcha.in/epoch/385949" target="_blank">385949</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-12 19:53:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12350103" target="_blank">12350103</a></td>
+                <td><a href="https://beaconcha.in/epoch/385940" target="_blank">385940</a></td>
+                <td class="depth-normal">1</td>
+                <td>23</td>
+                <td>2025-08-12 19:00:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12350088" target="_blank">12350088</a></td>
+                <td><a href="https://beaconcha.in/epoch/385940" target="_blank">385940</a></td>
+                <td class="depth-normal">1</td>
+                <td>8</td>
+                <td>2025-08-12 18:57:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12348201" target="_blank">12348201</a></td>
+                <td><a href="https://beaconcha.in/epoch/385881" target="_blank">385881</a></td>
+                <td class="depth-normal">1</td>
+                <td>9</td>
+                <td>2025-08-12 12:40:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12346819" target="_blank">12346819</a></td>
+                <td><a href="https://beaconcha.in/epoch/385838" target="_blank">385838</a></td>
+                <td class="depth-normal">1</td>
+                <td>3</td>
+                <td>2025-08-12 08:04:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12344909" target="_blank">12344909</a></td>
+                <td><a href="https://beaconcha.in/epoch/385778" target="_blank">385778</a></td>
+                <td class="depth-normal">1</td>
+                <td>13</td>
+                <td>2025-08-12 01:42:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12344249" target="_blank">12344249</a></td>
+                <td><a href="https://beaconcha.in/epoch/385757" target="_blank">385757</a></td>
+                <td class="depth-normal">1</td>
+                <td>25</td>
+                <td>2025-08-11 23:30:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12343392" target="_blank">12343392</a></td>
+                <td><a href="https://beaconcha.in/epoch/385731" target="_blank">385731</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-11 20:38:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12343008" target="_blank">12343008</a></td>
+                <td><a href="https://beaconcha.in/epoch/385719" target="_blank">385719</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-11 19:21:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12342688" target="_blank">12342688</a></td>
+                <td><a href="https://beaconcha.in/epoch/385709" target="_blank">385709</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-11 18:17:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12341600" target="_blank">12341600</a></td>
+                <td><a href="https://beaconcha.in/epoch/385675" target="_blank">385675</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-11 14:40:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12341295" target="_blank">12341295</a></td>
+                <td><a href="https://beaconcha.in/epoch/385665" target="_blank">385665</a></td>
+                <td class="depth-normal">1</td>
+                <td>15</td>
+                <td>2025-08-11 13:39:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12341134" target="_blank">12341134</a></td>
+                <td><a href="https://beaconcha.in/epoch/385660" target="_blank">385660</a></td>
+                <td class="depth-normal">1</td>
+                <td>14</td>
+                <td>2025-08-11 13:07:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12340471" target="_blank">12340471</a></td>
+                <td><a href="https://beaconcha.in/epoch/385639" target="_blank">385639</a></td>
+                <td class="depth-normal">1</td>
+                <td>23</td>
+                <td>2025-08-11 10:54:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12339770" target="_blank">12339770</a></td>
+                <td><a href="https://beaconcha.in/epoch/385617" target="_blank">385617</a></td>
+                <td class="depth-normal">1</td>
+                <td>26</td>
+                <td>2025-08-11 08:34:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12339236" target="_blank">12339236</a></td>
+                <td><a href="https://beaconcha.in/epoch/385601" target="_blank">385601</a></td>
+                <td class="depth-normal">1</td>
+                <td>4</td>
+                <td>2025-08-11 06:47:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12338905" target="_blank">12338905</a></td>
+                <td><a href="https://beaconcha.in/epoch/385590" target="_blank">385590</a></td>
+                <td class="depth-normal">1</td>
+                <td>25</td>
+                <td>2025-08-11 05:41:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12338763" target="_blank">12338763</a></td>
+                <td><a href="https://beaconcha.in/epoch/385586" target="_blank">385586</a></td>
+                <td class="depth-normal">1</td>
+                <td>11</td>
+                <td>2025-08-11 05:12:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12337584" target="_blank">12337584</a></td>
+                <td><a href="https://beaconcha.in/epoch/385549" target="_blank">385549</a></td>
+                <td class="depth-normal">1</td>
+                <td>16</td>
+                <td>2025-08-11 01:17:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12337230" target="_blank">12337230</a></td>
+                <td><a href="https://beaconcha.in/epoch/385538" target="_blank">385538</a></td>
+                <td class="depth-normal">1</td>
+                <td>14</td>
+                <td>2025-08-11 00:06:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12336736" target="_blank">12336736</a></td>
+                <td><a href="https://beaconcha.in/epoch/385523" target="_blank">385523</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-10 22:27:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12336390" target="_blank">12336390</a></td>
+                <td><a href="https://beaconcha.in/epoch/385512" target="_blank">385512</a></td>
+                <td class="depth-normal">1</td>
+                <td>6</td>
+                <td>2025-08-10 21:18:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12334876" target="_blank">12334876</a></td>
+                <td><a href="https://beaconcha.in/epoch/385464" target="_blank">385464</a></td>
+                <td class="depth-normal">1</td>
+                <td>28</td>
+                <td>2025-08-10 16:15:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12333280" target="_blank">12333280</a></td>
+                <td><a href="https://beaconcha.in/epoch/385415" target="_blank">385415</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-10 10:56:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12333088" target="_blank">12333088</a></td>
+                <td><a href="https://beaconcha.in/epoch/385409" target="_blank">385409</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-10 10:17:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12332884" target="_blank">12332884</a></td>
+                <td><a href="https://beaconcha.in/epoch/385402" target="_blank">385402</a></td>
+                <td class="depth-normal">1</td>
+                <td>20</td>
+                <td>2025-08-10 09:37:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12332808" target="_blank">12332808</a></td>
+                <td><a href="https://beaconcha.in/epoch/385400" target="_blank">385400</a></td>
+                <td class="depth-normal">1</td>
+                <td>8</td>
+                <td>2025-08-10 09:21:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12332437" target="_blank">12332437</a></td>
+                <td><a href="https://beaconcha.in/epoch/385388" target="_blank">385388</a></td>
+                <td class="depth-normal">1</td>
+                <td>21</td>
+                <td>2025-08-10 08:07:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12331929" target="_blank">12331929</a></td>
+                <td><a href="https://beaconcha.in/epoch/385372" target="_blank">385372</a></td>
+                <td class="depth-normal">1</td>
+                <td>25</td>
+                <td>2025-08-10 06:26:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12331852" target="_blank">12331852</a></td>
+                <td><a href="https://beaconcha.in/epoch/385370" target="_blank">385370</a></td>
+                <td class="depth-normal">1</td>
+                <td>12</td>
+                <td>2025-08-10 06:10:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12331078" target="_blank">12331078</a></td>
+                <td><a href="https://beaconcha.in/epoch/385346" target="_blank">385346</a></td>
+                <td class="depth-normal">1</td>
+                <td>6</td>
+                <td>2025-08-10 03:35:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12330547" target="_blank">12330547</a></td>
+                <td><a href="https://beaconcha.in/epoch/385329" target="_blank">385329</a></td>
+                <td class="depth-normal">1</td>
+                <td>19</td>
+                <td>2025-08-10 01:49:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12330234" target="_blank">12330234</a></td>
+                <td><a href="https://beaconcha.in/epoch/385319" target="_blank">385319</a></td>
+                <td class="depth-normal">1</td>
+                <td>26</td>
+                <td>2025-08-10 00:47:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12329856" target="_blank">12329856</a></td>
+                <td><a href="https://beaconcha.in/epoch/385308" target="_blank">385308</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-09 23:31:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12329741" target="_blank">12329741</a></td>
+                <td><a href="https://beaconcha.in/epoch/385304" target="_blank">385304</a></td>
+                <td class="depth-normal">1</td>
+                <td>13</td>
+                <td>2025-08-09 23:08:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12329562" target="_blank">12329562</a></td>
+                <td><a href="https://beaconcha.in/epoch/385298" target="_blank">385298</a></td>
+                <td class="depth-normal">1</td>
+                <td>26</td>
+                <td>2025-08-09 22:32:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12329148" target="_blank">12329148</a></td>
+                <td><a href="https://beaconcha.in/epoch/385285" target="_blank">385285</a></td>
+                <td class="depth-normal">1</td>
+                <td>28</td>
+                <td>2025-08-09 21:09:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12328965" target="_blank">12328965</a></td>
+                <td><a href="https://beaconcha.in/epoch/385280" target="_blank">385280</a></td>
+                <td class="depth-normal">1</td>
+                <td>5</td>
+                <td>2025-08-09 20:33:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12327058" target="_blank">12327058</a></td>
+                <td><a href="https://beaconcha.in/epoch/385220" target="_blank">385220</a></td>
+                <td class="depth-normal">1</td>
+                <td>18</td>
+                <td>2025-08-09 14:11:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12326264" target="_blank">12326264</a></td>
+                <td><a href="https://beaconcha.in/epoch/385195" target="_blank">385195</a></td>
+                <td class="depth-normal">1</td>
+                <td>24</td>
+                <td>2025-08-09 11:33:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12325984" target="_blank">12325984</a></td>
+                <td><a href="https://beaconcha.in/epoch/385187" target="_blank">385187</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-09 10:37:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12325266" target="_blank">12325266</a></td>
+                <td><a href="https://beaconcha.in/epoch/385164" target="_blank">385164</a></td>
+                <td class="depth-normal">1</td>
+                <td>18</td>
+                <td>2025-08-09 08:13:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12325185" target="_blank">12325185</a></td>
+                <td><a href="https://beaconcha.in/epoch/385162" target="_blank">385162</a></td>
+                <td class="depth-normal">1</td>
+                <td>1</td>
+                <td>2025-08-09 07:57:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12324896" target="_blank">12324896</a></td>
+                <td><a href="https://beaconcha.in/epoch/385153" target="_blank">385153</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-09 06:59:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12324813" target="_blank">12324813</a></td>
+                <td><a href="https://beaconcha.in/epoch/385150" target="_blank">385150</a></td>
+                <td class="depth-normal">1</td>
+                <td>13</td>
+                <td>2025-08-09 06:42:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12324612" target="_blank">12324612</a></td>
+                <td><a href="https://beaconcha.in/epoch/385144" target="_blank">385144</a></td>
+                <td class="depth-normal">1</td>
+                <td>4</td>
+                <td>2025-08-09 06:02:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12324340" target="_blank">12324340</a></td>
+                <td><a href="https://beaconcha.in/epoch/385135" target="_blank">385135</a></td>
+                <td class="depth-normal">1</td>
+                <td>20</td>
+                <td>2025-08-09 05:08:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12323808" target="_blank">12323808</a></td>
+                <td><a href="https://beaconcha.in/epoch/385119" target="_blank">385119</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-09 03:21:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12322363" target="_blank">12322363</a></td>
+                <td><a href="https://beaconcha.in/epoch/385073" target="_blank">385073</a></td>
+                <td class="depth-normal">1</td>
+                <td>27</td>
+                <td>2025-08-08 22:32:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12321891" target="_blank">12321891</a></td>
+                <td><a href="https://beaconcha.in/epoch/385059" target="_blank">385059</a></td>
+                <td class="depth-normal">1</td>
+                <td>3</td>
+                <td>2025-08-08 20:58:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12321653" target="_blank">12321653</a></td>
+                <td><a href="https://beaconcha.in/epoch/385051" target="_blank">385051</a></td>
+                <td class="depth-normal">1</td>
+                <td>21</td>
+                <td>2025-08-08 20:10:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12321596" target="_blank">12321596</a></td>
+                <td><a href="https://beaconcha.in/epoch/385049" target="_blank">385049</a></td>
+                <td class="depth-normal">1</td>
+                <td>28</td>
+                <td>2025-08-08 19:59:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12320947" target="_blank">12320947</a></td>
+                <td><a href="https://beaconcha.in/epoch/385029" target="_blank">385029</a></td>
+                <td class="depth-normal">1</td>
+                <td>19</td>
+                <td>2025-08-08 17:49:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12320359" target="_blank">12320359</a></td>
+                <td><a href="https://beaconcha.in/epoch/385011" target="_blank">385011</a></td>
+                <td class="depth-normal">1</td>
+                <td>7</td>
+                <td>2025-08-08 15:52:11 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12319912" target="_blank">12319912</a></td>
+                <td><a href="https://beaconcha.in/epoch/384997" target="_blank">384997</a></td>
+                <td class="depth-normal">1</td>
+                <td>8</td>
+                <td>2025-08-08 14:22:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12317793" target="_blank">12317793</a></td>
+                <td><a href="https://beaconcha.in/epoch/384931" target="_blank">384931</a></td>
+                <td class="depth-normal">1</td>
+                <td>1</td>
+                <td>2025-08-08 07:18:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12316112" target="_blank">12316112</a></td>
+                <td><a href="https://beaconcha.in/epoch/384878" target="_blank">384878</a></td>
+                <td class="depth-normal">1</td>
+                <td>16</td>
+                <td>2025-08-08 01:42:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12314208" target="_blank">12314208</a></td>
+                <td><a href="https://beaconcha.in/epoch/384819" target="_blank">384819</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-07 19:21:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12314120" target="_blank">12314120</a></td>
+                <td><a href="https://beaconcha.in/epoch/384816" target="_blank">384816</a></td>
+                <td class="depth-normal">1</td>
+                <td>8</td>
+                <td>2025-08-07 19:04:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12314080" target="_blank">12314080</a></td>
+                <td><a href="https://beaconcha.in/epoch/384815" target="_blank">384815</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-07 18:56:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12314052" target="_blank">12314052</a></td>
+                <td><a href="https://beaconcha.in/epoch/384814" target="_blank">384814</a></td>
+                <td class="depth-normal">1</td>
+                <td>4</td>
+                <td>2025-08-07 18:50:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12313888" target="_blank">12313888</a></td>
+                <td><a href="https://beaconcha.in/epoch/384809" target="_blank">384809</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-07 18:17:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12313102" target="_blank">12313102</a></td>
+                <td><a href="https://beaconcha.in/epoch/384784" target="_blank">384784</a></td>
+                <td class="depth-normal">1</td>
+                <td>14</td>
+                <td>2025-08-07 15:40:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12312448" target="_blank">12312448</a></td>
+                <td><a href="https://beaconcha.in/epoch/384764" target="_blank">384764</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-07 13:29:59 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12311931" target="_blank">12311931</a></td>
+                <td><a href="https://beaconcha.in/epoch/384747" target="_blank">384747</a></td>
+                <td class="depth-normal">1</td>
+                <td>27</td>
+                <td>2025-08-07 11:46:35 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12310240" target="_blank">12310240</a></td>
+                <td><a href="https://beaconcha.in/epoch/384695" target="_blank">384695</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-07 06:08:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12309510" target="_blank">12309510</a></td>
+                <td><a href="https://beaconcha.in/epoch/384672" target="_blank">384672</a></td>
+                <td class="depth-normal">1</td>
+                <td>6</td>
+                <td>2025-08-07 03:42:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12309312" target="_blank">12309312</a></td>
+                <td><a href="https://beaconcha.in/epoch/384666" target="_blank">384666</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-07 03:02:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12309280" target="_blank">12309280</a></td>
+                <td><a href="https://beaconcha.in/epoch/384665" target="_blank">384665</a></td>
+                <td class="depth-normal">1</td>
+                <td>0</td>
+                <td>2025-08-07 02:56:23 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12308907" target="_blank">12308907</a></td>
+                <td><a href="https://beaconcha.in/epoch/384653" target="_blank">384653</a></td>
+                <td class="depth-normal">1</td>
+                <td>11</td>
+                <td>2025-08-07 01:41:47 UTC</td>
+            </tr>
+        
+            <tr>
+                <td><a href="https://beaconcha.in/slot/12307218" target="_blank">12307218</a></td>
+                <td><a href="https://beaconcha.in/epoch/384600" target="_blank">384600</a></td>
+                <td class="depth-normal">1</td>
+                <td>18</td>
+                <td>2025-08-06 20:03:59 UTC</td>
+            </tr>
+        
+                </tbody>
+            </table>
+            <div class="table-info">
+                Click on slot or epoch numbers to view details on beaconcha.in
+            </div>
+        </div>
+        
+        <div class="footer">
+            Built with 🖤 by <a href="https://twitter.com/nero_eth" target="_blank">Toni Wahrstätter</a> | 
+            Generated 2025-08-15 10:11 UTC | 
+            Using <a href="https://github.com/nerolation/pyxatu" target="_blank">PyXatu</a> | 
+            Data from <a href="https://ethpandaops.io" target="_blank">EthPandaOps</a>
+        </div>
+    </div>
+    
+    <script>
+        // Set Plotly config
+        const config = {
+            responsive: true,
+            displayModeBar: false
+        };
+        
+        
+        (function() {
+            var figure_0 = {"data":[{"fill":"tozeroy","fillcolor":"rgba(99, 102, 241, 0.1)","line":{"color":"#6366f1","shape":"spline","width":3},"marker":{"color":"#6366f1","line":{"color":"white","width":2},"size":8},"mode":"lines+markers","name":"Daily Reorgs","x":["2025-05-17","2025-05-18","2025-05-19","2025-05-20","2025-05-21","2025-05-22","2025-05-23","2025-05-24","2025-05-25","2025-05-26","2025-05-27","2025-05-28","2025-05-29","2025-05-30","2025-05-31","2025-06-01","2025-06-02","2025-06-03","2025-06-04","2025-06-05","2025-06-06","2025-06-07","2025-06-08","2025-06-09","2025-06-10","2025-06-11","2025-06-12","2025-06-13","2025-06-14","2025-06-15","2025-06-16","2025-06-17","2025-06-18","2025-06-19","2025-06-20","2025-06-21","2025-06-22","2025-06-23","2025-06-24","2025-06-25","2025-06-26","2025-06-27","2025-06-28","2025-06-29","2025-06-30","2025-07-01","2025-07-02","2025-07-03","2025-07-04","2025-07-05","2025-07-06","2025-07-07","2025-07-08","2025-07-09","2025-07-10","2025-07-11","2025-07-12","2025-07-13","2025-07-14","2025-07-15","2025-07-16","2025-07-17","2025-07-18","2025-07-19","2025-07-20","2025-07-21","2025-07-22","2025-07-23","2025-07-24","2025-07-25","2025-07-26","2025-07-27","2025-07-28","2025-07-29","2025-07-30","2025-07-31","2025-08-01","2025-08-02","2025-08-03","2025-08-04","2025-08-05","2025-08-06","2025-08-07","2025-08-08","2025-08-09","2025-08-10","2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15"],"y":[9,7,9,4,5,7,4,9,7,7,3,6,5,3,4,7,6,11,7,7,18,4,7,7,9,8,6,7,10,2,8,6,5,5,4,7,4,4,2,6,6,3,4,13,4,8,3,6,6,6,6,7,7,6,4,8,4,7,7,3,7,3,6,11,12,6,19,14,15,12,11,10,12,7,19,21,21,21,10,11,13,16,13,9,15,13,14,6,13,10,6],"type":"scatter"},{"line":{"color":"#8b5cf6","dash":"dash","width":2},"mode":"lines","name":"7-day MA","x":["2025-05-17","2025-05-18","2025-05-19","2025-05-20","2025-05-21","2025-05-22","2025-05-23","2025-05-24","2025-05-25","2025-05-26","2025-05-27","2025-05-28","2025-05-29","2025-05-30","2025-05-31","2025-06-01","2025-06-02","2025-06-03","2025-06-04","2025-06-05","2025-06-06","2025-06-07","2025-06-08","2025-06-09","2025-06-10","2025-06-11","2025-06-12","2025-06-13","2025-06-14","2025-06-15","2025-06-16","2025-06-17","2025-06-18","2025-06-19","2025-06-20","2025-06-21","2025-06-22","2025-06-23","2025-06-24","2025-06-25","2025-06-26","2025-06-27","2025-06-28","2025-06-29","2025-06-30","2025-07-01","2025-07-02","2025-07-03","2025-07-04","2025-07-05","2025-07-06","2025-07-07","2025-07-08","2025-07-09","2025-07-10","2025-07-11","2025-07-12","2025-07-13","2025-07-14","2025-07-15","2025-07-16","2025-07-17","2025-07-18","2025-07-19","2025-07-20","2025-07-21","2025-07-22","2025-07-23","2025-07-24","2025-07-25","2025-07-26","2025-07-27","2025-07-28","2025-07-29","2025-07-30","2025-07-31","2025-08-01","2025-08-02","2025-08-03","2025-08-04","2025-08-05","2025-08-06","2025-08-07","2025-08-08","2025-08-09","2025-08-10","2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15"],"y":[9.0,8.0,8.333333333333334,7.25,6.8,6.833333333333333,6.428571428571429,6.428571428571429,6.428571428571429,6.142857142857143,6.0,6.142857142857143,5.857142857142857,5.714285714285714,5.0,5.0,4.857142857142857,6.0,6.142857142857143,6.428571428571429,8.571428571428571,8.571428571428571,8.571428571428571,8.714285714285714,8.428571428571429,8.571428571428571,8.428571428571429,6.857142857142857,7.714285714285714,7.0,7.142857142857143,6.714285714285714,6.285714285714286,6.142857142857143,5.714285714285714,5.285714285714286,5.571428571428571,5.0,4.428571428571429,4.571428571428571,4.714285714285714,4.571428571428571,4.142857142857143,5.428571428571429,5.428571428571429,6.285714285714286,5.857142857142857,5.857142857142857,6.285714285714286,6.571428571428571,5.571428571428571,6.0,5.857142857142857,6.285714285714286,6.0,6.285714285714286,6.0,6.142857142857143,6.142857142857143,5.571428571428571,5.714285714285714,5.571428571428571,5.285714285714286,6.285714285714286,7.0,6.857142857142857,9.142857142857142,10.142857142857142,11.857142857142858,12.714285714285714,12.714285714285714,12.428571428571429,13.285714285714286,11.571428571428571,12.285714285714286,13.142857142857142,14.428571428571429,15.857142857142858,15.857142857142858,15.714285714285714,16.571428571428573,16.142857142857142,15.0,13.285714285714286,12.428571428571429,12.857142857142858,13.285714285714286,12.285714285714286,11.857142857142858,11.428571428571429,11.0],"type":"scatter"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"font":{"size":24,"family":"Ubuntu Mono","color":"#1e293b"},"text":"\u003cb\u003e90-Day Reorg Trend\u003c\u002fb\u003e"},"xaxis":{"title":{"text":"Date","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)","zeroline":false},"yaxis":{"title":{"text":"Number of Reorgs","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)","zeroline":true,"zerolinecolor":"rgba(0,0,0,0.1)"},"hoverlabel":{"font":{"size":12,"family":"Ubuntu Mono"},"bgcolor":"white","bordercolor":"#6366f1"},"margin":{"l":60,"r":30,"t":80,"b":60},"legend":{"font":{"size":12,"family":"Ubuntu Mono"},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":500,"showlegend":true}};
+            Plotly.newPlot('chart_0', figure_0.data, figure_0.layout, config);
+        })();
+        
+
+        (function() {
+            var figure_1 = {"data":[{"fill":"tozeroy","fillcolor":"rgba(99, 102, 241, 0.1)","line":{"color":"#6366f1","shape":"spline","width":3},"marker":{"color":"#6366f1","line":{"color":"white","width":2},"size":8},"mode":"lines+markers","name":"Daily Reorgs","x":["2025-07-16","2025-07-17","2025-07-18","2025-07-19","2025-07-20","2025-07-21","2025-07-22","2025-07-23","2025-07-24","2025-07-25","2025-07-26","2025-07-27","2025-07-28","2025-07-29","2025-07-30","2025-07-31","2025-08-01","2025-08-02","2025-08-03","2025-08-04","2025-08-05","2025-08-06","2025-08-07","2025-08-08","2025-08-09","2025-08-10","2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15"],"y":[4,3,6,11,12,6,19,14,15,12,11,10,12,7,19,21,21,21,10,11,13,16,13,9,15,13,14,6,13,10,6],"type":"scatter"},{"line":{"color":"#8b5cf6","dash":"dash","width":2},"mode":"lines","name":"7-day MA","x":["2025-07-16","2025-07-17","2025-07-18","2025-07-19","2025-07-20","2025-07-21","2025-07-22","2025-07-23","2025-07-24","2025-07-25","2025-07-26","2025-07-27","2025-07-28","2025-07-29","2025-07-30","2025-07-31","2025-08-01","2025-08-02","2025-08-03","2025-08-04","2025-08-05","2025-08-06","2025-08-07","2025-08-08","2025-08-09","2025-08-10","2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15"],"y":[4.0,3.5,4.333333333333333,6.0,7.2,7.0,8.714285714285714,10.142857142857142,11.857142857142858,12.714285714285714,12.714285714285714,12.428571428571429,13.285714285714286,11.571428571428571,12.285714285714286,13.142857142857142,14.428571428571429,15.857142857142858,15.857142857142858,15.714285714285714,16.571428571428573,16.142857142857142,15.0,13.285714285714286,12.428571428571429,12.857142857142858,13.285714285714286,12.285714285714286,11.857142857142858,11.428571428571429,11.0],"type":"scatter"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"font":{"size":24,"family":"Ubuntu Mono","color":"#1e293b"},"text":"\u003cb\u003e30-Day Reorg Trend\u003c\u002fb\u003e"},"xaxis":{"title":{"text":"Date","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)","zeroline":false},"yaxis":{"title":{"text":"Number of Reorgs","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)","zeroline":true,"zerolinecolor":"rgba(0,0,0,0.1)"},"hoverlabel":{"font":{"size":12,"family":"Ubuntu Mono"},"bgcolor":"white","bordercolor":"#6366f1"},"margin":{"l":60,"r":30,"t":80,"b":60},"legend":{"font":{"size":12,"family":"Ubuntu Mono"},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":500,"showlegend":true}};
+            Plotly.newPlot('chart_1', figure_1.data, figure_1.layout, config);
+        })();
+        
+
+        (function() {
+            var figure_2 = {"data":[{"fill":"tozeroy","fillcolor":"rgba(99, 102, 241, 0.1)","line":{"color":"#6366f1","shape":"spline","width":3},"marker":{"color":"#6366f1","line":{"color":"white","width":2},"size":8},"mode":"lines+markers","name":"Daily Reorgs","x":["2025-08-08","2025-08-09","2025-08-10","2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15"],"y":[7,15,13,14,6,13,10,6],"type":"scatter"},{"line":{"color":"#8b5cf6","dash":"dash","width":2},"mode":"lines","name":"7-day MA","x":["2025-08-08","2025-08-09","2025-08-10","2025-08-11","2025-08-12","2025-08-13","2025-08-14","2025-08-15"],"y":[7.0,11.0,11.666666666666666,12.25,11.0,11.333333333333334,11.142857142857142,11.0],"type":"scatter"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"font":{"size":24,"family":"Ubuntu Mono","color":"#1e293b"},"text":"\u003cb\u003e7-Day Reorg Trend\u003c\u002fb\u003e"},"xaxis":{"title":{"text":"Date","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)","zeroline":false},"yaxis":{"title":{"text":"Number of Reorgs","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)","zeroline":true,"zerolinecolor":"rgba(0,0,0,0.1)"},"hoverlabel":{"font":{"size":12,"family":"Ubuntu Mono"},"bgcolor":"white","bordercolor":"#6366f1"},"margin":{"l":60,"r":30,"t":80,"b":60},"legend":{"font":{"size":12,"family":"Ubuntu Mono"},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":500,"showlegend":true}};
+            Plotly.newPlot('chart_2', figure_2.data, figure_2.layout, config);
+        })();
+        
+
+        (function() {
+            var figure_3 = {"data":[{"hovertemplate":"\u003cb\u003eSlot %{x}\u003c\u002fb\u003e\u003cbr\u003eReorgs: %{y}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["rgba(99, 102, 241, 1.0)","rgba(99, 102, 241, 0.4741463414634146)","rgba(99, 102, 241, 0.3648780487804878)","rgba(99, 102, 241, 0.37170731707317073)","rgba(99, 102, 241, 0.34780487804878046)","rgba(99, 102, 241, 0.3546341463414634)","rgba(99, 102, 241, 0.3648780487804878)","rgba(99, 102, 241, 0.3546341463414634)","rgba(99, 102, 241, 0.36829268292682926)","rgba(99, 102, 241, 0.35121951219512193)","rgba(99, 102, 241, 0.35804878048780486)","rgba(99, 102, 241, 0.37853658536585366)","rgba(99, 102, 241, 0.344390243902439)","rgba(99, 102, 241, 0.36829268292682926)","rgba(99, 102, 241, 0.35121951219512193)","rgba(99, 102, 241, 0.36146341463414633)","rgba(99, 102, 241, 0.3853658536585366)","rgba(99, 102, 241, 0.3546341463414634)","rgba(99, 102, 241, 0.34097560975609753)","rgba(99, 102, 241, 0.34780487804878046)","rgba(99, 102, 241, 0.36829268292682926)","rgba(99, 102, 241, 0.35804878048780486)","rgba(99, 102, 241, 0.33073170731707313)","rgba(99, 102, 241, 0.3751219512195122)","rgba(99, 102, 241, 0.33756097560975606)","rgba(99, 102, 241, 0.36829268292682926)","rgba(99, 102, 241, 0.37853658536585366)","rgba(99, 102, 241, 0.33756097560975606)","rgba(99, 102, 241, 0.36829268292682926)","rgba(99, 102, 241, 0.34097560975609753)","rgba(99, 102, 241, 0.33756097560975606)","rgba(99, 102, 241, 0.3170731707317073)"],"line":{"color":"rgba(99, 102, 241, 1)","width":1}},"text":["205","51","19","21","14","16","19","16","20","15","17","23","13","20","15","18","25","16","12","14","20","17","9","22","11","20","23","11","20","12","11","5"],"textfont":{"family":"Ubuntu Mono","size":10},"textposition":"outside","x":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],"y":[205,51,19,21,14,16,19,16,20,15,17,23,13,20,15,18,25,16,12,14,20,17,9,22,11,20,23,11,20,12,11,5],"type":"bar"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"font":{"size":24,"family":"Ubuntu Mono","color":"#1e293b"},"text":"\u003cb\u003eReorgs by Slot Position in Epoch\u003c\u002fb\u003e"},"xaxis":{"title":{"text":"Slot Position in Epoch (0-31)","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"tickmode":"linear","tick0":0,"dtick":1,"showgrid":false},"yaxis":{"title":{"text":"Number of Reorgs","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)"},"margin":{"l":60,"r":30,"t":80,"b":60},"hoverlabel":{"font":{"size":12,"family":"Ubuntu Mono"},"bgcolor":"white","bordercolor":"#6366f1"},"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":500,"showlegend":false}};
+            Plotly.newPlot('chart_3', figure_3.data, figure_3.layout, config);
+        })();
+        
+
+        (function() {
+            var figure_4 = {"data":[{"colorbar":{"len":0.7,"thickness":15,"tickfont":{"family":"Ubuntu Mono","size":10},"title":{"font":{"family":"Ubuntu Mono","size":12},"text":"Reorgs"}},"colorscale":[[0,"#f1f5f9"],[0.2,"#ddd6fe"],[0.4,"#c4b5fd"],[0.6,"#a78bfa"],[0.8,"#8b5cf6"],[1.0,"#6366f1"]],"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eHour: %{y}:00\u003cbr\u003eReorgs: %{z}\u003cextra\u003e\u003c\u002fextra\u003e","text":[[5,4,4,1,2,5,6],[4,5,8,6,4,10,2],[2,4,7,8,3,4,0],[6,5,11,5,2,6,5],[4,6,5,1,4,5,8],[6,5,1,3,6,3,5],[1,3,2,4,6,5,5],[5,2,6,3,4,7,3],[5,5,6,3,5,4,8],[6,4,2,1,11,1,4],[6,3,4,9,3,6,3],[2,6,4,5,6,5,3],[6,5,9,6,11,3,6],[3,5,5,5,7,4,6],[3,0,6,3,3,7,5],[3,4,5,4,5,4,6],[3,4,1,2,3,5,6],[3,2,3,5,3,5,1],[6,3,4,9,1,5,3],[8,5,2,7,3,4,2],[3,4,11,7,3,3,2],[7,3,4,4,2,5,6],[3,7,2,5,6,6,7],[2,4,3,2,4,3,3]],"textfont":{"family":"Ubuntu Mono","size":12},"texttemplate":"%{text}","x":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"y":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],"z":[[5,4,4,1,2,5,6],[4,5,8,6,4,10,2],[2,4,7,8,3,4,0],[6,5,11,5,2,6,5],[4,6,5,1,4,5,8],[6,5,1,3,6,3,5],[1,3,2,4,6,5,5],[5,2,6,3,4,7,3],[5,5,6,3,5,4,8],[6,4,2,1,11,1,4],[6,3,4,9,3,6,3],[2,6,4,5,6,5,3],[6,5,9,6,11,3,6],[3,5,5,5,7,4,6],[3,0,6,3,3,7,5],[3,4,5,4,5,4,6],[3,4,1,2,3,5,6],[3,2,3,5,3,5,1],[6,3,4,9,1,5,3],[8,5,2,7,3,4,2],[3,4,11,7,3,3,2],[7,3,4,4,2,5,6],[3,7,2,5,6,6,7],[2,4,3,2,4,3,3]],"type":"heatmap"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"font":{"size":24,"family":"Ubuntu Mono","color":"#1e293b"},"text":"\u003cb\u003eReorg Activity Heatmap\u003c\u002fb\u003e"},"xaxis":{"title":{"text":"Day of Week","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"side":"bottom"},"yaxis":{"title":{"text":"Hour of Day (UTC)","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"tickmode":"linear","tick0":0,"dtick":1},"margin":{"l":60,"r":80,"t":80,"b":60},"hoverlabel":{"font":{"size":12,"family":"Ubuntu Mono"},"bgcolor":"white","bordercolor":"#6366f1"},"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":600}};
+            Plotly.newPlot('chart_4', figure_4.data, figure_4.layout, config);
+        })();
+        
+
+        (function() {
+            var figure_5 = {"data":[{"hovertemplate":"\u003cb\u003eDepth: %{x} blocks\u003c\u002fb\u003e\u003cbr\u003eCount: %{y}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#10b981"],"line":{"color":"white","width":2}},"text":[750.0],"textfont":{"color":"#1e293b","family":"Ubuntu Mono","size":14},"textposition":"outside","x":[1],"y":[750],"type":"bar"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"font":{"size":24,"family":"Ubuntu Mono","color":"#1e293b"},"text":"\u003cb\u003eReorg Depth Distribution\u003c\u002fb\u003e"},"xaxis":{"title":{"text":"Reorg Depth (blocks)","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"tickmode":"linear","tick0":1,"dtick":1,"showgrid":false},"yaxis":{"title":{"text":"Count","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)"},"margin":{"l":60,"r":30,"t":80,"b":60},"hoverlabel":{"font":{"size":12,"family":"Ubuntu Mono"},"bgcolor":"white","bordercolor":"#6366f1"},"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":400,"showlegend":false}};
+            Plotly.newPlot('chart_5', figure_5.data, figure_5.layout, config);
+        })();
+        
+
+        (function() {
+            var figure_6 = {"data":[{"fill":"tozeroy","fillcolor":"rgba(236, 72, 153, 0.1)","hovertemplate":"\u003cb\u003eEpoch %{x}\u003c\u002fb\u003e\u003cbr\u003eReorgs: %{y}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#ec4899","width":2},"marker":{"color":"#ec4899","line":{"color":"white","width":1},"size":6},"mode":"lines+markers","x":[384539,384579,384588,384600,384653,384665,384666,384672,384695,384747,384764,384784,384809,384814,384815,384816,384819,384878,384931,384997,385011,385029,385049,385051,385059,385073,385119,385135,385144,385150,385153,385162,385164,385187,385195,385220,385280,385285,385298,385304,385308,385319,385329,385346,385370,385372,385388,385400,385402,385409,385415,385464,385512,385523,385538,385549,385586,385590,385601,385617,385639,385660,385665,385675,385709,385719,385731,385757,385778,385838,385881,385940,385949,385996,386000,386007,386008,386027,386071,386109,386136,386168,386179,386180,386184,386232,386262,386288,386311,386332,386369,386384,386402,386411,386448,386452,386468,386498,386499,386524],"y":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1],"type":"scatter"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"font":{"size":24,"family":"Ubuntu Mono","color":"#1e293b"},"text":"\u003cb\u003eReorgs by Epoch\u003c\u002fb\u003e (Last 100 Epochs)"},"xaxis":{"title":{"text":"Epoch Number","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)"},"yaxis":{"title":{"text":"Number of Reorgs","font":{"size":14,"family":"Ubuntu Mono"}},"tickfont":{"size":12,"family":"Ubuntu Mono"},"showgrid":true,"gridcolor":"rgba(0,0,0,0.05)"},"margin":{"l":60,"r":30,"t":80,"b":60},"hoverlabel":{"font":{"size":12,"family":"Ubuntu Mono"},"bgcolor":"white","bordercolor":"#ec4899"},"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":400,"showlegend":false}};
+            Plotly.newPlot('chart_6', figure_6.data, figure_6.layout, config);
+        })();
+        
+    </script>
+</body>
+</html>
