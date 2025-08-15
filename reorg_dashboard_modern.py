@@ -140,20 +140,20 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
     fig.update_layout(
         title=dict(
             text=f"<b>{title}</b>",
-            font=dict(size=24, family='Ubuntu Mono', color=COLORS['dark'])
+            font=dict(size=28, family='Ubuntu Mono', color=COLORS['dark'])
         ),
         xaxis=dict(
             title='Date',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
             gridcolor='rgba(0,0,0,0.05)',
             zeroline=False
         ),
         yaxis=dict(
             title='Number of Reorgs',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
             gridcolor='rgba(0,0,0,0.05)',
             zeroline=True,
@@ -162,13 +162,13 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
         hovermode='x unified',
         hoverlabel=dict(
             bgcolor='white',
-            font=dict(size=12, family='Ubuntu Mono'),
+            font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['primary']
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         height=500,
-        margin=dict(l=60, r=30, t=80, b=60),
+        margin=dict(l=80, r=40, t=100, b=80),
         showlegend=True,
         legend=dict(
             orientation="h",
@@ -176,7 +176,7 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
             y=1.02,
             xanchor="right",
             x=1,
-            font=dict(size=12, family='Ubuntu Mono')
+            font=dict(size=14, family='Ubuntu Mono')
         )
     )
     
@@ -207,19 +207,19 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
         ),
         text=[slot_counts.get(i, 0) for i in range(32)],
         textposition='outside',
-        textfont=dict(size=10, family='Ubuntu Mono'),
+        textfont=dict(size=12, family='Ubuntu Mono', color=COLORS['dark']),
         hovertemplate='<b>Slot %{x}</b><br>Reorgs: %{y}<extra></extra>'
     ))
     
     fig.update_layout(
         title=dict(
             text=f"<b>{title}</b>",
-            font=dict(size=24, family='Ubuntu Mono', color=COLORS['dark'])
+            font=dict(size=28, family='Ubuntu Mono', color=COLORS['dark'])
         ),
         xaxis=dict(
             title='Slot Position in Epoch (0-31)',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             tickmode='linear',
             tick0=0,
             dtick=1,
@@ -227,19 +227,19 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
         ),
         yaxis=dict(
             title='Number of Reorgs',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
             gridcolor='rgba(0,0,0,0.05)'
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         height=500,
-        margin=dict(l=60, r=30, t=80, b=60),
+        margin=dict(l=80, r=40, t=100, b=80),
         showlegend=False,
         hoverlabel=dict(
             bgcolor='white',
-            font=dict(size=12, family='Ubuntu Mono'),
+            font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['primary']
         )
     )
@@ -281,12 +281,12 @@ def create_heatmap_chart(df, title="Reorg Activity Heatmap"):
         colorscale=colorscale,
         text=pivot.values,
         texttemplate='%{text}',
-        textfont=dict(size=12, family='Ubuntu Mono'),
+        textfont=dict(size=14, family='Ubuntu Mono', color='white'),
         hovertemplate='<b>%{x}</b><br>Hour: %{y}:00<br>Reorgs: %{z}<extra></extra>',
         colorbar=dict(
             title='Reorgs',
-            titlefont=dict(size=12, family='Ubuntu Mono'),
-            tickfont=dict(size=10, family='Ubuntu Mono'),
+            titlefont=dict(size=14, family='Ubuntu Mono'),
+            tickfont=dict(size=12, family='Ubuntu Mono'),
             thickness=15,
             len=0.7
         )
@@ -295,18 +295,18 @@ def create_heatmap_chart(df, title="Reorg Activity Heatmap"):
     fig.update_layout(
         title=dict(
             text=f"<b>{title}</b>",
-            font=dict(size=24, family='Ubuntu Mono', color=COLORS['dark'])
+            font=dict(size=28, family='Ubuntu Mono', color=COLORS['dark'])
         ),
         xaxis=dict(
             title='Day of Week',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             side='bottom'
         ),
         yaxis=dict(
             title='Hour of Day (UTC)',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             tickmode='linear',
             tick0=0,
             dtick=1
@@ -314,10 +314,10 @@ def create_heatmap_chart(df, title="Reorg Activity Heatmap"):
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         height=600,
-        margin=dict(l=60, r=80, t=80, b=60),
+        margin=dict(l=80, r=100, t=100, b=80),
         hoverlabel=dict(
             bgcolor='white',
-            font=dict(size=12, family='Ubuntu Mono'),
+            font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['primary']
         )
     )
@@ -343,19 +343,19 @@ def create_depth_distribution_chart(df, title="Reorg Depth Distribution"):
         ),
         text=depth_counts.values,
         textposition='outside',
-        textfont=dict(size=14, family='Ubuntu Mono', color=COLORS['dark']),
+        textfont=dict(size=16, family='Ubuntu Mono', color=COLORS['dark']),
         hovertemplate='<b>Depth: %{x} blocks</b><br>Count: %{y}<extra></extra>'
     ))
     
     fig.update_layout(
         title=dict(
             text=f"<b>{title}</b>",
-            font=dict(size=24, family='Ubuntu Mono', color=COLORS['dark'])
+            font=dict(size=28, family='Ubuntu Mono', color=COLORS['dark'])
         ),
         xaxis=dict(
             title='Reorg Depth (blocks)',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             tickmode='linear',
             tick0=1,
             dtick=1,
@@ -363,19 +363,19 @@ def create_depth_distribution_chart(df, title="Reorg Depth Distribution"):
         ),
         yaxis=dict(
             title='Count',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
             gridcolor='rgba(0,0,0,0.05)'
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         height=400,
-        margin=dict(l=60, r=30, t=80, b=60),
+        margin=dict(l=80, r=40, t=100, b=80),
         showlegend=False,
         hoverlabel=dict(
             bgcolor='white',
-            font=dict(size=12, family='Ubuntu Mono'),
+            font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['primary']
         )
     )
@@ -411,30 +411,30 @@ def create_epoch_analysis_chart(df, title="Reorgs by Epoch"):
     fig.update_layout(
         title=dict(
             text=f"<b>{title}</b> (Last 100 Epochs)",
-            font=dict(size=24, family='Ubuntu Mono', color=COLORS['dark'])
+            font=dict(size=28, family='Ubuntu Mono', color=COLORS['dark'])
         ),
         xaxis=dict(
             title='Epoch Number',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
             gridcolor='rgba(0,0,0,0.05)'
         ),
         yaxis=dict(
             title='Number of Reorgs',
-            titlefont=dict(size=14, family='Ubuntu Mono'),
-            tickfont=dict(size=12, family='Ubuntu Mono'),
+            titlefont=dict(size=18, family='Ubuntu Mono', color=COLORS['dark']),
+            tickfont=dict(size=14, family='Ubuntu Mono'),
             showgrid=True,
             gridcolor='rgba(0,0,0,0.05)'
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         height=400,
-        margin=dict(l=60, r=30, t=80, b=60),
+        margin=dict(l=80, r=40, t=100, b=80),
         showlegend=False,
         hoverlabel=dict(
             bgcolor='white',
-            font=dict(size=12, family='Ubuntu Mono'),
+            font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['tertiary']
         )
     )
