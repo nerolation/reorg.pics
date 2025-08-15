@@ -441,7 +441,7 @@ def create_epoch_analysis_chart(df, title="Reorgs by Epoch"):
     
     return fig
 
-def generate_modern_html_dashboard(charts, df, output_file="reorg_dashboard_modern.html"):
+def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_dashboard_modern.html"):
     """Generate a modern, stylish HTML file with all charts"""
     
     # Calculate statistics
@@ -452,6 +452,18 @@ def generate_modern_html_dashboard(charts, df, output_file="reorg_dashboard_mode
     reorgs_today = len(df[df['date'].dt.date == today]) if not df.empty else 0
     reorgs_7d = len(df[df['date'] >= datetime.utcnow() - timedelta(days=7)])
     reorgs_30d = len(df[df['date'] >= datetime.utcnow() - timedelta(days=30)])
+    
+    # Determine period label
+    if days_back >= 365:
+        period_label = f"last {days_back // 365} year{'s' if days_back >= 730 else ''}"
+    elif days_back >= 30:
+        months = days_back // 30
+        period_label = f"last {months} month{'s' if months > 1 else ''}"
+    elif days_back >= 7:
+        weeks = days_back // 7
+        period_label = f"last {weeks} week{'s' if weeks > 1 else ''}"
+    else:
+        period_label = f"last {days_back} day{'s' if days_back > 1 else ''}"
     
     # Prepare table data (last 100 reorgs)
     df_table = df.sort_values('date', ascending=False).head(100).copy()
@@ -772,7 +784,7 @@ def generate_modern_html_dashboard(charts, df, output_file="reorg_dashboard_mode
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value">{total_reorgs}</div>
-                <div class="stat-label">Total Reorgs</div>
+                <div class="stat-label">Total Reorgs ({period_label})</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">{reorgs_today}</div>
@@ -788,11 +800,11 @@ def generate_modern_html_dashboard(charts, df, output_file="reorg_dashboard_mode
             </div>
             <div class="stat-card">
                 <div class="stat-value">{avg_depth:.2f}</div>
-                <div class="stat-label">Avg Depth</div>
+                <div class="stat-label">Avg Depth ({period_label})</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">{max_depth}</div>
-                <div class="stat-label">Max Depth</div>
+                <div class="stat-label">Max Depth ({period_label})</div>
             </div>
         </div>
         
@@ -869,6 +881,7 @@ def generate_modern_html_dashboard(charts, df, output_file="reorg_dashboard_mode
         reorgs_30d=reorgs_30d,
         avg_depth=avg_depth,
         max_depth=max_depth,
+        period_label=period_label,
         timestamp=datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC'),
         chart_divs='\n'.join(chart_divs),
         table_rows=''.join(table_rows),
@@ -885,8 +898,11 @@ def main():
     """Main function to generate the modern dashboard"""
     print("Starting Modern Reorg Dashboard generation...")
     
+    # Configuration - fetch last year of data
+    days_back = 365
+    
     # Fetch data
-    df = fetch_reorg_data_pyxatu(days_back=90)
+    df = fetch_reorg_data_pyxatu(days_back=days_back)
     
     if df.empty:
         print("No reorg data found!")
@@ -894,9 +910,11 @@ def main():
     
     print(f"Found {len(df)} reorgs")
     
-    # Create charts (no client-related charts)
+    # Create charts with appropriate titles
+    period_label = "Year" if days_back >= 365 else f"{days_back}-Day"
     charts = {
-        'time_series_90d': create_time_series_chart(df, "90-Day Reorg Trend"),
+        'time_series_year': create_time_series_chart(df, f"{period_label} Reorg Trend"),
+        'time_series_90d': create_time_series_chart(df, "90-Day Reorg Trend", period_days=90),
         'time_series_30d': create_time_series_chart(df, "30-Day Reorg Trend", period_days=30),
         'time_series_7d': create_time_series_chart(df, "7-Day Reorg Trend", period_days=7),
         'slot_position': create_slot_position_chart(df),
@@ -906,7 +924,7 @@ def main():
     }
     
     # Generate HTML
-    generate_modern_html_dashboard(charts, df, "reorg_dashboard_modern.html")
+    generate_modern_html_dashboard(charts, df, days_back, "reorg_dashboard_modern.html")
     
     print("Modern dashboard generation complete!")
 
