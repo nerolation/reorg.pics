@@ -628,14 +628,12 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
             width: 100%;
             box-sizing: border-box;
             /* CRITICAL: Prevent container collapse */
-            min-width: 700px;
             min-height: 500px;
             position: relative;
         }}
         
         .chart-container > div {{
             width: 100% !important;
-            min-width: 650px !important;
             min-height: 450px !important;
             overflow: hidden;
             position: relative;
@@ -643,7 +641,7 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
         
         /* Ensure Plotly containers maintain minimum size */
         .plotly-graph-div {{
-            min-width: 650px !important;
+            width: 100% !important;
             min-height: 450px !important;
         }}
         
@@ -653,7 +651,7 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
         
         .chart-grid {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(700px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(700px, 100%), 1fr));
             gap: 30px;
             margin-bottom: 30px;
             width: 100%;
@@ -724,12 +722,12 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
                 padding: 15px;
                 border-radius: 15px;
                 margin-bottom: 20px;
-                min-width: 100%;
+                width: 100%;
                 min-height: 400px;
             }}
             
             .chart-container > div {{
-                min-width: 100% !important;
+                width: 100% !important;
                 min-height: 380px !important;
             }}
             
@@ -1010,45 +1008,61 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
     </div>
     
     <script>
-        // Elegant configuration - disable responsive mode to prevent resize issues
+        // Elegant configuration - enable responsive with safety checks
         const config = {{
             staticPlot: false,      // Allow hover interactions
-            responsive: false,      // Disable responsive to prevent resize on focus loss
+            responsive: true,       // Enable responsive but with custom handlers
             displayModeBar: false,
             scrollZoom: false,
             doubleClick: false,
             showTips: false,
-            editable: false
+            editable: false,
+            responsiveAnimationDuration: 0  // Instant resize without animation
         }};
         
-        // Simple and elegant fix: Ensure Plotly never tries to resize with invalid dimensions
-        if (window.Plotly && Plotly.Plots && Plotly.Plots.resize) {{
-            const originalResize = Plotly.Plots.resize;
-            Plotly.Plots.resize = function(gd) {{
-                // Skip resize if document is hidden (prevents axis scaling error)
-                if (document.hidden) {{
-                    return Promise.resolve(gd);
-                }}
-                
-                // Ensure we have a valid element
-                const graphDiv = typeof gd === 'string' ? document.getElementById(gd) : gd;
-                if (!graphDiv) return Promise.resolve();
-                
-                // Check container has minimum dimensions (CSS enforces this, but double-check)
-                const rect = graphDiv.getBoundingClientRect();
-                if (rect.width < 100 || rect.height < 100) {{
-                    return Promise.resolve(graphDiv);
-                }}
-                
-                // Safe to resize
-                try {{
-                    return originalResize.apply(this, arguments);
-                }} catch (e) {{
-                    console.debug('Resize skipped due to error:', e.message);
-                    return Promise.resolve(graphDiv);
-                }}
-            }};
+        // Store initial render state for each chart
+        const chartStates = new Map();
+        
+        // Custom resize handler that prevents the collapsing bug
+        function safeResize(chartDiv) {{
+            // Don't resize if document is hidden or container has no size
+            if (document.hidden) return;
+            
+            const rect = chartDiv.getBoundingClientRect();
+            if (rect.width < 100 || rect.height < 100) return;
+            
+            // Only resize if container has valid dimensions
+            try {{
+                Plotly.Plots.resize(chartDiv);
+            }} catch (e) {{
+                console.debug('Resize skipped:', e.message);
+            }}
         }}
+        
+        // Handle visibility changes - resize charts when page becomes visible
+        document.addEventListener('visibilitychange', () => {{
+            if (!document.hidden) {{
+                // Wait for browser to restore layout
+                setTimeout(() => {{
+                    document.querySelectorAll('.chart-container > div').forEach(chartDiv => {{
+                        if (chartDiv.data) safeResize(chartDiv);
+                    }});
+                }}, 100);
+            }}
+        }});
+        
+        // Handle window resize with debouncing
+        let resizeTimeout;
+        window.addEventListener('resize', () => {{
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {{
+                if (!document.hidden) {{
+                    document.querySelectorAll('.chart-container > div').forEach(chartDiv => {{
+                        if (chartDiv.data) safeResize(chartDiv);
+                    }});
+                }}
+            }}, 250);
+        }});
         
         // Render all charts
         {chart_scripts}
@@ -1061,11 +1075,17 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
                     overlay.style.opacity = '0';
                     setTimeout(() => overlay.style.display = 'none', 300);
                 }}
+                
+                // Initial resize to fit containers after load
+                if (!document.hidden) {{
+                    document.querySelectorAll('.chart-container > div').forEach(chartDiv => {{
+                        if (chartDiv.data) safeResize(chartDiv);
+                    }});
+                }}
             }}, 100);
         }});
         
-        // Since we're using fixed dimensions, we don't need complex resize handling
-        // Charts will maintain their size thanks to CSS min-width/min-height
+        // Charts now adapt to container width while preventing the collapse bug
     </script>
 </body>
 </html>"""
@@ -1089,11 +1109,10 @@ def generate_modern_html_dashboard(charts, df, days_back=90, output_file="reorg_
             var chartDiv = document.getElementById('{div_id}');
             
             if (chartDiv) {{
-                // Use reasonable fixed dimensions that work across all screen sizes
-                // The CSS ensures containers never collapse below these sizes
-                figure_{chart_index}.layout.width = 900;  // Fixed width
-                figure_{chart_index}.layout.height = 450; // Fixed height
-                figure_{chart_index}.layout.autosize = false;
+                // Enable responsive sizing but with safety checks
+                figure_{chart_index}.layout.autosize = true;
+                figure_{chart_index}.layout.height = 450; // Fixed height to prevent vertical issues
+                delete figure_{chart_index}.layout.width; // Let width be responsive
                 
                 // Ensure margins are reasonable
                 if (!figure_{chart_index}.layout.margin) {{
