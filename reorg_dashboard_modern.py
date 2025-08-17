@@ -180,9 +180,14 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
     
     return fig
 
-def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
+def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch", period_days=None):
     """Create modern bar chart showing which slots in epoch get reorged most"""
     fig = go.Figure()
+    
+    # Filter data to specified period if provided
+    if period_days:
+        cutoff_date = datetime.utcnow() - timedelta(days=period_days)
+        df = df[df['date'] >= cutoff_date]
     
     # Group by slot position
     slot_counts = df['slot_in_epoch'].value_counts().sort_index()
@@ -248,7 +253,7 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch"):
     
     return fig
 
-def create_heatmap_chart(df, title="Reorg Activity Heatmap (Last 365 Days)"):
+def create_heatmap_chart(df, title="Reorg Activity Heatmap (Last 90 Days)"):
     """Create beautiful heatmap of reorgs by hour and day"""
     df['hour'] = df['date'].dt.hour
     df['day_of_week'] = df['date'].dt.day_name()
@@ -1085,8 +1090,8 @@ def main():
     """Main function to generate the modern dashboard"""
     print("Starting Modern Reorg Dashboard generation...")
     
-    # Configuration - fetch last year of data
-    days_back = 365
+    # Configuration - fetch last 90 days of data
+    days_back = 90
     
     # Fetch data
     df = fetch_reorg_data_pyxatu(days_back=days_back)
@@ -1098,15 +1103,14 @@ def main():
     print(f"Found {len(df)} reorgs")
     
     # Create charts with appropriate titles
-    period_label = "Year" if days_back >= 365 else f"{days_back}-Day"
+    period_label = "90-Day"
     charts = {
-        'time_series_year': create_time_series_chart(df, f"{period_label} Reorg Trend"),
-        'time_series_90d': create_time_series_chart(df, "90-Day Reorg Trend", period_days=90),
+        'time_series_90d': create_time_series_chart(df, "90-Day Reorg Trend"),
         'time_series_30d': create_time_series_chart(df, "30-Day Reorg Trend", period_days=30),
         'time_series_7d': create_time_series_chart(df, "7-Day Reorg Trend", period_days=7),
-        'slot_position': create_slot_position_chart(df),
+        'slot_position': create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch (Last 90 Days)"),
         'heatmap': create_heatmap_chart(df),
-        'depth_distribution': create_depth_distribution_chart(df, title="Reorg Depth Distribution (Last 365 Days)"),
+        'depth_distribution': create_depth_distribution_chart(df, title="Reorg Depth Distribution (Last 90 Days)"),
         'epoch_analysis': create_epoch_analysis_chart(df)
     }
     
