@@ -176,7 +176,7 @@ def create_time_series_chart(df, title="Reorgs Over Time", period_days=None):
             x=1,
             font=dict(size=14, family='Ubuntu Mono')
         ),
-        dragemode=False
+        dragmode=False
     )
     
     return fig
@@ -250,7 +250,7 @@ def create_slot_position_chart(df, title="Reorgs by Slot Position in Epoch", per
             font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['primary']
         ),
-        dragemode=False
+        dragmode=False
     )
     
     return fig
@@ -332,7 +332,7 @@ def create_heatmap_chart(df, title="Reorg Activity Heatmap (Last 90 Days)"):
             font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['primary']
         ),
-        dragemode=False
+        dragmode=False
     )
     
     return fig
@@ -395,7 +395,7 @@ def create_depth_distribution_chart(df, title="Reorg Depth Distribution"):
             font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['primary']
         ),
-        dragemode=False
+        dragmode=False
     )
     
     return fig
@@ -454,7 +454,7 @@ def create_epoch_analysis_chart(df, title="Reorgs by Epoch"):
             font=dict(size=14, family='Ubuntu Mono'),
             bordercolor=COLORS['tertiary']
         ),
-        dragemode=False
+        dragmode=False
     )
     
     return fig
