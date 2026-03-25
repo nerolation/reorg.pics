@@ -66,13 +66,23 @@ def fetch_reorg_data_pyxatu(days_back=90):
         print("Querying reorgs...")
         reorgs_raw = xatu.raw_query(reorg_query)
         
-       # Group by slot and take MINIMUM depth to avoid false positives
+        # Filter to events with consensus across >= MIN_SENTRY_COUNT sentries.
+        # Single-sentry high-depth reports are node sync artifacts, not real chain reorgs. 
+        # Real reorgs are reported by nearly all sentries simultaneously.
+        MIN_SENTRY_COUNT = 10
+        sentry_counts = reorgs_raw.groupby('reorg_slot').size()
+        valid_reorg_slots = sentry_counts[sentry_counts >= MIN_SENTRY_COUNT].index
+        reorgs_filtered = reorgs_raw[reorgs_raw['reorg_slot'].isin(valid_reorg_slots)]
+        print(f"Filtered to {len(valid_reorg_slots)} reorg events with >= {MIN_SENTRY_COUNT} sentry reports "
+              f"(dropped {len(sentry_counts) - len(valid_reorg_slots)} artifacts)")
+
+        # Group by slot and take MINIMUM depth to avoid false positives
         print("Processing reorgs - taking minimum depth per slot...")
-        reorgs_df = reorgs_raw.groupby('slot').agg({
+        reorgs_df = reorgs_filtered.groupby('slot').agg({
             'depth': 'min',  # Take minimum depth to be conservative
             'reorg_slot': 'first'
         }).reset_index()
-        
+
         # Get missed slots
         print("Getting missed slots...")
         missed_slots = xatu.get_missed_slots(slot_range=[start_slot, current_slot])
